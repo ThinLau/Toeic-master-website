@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Toeic Master - Free Practice for TOEIC® tests</title>
+
+<!-- Meta -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" th:href="@{/favicon.ico}" />
+
+<!-- Bootstrap CSS-->
+<link rel="stylesheet"
+	th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}" />
+<!-- Custom CSS -->
+<link rel="stylesheet" th:href="@{/assets/css/style.css}" />
+<link rel="stylesheet" th:href="@{/css/mycss.css}" />
+
+<!-- CSS Implementing Plugins -->
+<link rel="stylesheet"
+	th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}" />
+
+<!-- CSS Theme -->
+<link rel="stylesheet" th:href="@{/assets/css/themes/dark-blue.css}"
+	id="style_color" />
+
+<!-- JS Global Compulsory -->
+<script type="text/javascript"
+	th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript"
+	th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
+
+</head>
+<body>
+
+	<!--=== Header ===-->
+	<div class="header" th:fragment="header">
+
+		<!-- Navbar -->
+		<div class="navbar navbar-default" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="row">
+					<div class="navbar-header col-md-offset-1">
+
+						<a class="navbar-brand" th:href="@{/}"> <img id="logo-header"
+							th:src="@{/assets/img/banner-2.png}" style="display: block;"
+							alt="Logo" /> <span class="hidden-xs hidden-sm hidden-md"
+							style="display: block; float: right;">as easy as <span
+								style="color: red;">pie</span></span> <!-- <h1>Exam English &#10003;</h1> -->
+						</a>
+						<button type="button" class="navbar-toggle" data-toggle="collapse"
+							data-target=".navbar-responsive-collapse">
+							<span class="sr-only">Toggle navigation</span> <span
+								class="fa fa-bars"></span>
+						</button>
+					</div>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="row ">
+					<div class="collapse navbar-collapse navbar-responsive-collapse">
+						<ul class="nav navbar-nav">
+							<li class="hidden-md"><a href="#"></a></li>
+							<li th:classappend="${module == 'home' ? 'active' : ''}"><a
+								th:href="@{/}">Trang chủ</a></li>
+							<li th:classappend="${module == 'instruction' ? 'active' : ''}"
+								class="dropdown"><a href="#" class="dropdown-toggle"
+								data-toggle="dropdown">Hướng dẫn</a>
+								<ul class="dropdown-menu">
+
+									<li><a th:href="@{/instruction/homepage?type=listen}">Hướng
+											dẫn phần nghe</a></li>
+									<li><a th:href="@{/instruction/homepage?type=read}">Hướng
+											dẫn phần đọc</a></li>
+
+								</ul></li>
+							<li th:classappend="${module == 'exercise' ? 'active' : ''}"
+								class="dropdown"><a href="#" class="dropdown-toggle"
+								data-toggle="dropdown">Bài tập</a>
+								<ul class="dropdown-menu">
+
+									<li><a th:href="@{/exercise/homepage?exerciseType=listen}">Bài
+											tập phần nghe</a></li>
+									<li><a th:href="@{/exercise/homepage?exerciseType=read}">Bài
+											tập phần đọc</a></li>
+
+								</ul></li>
+							<li th:classappend="${module == 'examination' ? 'active' : ''}"><a
+								th:href="@{/examination}">Bài thi</a></li>
+							<li th:classappend="${module == 'contact' ? 'active' : ''}"><a
+								href="#">Liên hệ</a></li>
+							<li th:classappend="${module == 'about' ? 'active' : ''}"><a
+								href="#">Giới thiệu</a></li>
+						</ul>
+					</div>
+					<!--/navbar-collapse-->
+				</div>
+			</div>
+		</div>
+		<!-- End Navbar -->
+	</div>
+	<!--=== End Header ===-->
+
+
+	<!--=== Breadcrumbs ===-->
+	<div class="breadcrumbs hidden-xs" th:fragment="breadcrumb">
+		<div class="container">
+			<h3 class="pull-right">
+				<i class="icon-like"></i> Free Toeic Practice Tests for learners of
+				English
+			</h3>
+
+		</div>
+	</div>
+	<!--/breadcrumbs-->
+	<!--=== End Breadcrumbs ===-->
+
+	<!-- right side panel fragment -->
+	<div class="panel panel-dark-blue" th:fragment="panel-right">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				<i class="fa fa-tasks"></i> Links
+			</h3>
+		</div>
+
+		<div class="panel-body">
+			<ul style="list-style-type: none; margin: 0; padding: 0;">
+				<li><h4>Bài tập</h4></li>
+				<li class="list-group-item"><a th:href="@{/exercise/homepage?exerciseType=listen}">Bài tập phần nghe</a></li>
+				<li class="list-group-item"><a th:href="@{/exercise/homepage?exerciseType=read}">Bài tập phần đọc</a></li>
+				<li class="list-group-item"><a th:href="@{/examination}">Làm bài thi thử</a></li>
+
+				<li><h4>Hướng dẫn</h4></li>
+				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=listen}">Hướng dẫn phần nghe</a></li>
+				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=read}">Hướng dẫn phần đọc</a></li>
+			</ul>
+
+		</div>
+
+	</div>
+	<!--  end panel -->
+
+
+	<!--=== Copyright ===-->
+	<div class="copyright footer" th:fragment="footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10">
+					<p>
+						2017 &copy; Toeic Master Website -- Tiểu luận chuyên ngành 2017.
+						<!-- IF login -->
+						<a th:unless="${session.user == null}" class="footerlink"
+							th:href="@{/user-info}" style="margin-left: 40px;">Trang cá
+							nhân </a>
+						<a th:unless="${session.user == null}" class="footerlink"
+							th:href="@{/logout}" style="margin-left: 40px;">Đăng xuất </a>
+						<!-- else not-->
+						<a th:if="${session.user == null}" class="footerlink"
+							th:href="@{/login-page}" style="margin-left: 40px;">Đăng nhập
+						</a>
+
+
+					</p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!--/copyright-->
+	<!--=== End Copyright ===-->
+
+</body>
+</html>

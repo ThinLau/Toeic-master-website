@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Đăng nhập tài khoản</title>
+  
+  <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
+   <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+
+  <link rel="stylesheet" th:href="@{/css/styleT.css}"/>
+
+</head>
+
+<body class="login">
+
+	<div class="pen-title">
+	  <h2 id="title"> Đăng nhập/Đăng kí tài khoản</h2>
+	</div>
+	
+	<!-- Form Module-->
+	<div class="module form-module">
+	  <div class="toggle"><i class="fa fa-times fa-pencil"></i>
+	    <div class="tooltip">Click Me</div>
+	  </div>
+	  <div class="form">
+	    <h2>Login to your account</h2>
+	    <form th:action="@{/login}" th:object="${user}" method="post">
+	      <input th:field="*{username}" type="text" placeholder="Username"/>
+	      <input th:field="*{password}" type="password" placeholder="Password"/>
+	      <button type="submit">Login</button>
+	    </form>
+	  </div>
+	  <div class="form">
+	    <h2>Create an account</h2>
+	    <form id="register-form" th:action ="@{/register-account}" th:object="${user}" method="post">
+	      <input th:field="*{username}" type="text" placeholder="Username"/>
+	      <input th:field="*{password}" type="password" placeholder="Password" id="pass"/>
+	      <input type="password" placeholder="Confirm Password" id="confirm-pass"/>
+	      <p id="pass_hint"></p>
+	      <input th:field="*{fullName}" type="text" placeholder="Full Name"/>
+	      <input th:field="*{email}" type="email" placeholder="Email"/>
+	      <input class="btn btn-primary" id="register" type="submit" value="Register"/>
+	    </form>
+	  </div>
+	  <div class="cta"><a href="#">Forgot your password?</a></div>
+	</div>
+
+    <!-- JS Global Compulsory -->           
+  <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+    <script  th:src="@{/js/login.js}"></script>
+
+</body>
+</html>

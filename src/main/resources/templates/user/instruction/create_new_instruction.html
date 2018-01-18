@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
+    <script type="text/javascript" th:src="@{/assets/plugins/ckeditor/ckeditor.js}"></script> 
+
+</head> 
+
+<body>
+
+<div class="container">
+    <div class="row profile">
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+      
+        
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${user.username}">Lầu Hôn Thìn</p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+        <div th:replace="fragments/user_sidebar :: user-sidebar"></div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+    <!-- content -->
+    <div class="col-md-9">
+       <div class="profile-content">
+          <h3>Thông tin bài bài hướng dẫn</h3>
+          <br/>
+          <form th:object="${instruction}" th:action="@{/save-instruction}" method="POST">
+            <div class="form-group">
+              <label class="small" for="name">Tên bài hướng dẫn</label>
+              <input th:field="*{name}" type="text" class="form-control" id="name"/>
+            </div>
+             <div class="form-group">
+                <label for="part">Hướng dẫn cho phần</label>
+                <select th:field="*{type}" class="form-control" id="type">
+                  <option value ="listen">Nghe</option>
+                  <option value ="read">Đọc</option>
+                </select>
+              </div>
+            
+             <!-- paragraph -->
+            <div class="form-group row" >
+              <div class="col-md-12">
+	              <textarea class="form-control" rows="10" cols="80" th:field="*{content}" name="content" id="content">
+					Nội dung đoạn văn.</textarea>
+			  </div>
+            </div> 
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary form-control">Lưu lại</button>
+            </div>
+          </form>
+
+       </div>
+    </div>
+
+
+
+  </div>
+</div>
+<center>
+<strong>Powered by <a>ThinLau</a></strong>
+</center>
+<br/>
+<br/>
+      
+      
+<script>
+    CKEDITOR.replace( 'content' );
+</script>
+
+    
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" src="assets/plugins/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script> 
+
+
+</body>
+
+</html> 

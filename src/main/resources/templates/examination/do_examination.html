@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+   <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+  
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+  
+	 <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}"/>
+     <link rel="stylesheet" th:href="@{/css/styleT.css}"/>
+
+    <!-- CSS Implementing Plugins -->
+    <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
+	<link rel="stylesheet" th:href="@{/assets/plugins/jquery-ui.min.css}"/>
+    <!-- CSS Theme -->    
+    <link rel="stylesheet" th:href="@{/assets/css/themes/dark-blue.css}" id="style_color"/>
+
+    <!-- Jplayer skin-->
+    <link th:href="@{/assets/plugins/jplayer/skin/css/jplayer.blue.monday.css}" rel="stylesheet" type="text/css" />
+
+	 
+     
+    <!-- JS Global Compulsory -->  
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>         
+    <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/plugins/jquery-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/plugins/jquery-migrate-1.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+
+    <!-- Jplayer plugin-->
+    <script type="text/javascript" th:src="@{/assets/plugins/jplayer/js/jquery.jplayer.min.js}"></script>
+    
+  
+   	 <!--  <script type="text/javascript" th:src="@{/js/do_examination.js}"></script> -->
+   	 <script type="text/javascript" th:src="@{/js/test.js}"></script>
+
+   
+
+</head> 
+
+<body>
+
+<!--=== Top ===-->    
+<div class="wrapper">
+    <div th:replace="fragments/layout :: header"></div>
+	<div th:replace="fragments/layout :: breadcrumb"></div>
+
+    <!--=== Content Part ===-->
+    <div class="container content">     
+        <div class="row"> 
+		  <div class="col-md-2">
+		  	<p id="countdown"></p>
+		  </div>
+	
+           <div class="col-md-6  content-margin-bottom "> 
+            <div class="row">
+            
+              <div class="panel panel-grey" style="min-height: 500px;">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-question"></i>
+                            <span th:text="${exam.name}">Bài thi thử 1</span></h3>
+                    </div> 
+
+                    <div class="panel-body">   
+                     	<!--  get the exercise id -->
+						<input id="exam-id" type="hidden" th:value="${exam.id}"/>
+						<input id="time-out" type="hidden" th:value="${exam.timeOut}"/>
+						
+	                    <p class="part-sumary">In each question, you will look at a photograph and then listen to 4 sentences. Choose the sentence that best describes the photograph.</p>
+	    
+	   					<p id = "current-question" style="color: red;"></p>
+						<!--  the image for photo area -->
+						<div class="image" style="display:none;">
+		                    <img id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+		                </div>
+	                        
+	                    <div class="audio" style="display:none;">
+			               <!--The Jplayer html code-->
+			                 <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+			                    <div id="jp_container_1" class="jp-audio" role="application" aria-label="media player">
+			                        <div class="jp-type-single">
+			                          <div class="jp-gui jp-interface">
+			                            <div class="jp-controls">
+			                              <button class="jp-play" role="button" tabindex="0">play</button>
+			                              <button class="jp-stop" role="button" tabindex="0">stop</button>
+			                            </div>
+			                            <div class="jp-progress">
+			                              <div class="jp-seek-bar">
+			                                <div class="jp-play-bar"></div>
+			                              </div>
+			                            </div>
+			                            <div class="jp-volume-controls">
+			                              <button class="jp-mute" role="button" tabindex="0">mute</button>
+			                              <button class="jp-volume-max" role="button" tabindex="0">max volume</button>
+			                              <div class="jp-volume-bar">
+			                                <div class="jp-volume-bar-value"></div>
+			                              </div>
+			                            </div>
+			                            <div class="jp-time-holder">
+			                              <div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+			                              <div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+			                              <div class="jp-toggles">
+			                                <button id="btn-repeat" class="jp-repeat" role="button" tabindex="0">repeat</button>
+			                              </div>
+			                            </div>
+			                          </div>
+			                          <div class="jp-details">
+			                            <div class="jp-title" aria-label="title">&nbsp;</div>
+			                          </div>
+			                          <div class="jp-no-solution">
+			                            <span>Update Required</span>
+			                            To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+			                          </div>
+			                        </div>
+			                      </div>
+								</div>
+
+					  <!--  show the conversation -->
+					  <div class="conversation"></div>
+
+					  <div id="question">     
+
+                          <div class="question-area1">
+                          	
+                          	<!-- list sub question -->
+                          	
+                           </div>
+                      </div>
+                      
+					
+                 </div> <!--end panel-body -->
+                  <div id="testfooter">
+	                   <span id="next"><input id = "btn-previous" type="button" value="Câu trước"/></span>
+	                    &nbsp;&nbsp;
+	                    <span id="next"><input id = "btn-next" type="button" value="Câu tiếp theo"/></span>
+	                </div>
+              </div> <!--end panel -->
+              </div>
+            </div>  <!-- end left column --> 
+
+            <div class="col-md-3 ">
+              <!-- listening exercise -->
+              <div class="panel panel-dark-blue" style="height: 450px;">
+                  <div class="panel-heading">
+                      <h3 class="panel-title"><i class="fa fa-tasks"></i>Bảng đáp án</h3>
+                  </div>
+                  <div class="panel-body" style="height: 410px;overflow: auto;">
+					<th:block th:each="i : ${numbers}">
+						<div th:id="${'question_' + i}" style="margin-bottom: 3px;">
+							<a th:text="${i + '. '}" class="anwser-number showQuestionContent" title="Click để xem nội dung câu hỏi"  th:attr="data-id=${i}" ></a>
+							<span class="choice"><input type="radio" th:name="${'answer_'+ i}" value="A" /> A  <i class="status_A"   aria-hidden="true"></i></span>&nbsp;&nbsp;
+							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="B" /> B <i class="status_B"  aria-hidden="true"></i></span>&nbsp;
+							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="C" /> C <i class="status_C"  aria-hidden="true"></i> </span>&nbsp;
+							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="D" /> D <i class ="status_D"  aria-hidden="true"></i> </span>
+						</div>
+					</th:block>
+					
+                  </div>
+
+                </div>  <!--  end panel -->
+
+			 <div id="testfooter"> 
+	                    <span id="next"><input id = "btn-finish" type="button" value="Nộp bài"/></span>
+	                    <span id="result"></span>
+	         </div>
+
+            </div>  <!-- end col panel -->
+
+			
+			
+			<!-- Modal showQuestionContent -->
+			<div id="myModal" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			        <h4 class="modal-title">Nội dung câu hỏi</h4>
+			      </div>
+			      <div class="modal-body">
+			       	<!-- modal body -->
+			       	 <p class="part-sumary2"></p>
+			       	<!--  the image for photo area -->
+						<div class="image2" style="display:none;">
+		                    <img id="exercise-image2" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+		                </div>
+	                    <br/>
+	                    <div class="audio2" style="display:none;">
+			               <!--The Jplayer html code-->
+			                 <div id="jquery_jplayer_2" class="jp-jplayer"></div>
+			                    <div id="jp_container_2" class="jp-audio" role="application" aria-label="media player">
+			                        <div class="jp-type-single">
+			                          <div class="jp-gui jp-interface">
+			                            <div class="jp-controls">
+			                              <button class="jp-play" role="button" tabindex="0">play</button>
+			                              <button class="jp-stop" role="button" tabindex="0">stop</button>
+			                            </div>
+			                            <div class="jp-progress">
+			                              <div class="jp-seek-bar">
+			                                <div class="jp-play-bar"></div>
+			                              </div>
+			                            </div>
+			                            <div class="jp-volume-controls">
+			                              <button class="jp-mute" role="button" tabindex="0">mute</button>
+			                              <button class="jp-volume-max" role="button" tabindex="0">max volume</button>
+			                              <div class="jp-volume-bar">
+			                                <div class="jp-volume-bar-value"></div>
+			                              </div>
+			                            </div>
+			                            <div class="jp-time-holder">
+			                              <div class="jp-current-time" role="timer" aria-label="time">&nbsp;</div>
+			                              <div class="jp-duration" role="timer" aria-label="duration">&nbsp;</div>
+			                              <div class="jp-toggles">
+			                                <button id="btn-repeat" class="jp-repeat" role="button" tabindex="0">repeat</button>
+			                              </div>
+			                            </div>
+			                          </div>
+			                          <div class="jp-details">
+			                            <div class="jp-title" aria-label="title">&nbsp;</div>
+			                          </div>
+			                          <div class="jp-no-solution">
+			                            <span>Update Required</span>
+			                            To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+			                          </div>
+			                        </div>
+			                      </div>
+								</div>
+
+					  <!--  show the conversation -->
+					  <div class="conversation2"></div>
+
+					  <div id="question2">     
+
+                          <div class="question-area2">
+                          	
+                          	<!-- list sub question -->
+                          	
+                           </div>
+                      </div>
+			       	
+			       	
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			
+			  </div>
+			</div>
+       <!--=== Copyright ===-->
+      
+        
+  </div>
+
+  <div th:replace="fragments/layout :: footer"></div>
+
+</div><!--/container-->     
+    <!--=== End Content Part ===-->
+
+    
+
+
+</div>
+
+
+
+
+</body>
+
+</html> 

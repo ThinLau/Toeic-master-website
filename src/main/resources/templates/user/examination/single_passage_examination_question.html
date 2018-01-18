@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+  
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+     <link rel="stylesheet" type="text/css" th:href="@{/css/user_css.css}"/>
+
+	<!-- JS Global Compulsory -->           
+	<script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+	<script type="text/javascript" th:src="@{/assets/plugins/ckeditor/ckeditor.js}"></script> 
+    <script type="text/javascript" th:src="@{/js/examination_passage_question.js}"></script> 
+  
+
+</head> 
+
+<body>
+
+
+<div class="container">
+    <div class="row profile">
+
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+      
+        
+       <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${exam.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+        <div class="profile-usermenu">
+          <ul class="nav">
+            <li >
+              <a th:href="@{/user-info}">
+              <i class="glyphicon glyphicon-home"></i>Trang cá nhân </a>
+            </li>
+            <li class="">
+              <a th:href="@{/new-examination/info(id=${exam.id})}">
+              <i class="glyphicon glyphicon-book"></i>Thông tin bài thi</a>
+            </li>
+             <li class="">
+              <a href="#">
+              <i class="glyphicon glyphicon-question-sign"></i>Câu hỏi</a>
+              <ul class="nav" style="margin-left: 30px;">
+                  <li ><a th:href="@{/new-examination/Photo(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Photographs</a></li>
+                  <li><a th:href="@{/new-examination/Question-Response(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Question response</a></li>
+                  <li><a th:href="@{/new-examination/Short-conversation(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Short conversation</a></li>
+                  <li><a th:href="@{/new-examination/Short-talk(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Short talk</a></li>
+                  <li><a th:href="@{/new-examination/Incomplete-Sentence(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Incomplete sentence</a></li>
+                  <li><a th:href="@{/new-examination/Text-completion(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Text completion</a></li>
+                  <li class="active"><a th:href="@{/new-examination/Single-passage(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Single passage</a></li>
+                  <li><a th:href="@{/new-examination/Double-passage(id=${exam.id})}"><i class="glyphicon glyphicon-hand-right"></i>Double passage</a></li>
+                </ul>
+            </li>
+            
+          </ul>
+        </div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+ <!-- content -->
+    <div class="col-md-9">
+      <!--form -->
+      <form method="post" enctype="multipart/form-data" th:action="@{/save-examination-single-passage-part/Single-passage/{num}/{currQuestion}(num=${num}, id=${exam.id},currQuestion=${currQuestion} )}">
+        <div class="profile-content">
+          <h2 style="color: #cc0000"><center>Nhập câu hỏi</center></h2>
+          
+          <div class="question-wrapper">
+
+          <!-- Câu 1 -->
+          <div class="question-border" id ="question">   
+              <div class="question-header">
+              <input type="hidden" th:value="${currQuestion}" id="currQuestion"/>
+                <!--  <span class ="question-number text-primary" th:text="${'Câu '+ num + ': '}" style="font-size: 22px;">CÂU 1:</span>-->
+              </div>
+            <!-- paragraph -->
+            <div class="form-group row">
+              <div class="col-md-12">
+	              <textarea class="form-control" rows="10" cols="80" name="paragraph" id="paragraph">
+					Nội dung đoạn văn.</textarea>
+			  </div>
+            </div> 
+  
+             <hr/>
+             <!-- sub-quesion 1 -->
+			<div class="question-border " id="sub_question_1" >   
+				<!-- add element in js -->
+              </div>  <!--  end sub- quesion 1 -->
+              
+             
+              <div style="margin-top: 20px;" class="row">
+                <div class="form-group col-md-5">
+                  <button type="button" class="btn btn-info form-control" id ="btn-add-sub-question">Thêm câu hỏi cho đoạn văn trên</button>
+                </div>       
+            </div>
+          </div> <!-- End Cau1 -->
+
+      </div><!-- end question-wrapper -->    
+            <div style="margin-top: 20px;" class="row">
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary form-control" id ="btn-save">Lưu và thêm câu hỏi</button>
+                </div>       
+            </div>
+          </div>
+        </form>
+      </div>
+
+</div>
+</div>
+      
+<script>
+    CKEDITOR.replace( 'paragraph' );
+</script>
+
+
+
+</body>
+
+</html> 

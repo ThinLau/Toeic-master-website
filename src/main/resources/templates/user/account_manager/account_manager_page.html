@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+     <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+     <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
+
+</head> 
+
+<body>
+
+
+<div class="container">
+    <div class="row profile">
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+      
+        
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${user.username}">Lầu Hôn Thìn</p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+  		<div th:replace="fragments/user_sidebar :: user-sidebar"></div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+    <!-- content -->
+    <div class="col-md-9">
+       <div class="profile-content">
+		     	<div class="account-manager">
+		            <h3 style="text-align: center; color: red; text-transform: uppercase;">Quản lý tài khoản</h3>
+		  			    <div style="max-height: 500px;overflow-y:auto;">
+		  	          <table  class="tbmana table table-striped" style="text-align: center; padding: 5px; width:100%" >
+		  	              <thead>
+		  	                <tr >
+		  	                  <th>#</th>
+		  	                  <th align="center">User name</th>
+		  	                  <th  align="center">Full Name</th>
+		  	                  <th align="center">Email</th>
+		  	                  <th align="center">Birthday</th>
+		  	                  <th align="center">Status</th>
+		  	                  <th align="center">Action</th>
+		  	                </tr>
+		  	              </thead>
+		  	              <tbody >
+		  	                <tr th:if="${u.username != 'admin'}" th:each="u,iter : ${users}">
+		  	                  <td th:text="${iter.index}">1</td>
+		  	                  <td th:text="${u.username}">  Unit 1)</td>
+		  	                  <td th:text="${u.fullName}">1</td>
+		  	                  <td th:text="${u.email}">200</td>
+		  	                  <td th:text="${u.birthday}">21-1-2017</td>
+		  	                  <td th:text="(${u.status}) ? 'hoạt động' : 'khóa' ">21-1-2017</td>
+		  	                  <td th:if="${u.status}"><a th:href="@{/change-account-status(id=${u.id})}" ><i class="fa fa-unlock" aria-hidden="true"></i></a></td>
+		  	                   <td ><a th:href="@{/change-account-status(id=${u.id})}" th:unless="${u.status}"><i class="fa fa-lock" aria-hidden="true"></i></a></td>
+		  	                </tr>
+		  	              </tbody>
+		  	            </table>
+		              </div>
+		            </div>
+
+       </div> <!-- end profile-content div -->
+    </div>
+  </div>
+</div>
+<br/>
+<br/>
+<center>
+<strong>Powered by <a>ThinLau</a></strong>
+</center>
+<br/>
+<br/>
+
+    
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+
+</body>
+
+</html> 

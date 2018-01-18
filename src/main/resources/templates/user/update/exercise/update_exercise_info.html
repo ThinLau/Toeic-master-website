@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+  
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+     <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
+
+</head> 
+
+<body>
+
+
+<div class="container">
+    <div class="row profile">
+
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+          
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${exercise.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+        <div th:replace="fragments/user_sidebar :: update-exercise-sidebar"></div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+    <!-- content -->
+    <div class="col-md-9">
+       <div class="profile-content">
+          <h3>Thông tin bài tập</h3>
+          <br/>
+          <form th:object="${exercise}" th:action="@{/update-exercise-info}" method="POST">
+          	 <input type="hidden" class="form-control" id="exercise-id" th:field="*{id}"/>
+            <div class="form-group">
+              <label class="small" for="fullname">Tên bài tập</label>
+              <input type="text" class="form-control" id="exercise-name" th:field="*{name}"/>
+            </div>
+            <div class="form-group">
+              <label class="small" for="birthday">Số câu hỏi</label>
+              <input type="number" class="form-control" id="birthday" th:field="*{numberOfQuestion}" />
+            </div>
+             <div class="form-group">
+                <label for="sel1">Phần</label>
+                <select th:field="*{part}" class="form-control" id="sel1">
+                  <option value ="1" th:selected="${exercise.part} == 1" >Part 1: Photographs</option>
+                  <option value ="2" th:selected="${exercise.part} == 2">Part 2: Question response</option>
+                  <option value ="3" th:selected="${exercise.part} == 3">Part 3: Short conversation</option>
+                  <option value ="4" th:selected="${exercise.part} == 4">Part 4: Short talk</option>
+                   <option value ="5" th:selected="${exercise.part} == 5">Part 5: Incomplete sentence</option>
+                  <option value ="6" th:selected="${exercise.part} == 6">Part 6: Text completion</option>
+                  <option value ="7" th:selected="${exercise.part} == 7">Part 7: Single passage</option>
+                  <option value ="8" th:selected="${exercise.part} == 8">Part 8: Double passage</option>
+                </select>
+              </div>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary form-control">Cập nhật</button>
+            </div>
+          </form>
+          
+
+       </div>
+    </div>
+
+
+
+  </div>
+</div>
+<center>
+<strong>Powered by <a>ThinLau</a></strong>
+</center>
+<br/>
+<br/>
+
+    
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+
+
+</body>
+
+</html> 

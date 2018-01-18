@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+     <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
+
+</head> 
+
+<body>
+
+
+<div class="container">
+    <div class="row profile">
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+      
+        
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${user.username}">Lầu Hôn Thìn</p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+  		<div th:replace="fragments/user_sidebar :: user-sidebar"></div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+    <!-- content -->
+    <div class="col-md-9">
+       <div class="profile-content">
+		  <ul class="nav nav-tabs" style="font-size: 16px;">
+		    <li th:classappend="${manager_module == 'exercise_manager' ? 'active' : ''}"><a data-toggle="tab" href="#exercise-manager">Quản lý bài tập</a></li>
+		    <li th:classappend="${manager_module == 'examination_manager' ? 'active' : ''}"><a data-toggle="tab" href="#exam-manager">Quản lý bài thi</a></li>
+		    <li th:classappend="${manager_module == 'instruction_manager' ? 'active' : ''}"><a data-toggle="tab" href="#instruction-manager">Quản lý hướng dẫn</a></li>
+		  </ul>
+		
+		  <div class="tab-content">
+		  	<!--  tab manager exercise -->
+		    <div id="exercise-manager" class="tab-pane fade in " th:classappend="${manager_module == 'exercise_manager' ? 'active' : ''}">
+		     	<div class="exercise">
+		            <h3 style="text-align: center; color: red; text-transform: uppercase;">Quản lý Bài tập</h3>
+		  			    <div style="max-height: 500px;overflow-y:auto;">
+		  	          <table  class="tbmana table table-striped" style="text-align: center; padding: 5px;">
+		  	              <thead>
+		  	                <tr>
+		  	                  <th>#</th>
+		  	                  <th>Tên bài tập</th>
+		  	                  <th>Part</th>
+		  	                  <th width="100">Số câu hỏi</th>
+		  	                  <th width="100">Ngày tạo</th>
+		  	                  <th width="90">Chỉnh sửa</th>
+		  	                  <th >Xóa</th>
+		  	                </tr>
+		  	              </thead>
+		  	              <tbody >
+		  	                <tr th:each="exercise : ${exercises}">
+		  	                  <td th:text="${exercise.id}">12</td>
+		  	                  <td th:text="${exercise.name}">Kỹ năng nghe tranh vật trong bài thi TOEIC (Part 2 - Unit 1)</td>
+		  	                  <td th:text="${exercise.part}">1</td>
+		  	                  <td th:text="${exercise.numberOfQuestion}">200</td>
+		  	                  <td th:text="${exercise.dateCreate}">21-1-2017</td>
+		  	                  <td><a th:href="@{/update-exercise/info(id=${exercise.id})}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+		  	                  <td><a th:href="@{/exam-manager/delete-exercise(id=${exercise.id})}"><i class="glyphicon glyphicon-trash"></i></a></td>
+		  	                </tr>
+		  	              </tbody>
+		  	            </table>
+		              </div>
+		            </div>
+  
+		    </div> 
+		    <!--  end tab manager exercise -->
+		    
+		    <div id="exam-manager" class="tab-pane fade in" th:classappend="${manager_module == 'examination_manager' ? 'active' : ''}">
+		     	<div class="examination">
+		            <h3 style="text-align: center; color: red; text-transform: uppercase;">Quản lý bài thi</h3>
+		  			    <div style="max-height: 500px;overflow-y:auto; padding: 5px;">
+		  	          <table  class="tbmana table table-striped" style="text-align: center;">
+		  	              <thead>
+		  	                <tr>
+		  	                  <th>#</th>
+		  	                  <th>Tên bài tập</th>
+		  	                  <th width="100">Số câu hỏi</th>
+		  	                  <th width="100">Thời gian</th>
+		  	                  <th width="100">Ngày tạo</th>
+		  	                  <th width="90">Chỉnh sửa</th>
+		  	                  <th >Xóa</th>
+		  	                </tr>
+		  	              </thead>
+		  	              <tbody >
+		  	               <tr th:each="exam : ${examinations}">
+		  	                  <td th:text="${exam.id}">12</td>
+		  	                  <td th:text="${exam.name}">Kỹ năng nghe tranh vật trong bài thi TOEIC (Part 2 - Unit 1)</td>
+		  	                  <td th:text="${exam.numberOfQuestion}">1</td>
+		  	                  <td th:text="${exam.timeOut}">200</td>
+		  	                  <td th:text="${exam.dateCreate}">21-1-2017</td>
+		  	                  <td><a th:href="@{/update-examination/info(id=${exam.id})}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+		  	                  <td><a th:href="@{/exam-manager/delete-examination(id=${exam.id})}"><i class="glyphicon glyphicon-trash"></i></a></td>
+		  	                </tr>
+		  	              </tbody>
+		  	            </table>
+		              </div>
+		            </div>
+		     
+		    </div>	
+		    <div id="instruction-manager" class="tab-pane fade in" th:classappend="${manager_module == 'instruction_manager' ? 'active' : ''}">
+		     	<div class="examination">
+		            <h3 style="text-align: center; color: red; text-transform: uppercase;">Quản lý hướng dẫn</h3>
+		  			    <div style="max-height: 500px;overflow-y:auto; padding: 5px;">
+		  	          <table  class="tbmana table table-striped" style="text-align: center;">
+		  	              <thead>
+		  	                <tr>
+		  	                  <th>#</th>
+		  	                  <th>Tên bài tập</th>
+		  	                  <th >Loại</th>
+		  	                  <th width="100">Ngày tạo</th>
+		  	                  <th width="90">Chỉnh sửa</th>
+		  	                  <th>Xóa</th>
+		  	                </tr>
+		  	              </thead>
+		  	              <tbody >
+		  	                <tr th:each="instruction : ${instructions}">
+		  	                  <td th:text="${instruction.id}">12</td>
+		  	                  <td th:text="${instruction.name}">Kỹ năng nghe tranh vật trong bài thi TOEIC (Part 2 - Unit 1)</td>
+		  	                  <td th:text="${instruction.type}">1</td>
+		  	                  <td th:text="${instruction.dateCreate}">21-1-2017</td>
+		  	                  <td><a th:href="@{/instruction/update(id=${instruction.id})}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+		  	                  <td><a th:href="@{/exam-manager/delete-instruction(id=${instruction.id})}"><i class="glyphicon glyphicon-trash"></i></a></td>
+		  	                </tr>
+		  	              </tbody>
+		  	            </table>
+		              </div>
+		            </div>
+		    </div>
+		   
+		  </div>
+          
+
+       </div> <!-- end profile-content div -->
+    </div>
+  </div>
+</div>
+<br/>
+<br/>
+<center>
+<strong>Powered by <a>ThinLau</a></strong>
+</center>
+<br/>
+<br/>
+
+    
+
+<!-- JS Global Compulsory -->           
+<script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+
+</body>
+
+</html> 

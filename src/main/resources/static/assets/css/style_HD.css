@@ -1,0 +1,15 @@
+.table {
+	background-color: red;
+}
+.post-content table tr td{
+	text-align:center; 
+	padding: 5px;
+}
+.post-content table tr th {
+	background-color: #BEBEBE;
+	text-align:center; 
+	padding: 5px;
+}
+.post-name {
+	color: red;
+}

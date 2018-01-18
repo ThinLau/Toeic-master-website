@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"> 
+
+<head>
+    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+
+    <!-- Meta -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+
+  
+
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom CSS -->
+     <link rel="stylesheet" type="text/css" th:href="@{/css/user_css.css}"/>
+
+	<!-- JS Global Compulsory -->           
+	<script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+	<script type="text/javascript" th:src="@{/assets/plugins/ckeditor/ckeditor.js}"></script> 
+	<script type="text/javascript" th:src="@{/js/input_file_change.js}"></script> 
+</head> 
+
+<body>
+
+
+<div class="container">
+    <div class="row profile">
+
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+      
+        
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <p th:text="${exercise.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
+          </div>
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+        <div th:replace="fragments/user_sidebar :: update-exercise-sidebar"></div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+ <!-- content -->
+    <div class="col-md-9">
+      <!--form -->
+      <form method="post" enctype="multipart/form-data" th:action="@{/update-single-passage-exercise/{exerciseQuestionId}(exerciseQuestionId=${eq.id})}">
+        <div class="profile-content">
+          <h2 style="color: #cc0000"><center>Nhập câu hỏi</center></h2>
+          
+          <div class="question-wrapper">
+
+          <!-- Câu 1 -->
+          <div class="question-border" id ="question">   
+              <div class="question-header">
+                <span class ="question-number text-primary" th:text="${'Câu '+ num + ': '}" style="font-size: 22px;">CÂU 1:</span>
+              </div>
+            <!-- file input -->
+            <div class="form-group row">
+              <div class="col-md-12" style="margin-top: 12px;">
+	              <textarea th:utext="${eq.paragraph}" class="form-control" rows="10" cols="80" name="paragraph" id="paragraph">Nội dung đoạn hội thoại.</textarea>
+			</div>
+
+            </div>  <!-- end file input -->
+             
+             
+             <hr/>
+             
+             <!-- sub-quesion 1 -->
+			<div class="question-border sub-question" th:each="eqd,iterStat : ${eqds}">   
+				<div  style="margin-bottom: 15px;" class="row"> 
+					<div class="col-md-2">
+		                <span class ="question-number" th:text="${'Câu '+ num + '.' + (iterStat.index + 1)+': '}" style="font-size: 22px;">CÂU 1.1:</span>
+		             </div>
+					<div class="col-md-10">
+	                	<input type="text" th:value="${eqd.question}" th:name="${'question-content-' + (iterStat.index + 1) }" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+	           		</div>
+	            </div>
+	            <!-- choices -->
+	              <div class="choices">
+	                <div class="answer row" id ="choice_A">
+	                      <div class="col-md-2" >
+	                        <!-- custom radio button -->
+	                        <label class="correct-answer-radio" >A.
+	                            <input type="radio" th:checked="${eqd.correctAnswer == 'A'}" th:name ="${'radio_question_' +(iterStat.index + 1)}" value="A"/>
+	                            <span class="checkmark"></span>
+	                        </label>
+	                      </div>
+	                    <div class="col-md-10">
+	                      <input type="text" th:value="${eqd.option1}" th:name="${'option1_' + (iterStat.index + 1)}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+	                    </div>
+	                </div>
+	      
+	                 <div class="answer row" id ="choice_B">
+	                      <div class="col-md-2" >
+	                        <!-- custom radio button -->
+	                        <label class="correct-answer-radio" >B.
+	                            <input type="radio" th:checked="${eqd.correctAnswer == 'B'}" th:name ="${'radio_question_' +(iterStat.index + 1)}" value="B"/>
+	                            <span class="checkmark"></span>
+	                        </label>
+	                      </div>
+	                    <div class="col-md-10">
+	                      <input type="text" th:value="${eqd.option2}"  th:name="${'option2_' + (iterStat.index + 1)}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+	                    </div>
+	                </div>
+	
+	                <div class="answer row" id ="choice_C">
+	                      <div class="col-md-2" >
+	                        <!-- custom radio button -->
+	                        <label class="correct-answer-radio" >C.
+	                            <input type="radio" th:checked="${eqd.correctAnswer == 'C'}" th:name ="${'radio_question_' +(iterStat.index + 1)}" value="C"/>
+	                            <span class="checkmark"></span>
+	                        </label>
+	                      </div>
+	                    <div class="col-md-10">
+	                      <input type="text" th:value="${eqd.option3}"  th:name="${'option3_' + (iterStat.index + 1)}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+	                    </div>
+	                </div>
+	                
+	                <div class="answer row" id ="choice_D">
+                      <div class="col-md-2" >
+                        <!-- custom radio button -->
+                        <label class="correct-answer-radio" >D.
+                            <input type="radio" th:checked="${eqd.correctAnswer == 'D'}"  th:name ="${'radio_question_' +(iterStat.index + 1)}" value="D"/>
+                            <span class="checkmark"></span>
+                        </label>
+                      </div>
+                    <div class="col-md-10">
+                      <input type="text" th:value="${eqd.option4}"  th:name="${'option4_' + (iterStat.index + 1)}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                    </div>
+                </div>
+	              
+	              </div> <!--  end choices -->
+              </div>  <!--  end sub- quesion 1 -->
+              
+              
+              
+          </div> <!-- End Cau1 -->
+
+      </div><!-- end question-wrapper -->    
+            <div style="margin-top: 20px;" class="row">
+                <div class="form-group col-md-4" >
+                  <button type="submit"  class="btn btn-success form-control" id ="btn-save">Chỉnh sửa</button>
+                </div>  
+                 <div class="form-group col-md-4" >
+                  <a th:if="${num} != 1" type="button" th:href="@{/update-exercise/question(id= ${exercise.id}, num = ${eq.num - 1})}" class="btn btn-primary form-control" id ="btn-next">Câu trước</a>
+                </div>   
+                <div class="form-group col-md-4" >
+                  <a th:if="${num} != ${exercise.numberOfQuestion}" type="button" th:href="@{/update-exercise/question(id= ${exercise.id}, num = ${eq.num + 1})}" class="btn btn-primary form-control" id ="btn-next">Câu tiếp theo</a>
+                </div>      
+            </div>
+          </div>
+        </form>
+      </div>
+
+</div>
+</div>
+      
+<script>
+    CKEDITOR.replace( 'paragraph' );
+</script>
+
+
+
+</body>
+
+</html> 
