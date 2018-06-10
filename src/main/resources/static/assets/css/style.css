@@ -2318,6 +2318,7 @@ ul.labels-demo li {
 
 #testfooter {
 	margin-top: 10px;
+	margin-left: 1px;
 	background:	#E8E8E8;
 	padding: 5px;
 }
@@ -2331,5 +2332,19 @@ ul.labels-demo li {
 }
 .panelLogin {
     margin-top: 50px;
+}
+#btndkn {
+	text-align: center; 
+	margin-top: 40px;
+	color: red;
+	margin-left: 43%; 
+	padding: 10px 40px 10px 40px; 
+	font-size: 25px; 
+	font-weight: bold;
+	border: white;
+	background: inactivecaption;
+}
+.panel-primary {
+	box-shadow: 5px 5px 10px #666;
 }
 

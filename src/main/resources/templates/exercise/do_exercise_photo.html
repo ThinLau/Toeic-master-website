@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+   <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -56,7 +56,6 @@
 <!--=== Top ===-->    
 <div class="wrapper">
    	<div th:replace="fragments/layout :: header"></div>
-	<div th:replace="fragments/layout :: breadcrumb"></div>
 
     <!--=== Content Part ===-->
     <div class="container content">     
@@ -65,8 +64,8 @@
            <div class="col-md-6 col-md-offset-2 content-margin-bottom "> 
             <div class="row">
             
-              <div class="panel panel-grey" style="min-height: 450px;">
-                    <div class="panel-heading">
+              <div class="panel panelEx" style="min-height: 450px;">
+                    <div class="panel-heading" style="background: #009900">
                         <h3 class="panel-title"><i class="fa fa-question"></i>
                             <span th:utext="${panelHeader}">TOEIC&reg; Listening part 1: Photographs</span></h3>
                     </div>
@@ -79,10 +78,10 @@
     
 						<!--  get the exercise id -->
 						<input id="exercise-id" type="hidden" th:value="${exercise.id}"/>
-						<input id="exalreadydo-id" type="hidden" th:value="${exAlreadyDoId}"/>
+
 						<!--  the image for photo area -->
 						<div class="image">
-	                          <img id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+	                          <img style="max-width: 350px;" id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
 	                    </div>
                         
                         <div class="audio">
@@ -125,6 +124,7 @@
 		                        </div>
 		                      </div>
 							</div>
+							
 
 
                       

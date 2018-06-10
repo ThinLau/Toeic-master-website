@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
@@ -35,36 +35,40 @@
 <div class="wrapper">
    
 	<div th:replace="fragments/layout :: header"></div>
-	<div th:replace="fragments/layout :: breadcrumb"></div>
 	
     <!--=== Content Part ===-->
-    <div class="container content">     
+       	
         <div class="row"> 
-
-           <div class="col-md-6 col-md-offset-2 md-margin-bottom-50"> 
-                <h2>Toeic Master Home Page</h2>
-  		
-          			<p>Trang web này dành cho những người muốn học và luyện thi Toeic</p>
-
-                <p>Trang web chúng tôi có phần <a href="#" class="atoc" style="text-decoration: underline;"> Hướng dẫn</a> - nơi chia sẻ các kiến thức, kinh nghiệm để làm các câu hỏi trong phần Reading và Listening.</p>
-
-                <p>Trong phần <a href="#" class="atoc" style="text-decoration: underline;">Bài tập </a> - bạn có thể luyện tập kỹ năng về các phần trong cấu trúc đề thi Toeic như: Photo - Question Response - Short Conversation - Short Talk - Incomplete Sentence - Text Completion - Single Passage - Double Passage.</p>
-          	   
-                <p>Và cuối cùng sau khi đã tự tin vào kỹ năng và kiến thức của mình bạn có thể vào phần <a href="#" class ="atoc" style="text-decoration: underline;">Bài thi </a> để làm bài thi thử và đánh giá lại khả năng của mình. </p>
-
-                <p>Chúng tôi những người làm nên trang web này mong bạn có những trải nghiệm tốt trên trang web chúng tôi và có được nhiều kiến thức bổ ích về Toeic cũng như đạt được kết quả cao trong kỳ thi thật để có được công việc ổn định và hạnh phúc trong cuộc sống !!! </p>
-
-                <p>Chúc các bạn thành công. </p>
-
-              
-
-            </div>
-
-            <div class="col-md-3 md-margin-bottom-50">
-                
-             	<div th:replace="fragments/layout :: panel-right"></div>
+            <div style="background: url(/assets/img/c3.jpg); height: 600px;">
+        	   <h1>.</h1>
+               <h1 style="text-align: center; margin-top: 120px; color: #FFF; font-size: 50px">Tự học Anh văn online hiệu quả !</h1>
+               <h1 style="text-align: center; margin-top: 40px; color: #FFF; font-size: 30px"><i class="fa fa-check"></i> Luyện tập, nâng cao trình độ TOEIC</h1>
+               <h1 style="text-align: center; margin-top: 20px; color: #FFF; font-size: 30px"><i class="fa fa-check"></i> Thực hành luyện nói giữa các thành viên</h1>
+               <a th:if="${session.user == null}" th:href="@{/login-page}" >
+               				<button  id="btndkn">Đăng ký ngay</button></a>
                
-            </div>  <!-- end col panel -->
+            </div>
+    		<div class="container content">   
+    	            
+	           <div class="col-md-12"> 
+	               
+	          		<p style="font-size: 18px">Trang web này dành cho những người muốn học và luyện thi Toeic</p>
+	
+	                <p style="font-size: 18px">Trang web chúng tôi có phần <a href="#" class="atoc" style="text-decoration: underline;"> Hướng dẫn</a> - nơi chia sẻ các kiến thức, kinh nghiệm để làm các câu hỏi trong phần Reading và Listening.</p>
+	
+	                <p style="font-size: 18px">Trong phần <a href="#" class="atoc" style="text-decoration: underline;">Bài tập </a> - bạn có thể luyện tập kỹ năng về các phần trong cấu trúc đề thi Toeic như: Photo - Question Response - Short Conversation - Short Talk - Incomplete Sentence - Text Completion - Single Passage - Double Passage.</p>
+	          	   
+	                <p style="font-size: 18px">Và cuối cùng sau khi đã tự tin vào kỹ năng và kiến thức của mình bạn có thể vào phần <a href="#" class ="atoc" style="text-decoration: underline;">Bài thi </a> để làm bài thi thử và đánh giá lại khả năng của mình. </p>
+	
+	                <p style="font-size: 18px">Chúng tôi những người làm nên trang web này mong bạn có những trải nghiệm tốt trên trang web chúng tôi và có được nhiều kiến thức bổ ích về Toeic cũng như đạt được kết quả cao trong kỳ thi thật để có được công việc ổn định và hạnh phúc trong cuộc sống !!! </p>
+	
+	                <p style="font-size: 18px">Chúc các bạn thành công. </p>
+	
+	              
+	
+	            </div>
+	
+
     
     </div><!--/container-->     
     <!--=== End Content Part ===-->

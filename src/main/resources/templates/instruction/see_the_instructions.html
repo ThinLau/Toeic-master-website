@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -33,8 +33,6 @@
 
     <!-- Jplayer skin-->
     <link th:href="@{/assets/plugins/jplayer/skin/css/jplayer.blue.monday.css}" rel="stylesheet" type="text/css" />
-
-	 
      
     <!-- JS Global Compulsory -->           
     <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
@@ -46,9 +44,6 @@
     
   
    	 <script type="text/javascript" th:src="@{/js/exercise_photo.js}"></script>
-
-   
-
 </head> 
 
 <body>
@@ -56,7 +51,6 @@
 <!--=== Top ===-->    
 <div class="wrapper">
    	<div th:replace="fragments/layout :: header"></div>
-	<div th:replace="fragments/layout :: breadcrumb"></div>
 
     <!--=== Content Part ===-->
     <div class="container content">     
@@ -65,7 +59,7 @@
            <div class="col-md-7 col-md-offset-1 content-margin-bottom "> 
             <div class="row">
             
-              <div class="panel panel-grey" style="min-height: 450px;">
+              <div class="panel panel-success" style="min-height: 450px;">
                     <div class="panel-heading">
                         <h3 class="panel-title"><i class="fa fa-eye"></i>
                             <span th:text="${type == 'listen'}? 'Xem hướng dẫn phần nghe' : 'Xem hướng dẫn phần đọc' ">TOEIC&reg; Listening part 1: Photographs</span></h3>

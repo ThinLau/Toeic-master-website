@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
@@ -56,7 +56,7 @@
 	                <div class="col-md-6">
 	                  <a class="excercise-link" th:href="@{/exercise/do-exercise/{part}(part=${exercise.partName} ,exerciseNo=${exercise.id})}" 
 	                  		th:title="${exercise.exerciseName}">
-	                     <div class="excercise">
+	                     <div class="excercise" id="chooseTest">
 	                        <p class="excercise-name text-primary" th:text="${exercise.exerciseName}">Kỹ năng nghe tranh vật trong bài thi TOEIC (Part 3 - Unit 1)</p>
 	                        <i class="fa fa-flag" aria-hidden="true"></i><span class="excercise-part text-success" th:text="${exercise.partName}">Photo</span>
 	                        <i class="fa fa-question-circle"></i><span class="excercise-num text-danger" th:text="${exercise.numberOfQuestion } + ' câu'">  10 câu</span>

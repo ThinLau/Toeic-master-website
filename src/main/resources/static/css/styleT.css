@@ -60,6 +60,7 @@ a.excercise-link:hover {
 
 .audio {
 	margin-top: 10px;
+	padding-bottom: 10px;
 }
 
 #question-number {
@@ -268,4 +269,13 @@ a.excercise-link:hover {
 }
 .choice{
 	font-size: 16px;
+}
+.panelEx {
+	box-shadow: 0px 0px 20px #696969;
+	background: #F8F8FF;
+	border: 1px solid #009900;
+}
+#chooseTest {
+	box-shadow: 0px 0px 10px #696969;
+	background: #F8F8FF;
 }

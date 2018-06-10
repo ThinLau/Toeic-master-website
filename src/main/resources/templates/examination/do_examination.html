@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -58,7 +58,6 @@
 <!--=== Top ===-->    
 <div class="wrapper">
     <div th:replace="fragments/layout :: header"></div>
-	<div th:replace="fragments/layout :: breadcrumb"></div>
 
     <!--=== Content Part ===-->
     <div class="container content">     
@@ -70,8 +69,8 @@
            <div class="col-md-6  content-margin-bottom "> 
             <div class="row">
             
-              <div class="panel panel-grey" style="min-height: 500px;">
-                    <div class="panel-heading">
+              <div class="panel panelEx" style="min-height: 500px;">
+                    <div class="panel-heading" style="background: #009900">
                         <h3 class="panel-title"><i class="fa fa-question"></i>
                             <span th:text="${exam.name}">Bài thi thử 1</span></h3>
                     </div> 
@@ -80,14 +79,13 @@
                      	<!--  get the exercise id -->
 						<input id="exam-id" type="hidden" th:value="${exam.id}"/>
 						<input id="time-out" type="hidden" th:value="${exam.timeOut}"/>
-						<input id="exalreadydo-id" type="hidden" th:value="${exAlreadyDoId}"/>
 						
 	                    <p class="part-sumary">In each question, you will look at a photograph and then listen to 4 sentences. Choose the sentence that best describes the photograph.</p>
 	    
 	   					<p id = "current-question" style="color: red;"></p>
 						<!--  the image for photo area -->
 						<div class="image" style="display:none;">
-		                    <img id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+		                    <img style="max-width: 350px; " id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
 		                </div>
 	                        
 	                    <div class="audio" style="display:none;">
@@ -156,7 +154,7 @@
 
             <div class="col-md-3 ">
               <!-- listening exercise -->
-              <div class="panel panel-dark-blue" style="height: 450px;">
+              <div class="panel panel-primary" style="height: 450px;">
                   <div class="panel-heading">
                       <h3 class="panel-title"><i class="fa fa-tasks"></i>Bảng đáp án</h3>
                   </div>
@@ -199,7 +197,7 @@
 			       	 <p class="part-sumary2"></p>
 			       	<!--  the image for photo area -->
 						<div class="image2" style="display:none;">
-		                    <img id="exercise-image2" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+		                    <img style="max-width: 350px;" id="exercise-image2" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
 		                </div>
 	                    <br/>
 	                    <div class="audio2" style="display:none;">
