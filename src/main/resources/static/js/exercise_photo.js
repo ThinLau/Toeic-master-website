@@ -6,11 +6,9 @@
     	  var subQuestion;    // tong so cau hoi nho   // question_number in exercise question detail
     	  var exerciseQuestionId;
     	  
-    	  
     	  var exerciseId = $('#exercise-id').val();
     	  var totalQuestion = $('#total-question').text();
-    	  
-    	  
+    	  var exAlreadyDoId = $('#exalreadydo-id').val();
     	  
     	  // when firs load the page will hide the previous button
     	  $('#btn-previous').hide();
@@ -113,7 +111,7 @@
       	function initQuestion(num){
       		$.ajax({
       			type : "GET",
-      			url : "/get-question?num="+num+"&exerciseId="+exerciseId,
+      			url : "/get-question?num="+num+"&exerciseId="+exerciseId+"&exAlreadyDoId="+exAlreadyDoId,
       			success: function(result){
     				if(result.status == "Done"){
     				

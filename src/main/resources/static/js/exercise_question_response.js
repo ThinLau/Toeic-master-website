@@ -8,6 +8,7 @@
     	  
     	  
     	  var exerciseId = $('#exercise-id').val();
+    	  var exAlreadyDoId = $('#exalreadydo-id').val();
     	  var totalQuestion = $('#total-question').text();
     	  
     	  
@@ -113,7 +114,7 @@
       	function initQuestion(num){
       		$.ajax({
       			type : "GET",
-      			url : "/get-question?num="+num+"&exerciseId="+exerciseId,
+      			url : "/get-question?num="+num+"&exerciseId="+exerciseId+"&exAlreadyDoId="+exAlreadyDoId,
       			success: function(result){
     				if(result.status == "Done"){
     				

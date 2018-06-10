@@ -50,24 +50,28 @@
               <a th:href="@{/user-info}">
               <i class="glyphicon glyphicon-user"></i>Thông tin cá nhân</a>
             </li>
-             <li th:classappend="${module == 'new-exercise' ? 'active' : ''}">
+             <li th:if="${user.role > 1}"  th:classappend="${module == 'new-exercise' ? 'active' : ''}">
               <a th:href="@{/new-exercise-page}" >
               <i class="glyphicon glyphicon-plus"></i>Tạo bài tập mới</a>
             </li>
-             <li th:classappend="${module == 'new-examination' ? 'active' : ''}">
+             <li th:if="${user.role > 1}" th:classappend="${module == 'new-examination' ? 'active' : ''}">
               <a th:href="@{/new-examination-page}" >
               <i class="glyphicon glyphicon-pencil"></i>Tạo đề thi mới </a>
             </li>
-            <li th:classappend="${module == 'new-instruction' ? 'active' : ''}">
+            <li th:if="${user.role > 1}" th:classappend="${module == 'new-instruction' ? 'active' : ''}">
               <a th:href="@{/new-instruction-page}" >
               <i class="glyphicon glyphicon-info-sign"></i>Tạo hướng dẫn mới </a>
             </li>
-            <li class =  "manager-exam" th:classappend="${module == 'manager-exam' ? 'active' : ''}" >
+            <li th:if="${user.role > 1}" class =  "manager-exam" th:classappend="${module == 'manager-exam' ? 'active' : ''}" >
               <a th:href="@{/exam-manager}" ><i class="glyphicon glyphicon-ok "></i>Quản lý đề thi </a>
             </li>
-              <li th:if="${user.role == 3}" th:classappend="${module == 'manager-account' ? 'active' : ''}">
+            <li th:if="${user.role == 3}" th:classappend="${module == 'manager-account' ? 'active' : ''}">
               <a th:href="@{/account-manager}" >
               <i class="glyphicon glyphicon-user"></i>Quản lý tài khoản </a>
+            </li>
+             <li th:if="${user.role == 1}" th:classappend="${module == 'exs-already-do' ? 'active' : ''}">
+              <a th:href="@{/exs-already-do}" >
+              <i class="glyphicon glyphicon-user"></i>Bài đã làm </a>
             </li>
             <li>
               <a th:href="@{/logout}">

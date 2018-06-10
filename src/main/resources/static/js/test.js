@@ -2,6 +2,7 @@
     	  
     	  var num = 1;
     	  var examId = $('#exam-id').val();
+    	  var exAlreadyDoId = $('#exalreadydo-id').val();
     	  var subQuestion = 1;    	
     	  var countDownDate =  ($('#time-out').val()) *60*1000;   	  
     	  var now =  0;
@@ -261,7 +262,19 @@
     					//swal("Kết quả bài thi!", mess+ "\n Nhấp vào số thứ tự câu hỏi trên bảng đáp án để xem đáp mỗi câu.");
     					swal("Kết quả bài thi: "+mess,"Nhấp vào số thứ tự câu hỏi trên bảng đáp án để xem đáp án của câu đó.");
     					$('#result').text('Kết quả: '+trueQuestion+'/' + (trueQuestion + failQuestion));
+    					
+    					var examResult = Math.round(100*(trueQuestion / (trueQuestion + failQuestion)) * 100) / 100;
+    					// update exam already do status
+    					 $.ajax({
+     		      			type : "GET",
+     		      			url : "/update-exam-already-do-status?exAlreadyDoId="+exAlreadyDoId + "&examResult="+examResult,
+     		      			success: function(result){
+     		      				// 
+     		      			}
+    					 });
+    					
     					clearInterval(x);
+    					
     				}		
       			}
             });

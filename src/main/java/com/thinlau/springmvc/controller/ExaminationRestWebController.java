@@ -2,17 +2,22 @@ package com.thinlau.springmvc.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.thinlau.springmvc.dao.ExAlreadyDoDao;
 import com.thinlau.springmvc.dao.ExaminationQuestionDao;
 import com.thinlau.springmvc.dao.ExaminationQuestionDetailDao;
 import com.thinlau.springmvc.message.Response;
+import com.thinlau.springmvc.model.ExAlreadyDo;
 import com.thinlau.springmvc.model.ExaminationQuestion;
 import com.thinlau.springmvc.model.ExaminationQuestionDetail;
+import com.thinlau.springmvc.model.User;
 
 
 @RestController
@@ -23,6 +28,9 @@ public class ExaminationRestWebController {
 	
 	@Autowired 
 	ExaminationQuestionDetailDao examinationQuestionDetailDao;
+	
+	@Autowired
+	ExAlreadyDoDao exAlreadyDoDao;
 	
 	@RequestMapping(value = "/get-exam-question", method = RequestMethod.GET)
 	public Response initPhotoQuestion(@RequestParam("num") int num, @RequestParam("examId") int examId) {
@@ -61,5 +69,19 @@ public class ExaminationRestWebController {
 		return response;
 	}
 	
-
+	@RequestMapping(value = "/update-exam-already-do-status", method = RequestMethod.GET)
+	public String updateExamAlreadyStatus(@RequestParam("exAlreadyDoId") int exAlreadyDoId, 
+			@RequestParam("examResult") double examResult, HttpSession session) {
+		User entity = (User) session.getAttribute("user");
+		if(entity != null) {
+			ExAlreadyDo ex = exAlreadyDoDao.findOne(exAlreadyDoId);
+			if (ex != null) {
+				ex.setStatus(examResult);
+				exAlreadyDoDao.save(ex);
+			}
+		}
+		return "done";
+		
+	}
+	
 }

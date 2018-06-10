@@ -7,9 +7,10 @@
     	  var exerciseQuestionId;
     	    
     	  var exerciseId = $('#exercise-id').val();
+    	  var exAlreadyDoId = $('#exalreadydo-id').val();
     	  var totalQuestion = $('#total-question').text();
     	  
-    	  // when firs load the page will hide the previous button
+    	  // when first load the page will hide the previous button
     	  $('#btn-previous').hide();
     	  if(totalQuestion == 1) $('#btn-next').hide();
     	  initQuestion(num);
@@ -79,7 +80,7 @@
       	function initQuestion(num){
       		$.ajax({
       			type : "GET",
-      			url : "/get-question?num="+num+"&exerciseId="+exerciseId,
+      			url : "/get-question?num="+num+"&exerciseId="+exerciseId+"&exAlreadyDoId="+exAlreadyDoId,
       			success: function(result){
     				if(result.status == "Done"){
     					

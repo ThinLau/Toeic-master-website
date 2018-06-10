@@ -2,6 +2,7 @@
     	  
     	  var num = 1;
     	  var examId = $('#exam-id').val();
+    	  var exAlreadyDoId = $('#exalreadydo-id').val();
     	  var previousQuestion = 0;
     	  var currQuestion = 0;
     	  var isNext = true;
@@ -125,8 +126,21 @@
     					
     				}  // end if
     				else {  // end all question
-    					alert('Số câu đúng: '+trueQuestion+'/' + (trueQuestion + failQuestion));
+    					
+    					//alert('Số câu đúng: '+trueQuestion+'/' + (trueQuestion + failQuestion));
     					$('#result').text(trueQuestion+'/' + (trueQuestion + failQuestion));
+    					var examResult = Math.round(100*(trueQuestion / (trueQuestion + failQuestion)) * 100) / 100;
+    					// update exam already do status
+    					 $.ajax({
+     		      			type : "GET",
+     		      			url : "/update-exam-already-do-status?exAlreadyDoId="+exAlreadyDoId + "&examResult="+examResult,
+     		      			success: function(result){
+     		      				// 
+     		      			}
+    					 });
+    					
+    					 
+    					 
     					clearInterval(x);
     				}
     					

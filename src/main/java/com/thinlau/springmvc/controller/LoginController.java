@@ -30,8 +30,8 @@ public class LoginController {
 		User entity =  userDao.findByUsernameAndPassword(user.getUsername(), user.getPassword());
 		
 		String viewPage = "error_page";
-		// role == 1 la nguoi binh thuong. 2,3 co quyen nhap de ||  acount is active. 
-		if(entity != null && entity.getRole() != 1 ) {
+		// role == 1 la nguoi binh thuong. 2,3 (3: admin) co quyen nhap de ||  acount is active. 
+		if(entity != null && entity.getRole() >= 1 ) {
 			if(entity.getStatus() == 0) // block status
 				 model.addAttribute("message", "Tài khoản này đã bị khóa. Vui lòng liên hệ admin để xử lý!");
 			else {
@@ -90,5 +90,6 @@ public class LoginController {
 
 		return "redirect:/user-info";
 	}
-	
+
+
 }

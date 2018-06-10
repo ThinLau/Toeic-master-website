@@ -1,6 +1,12 @@
 package com.thinlau.springmvc.controller;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.thinlau.springmvc.dao.ExAlreadyDoDao;
 import com.thinlau.springmvc.dao.ExerciseDao;
 import com.thinlau.springmvc.dao.ExerciseDetailViewDao;
 import com.thinlau.springmvc.dao.PartDao;
 import com.thinlau.springmvc.dao.UserDao;
+import com.thinlau.springmvc.model.ExAlreadyDo;
 import com.thinlau.springmvc.model.Exercise;
 import com.thinlau.springmvc.model.ExerciseDetailView;
+import com.thinlau.springmvc.model.User;
 
 @Controller
 @RequestMapping("/exercise")
@@ -34,6 +43,9 @@ public class ExerciseController {
 	@Autowired
 	UserDao userDao;
 
+	@Autowired
+	ExAlreadyDoDao exAlreadyDoDao;
+	
 	Page<ExerciseDetailView> exercises;
 
 	int pageSize = 6;
@@ -78,7 +90,7 @@ public class ExerciseController {
 	
 	@RequestMapping(value = "/do-exercise/{partName}", method = RequestMethod.GET)
 	public String doExercise(@PathVariable("partName") String partName,
-			@RequestParam("exerciseNo") int exerciseId, Model model){
+			@RequestParam("exerciseNo") int exerciseId, Model model,  HttpSession session){
 		
 		String result ="";
 		String panelHeader ="";
@@ -119,12 +131,47 @@ public class ExerciseController {
 		}
 		
 		Exercise exercise = exerciseDao.findOne(exerciseId);
+		// luu bai tap da lam
+		int exAlreadyDoId = -1;
+		User entity = (User) session.getAttribute("user");
+		if(entity != null) {
+			// get user id
+			int userId = entity.getId();
+			// create new ex already do record
+			ExAlreadyDo ex = new ExAlreadyDo();
+			ex.setUserId(userId);
+			// get current date time
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date();
+			String logTime = dateFormat.format(date);
+			ex.setLogTime(logTime);
+			
+			ex.setExerciseId(exerciseId);// real
+			ex.setExamId(1);//fake
+			ex.setExType("exercise");
+			// set status
+			int numOfQuest = Integer.parseInt(exercise.getNumberOfQuestion());
+			double percent = 100*(1.0/numOfQuest);
+			ex.setStatus(round(percent,2));
+			
+			exAlreadyDoDao.save(ex);
+			
+			exAlreadyDoId = ex.getId();
+		}
 		
 		model.addAttribute("module", "exercise");
 		model.addAttribute("panelHeader", panelHeader);
 		model.addAttribute("exercise", exercise);
+		model.addAttribute("exAlreadyDoId", exAlreadyDoId);
 		return result;
 	}
 	
-	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 }
