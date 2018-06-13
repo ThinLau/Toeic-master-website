@@ -169,8 +169,8 @@
     					var paragraph2 = result.data.paragraph2;
 
     					
-    					var audioPath = "/upload/audio/"+ result.data.audio;
-    					var photoPath = "/upload/photo/"+ result.data.photo;
+    					var audioPath = result.data.audio;
+    					var photoPath = result.data.photo;
     					
     				
     					switch(part){

@@ -3,6 +3,8 @@ package com.toeicmaster.springmvc.controller;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,8 @@ import com.toeicmaster.springmvc.dao.UserDao;
 import com.toeicmaster.springmvc.model.Exercise;
 import com.toeicmaster.springmvc.model.ExerciseQuestion;
 import com.toeicmaster.springmvc.model.ExerciseQuestionDetail;
+import com.toeicmaster.springmvc.service.S3Service;
+import com.toeicmaster.springmvc.service.StorageService;
 
 @Controller
 public class UpdateExerciseController {
@@ -44,6 +48,13 @@ public class UpdateExerciseController {
 
 	@Autowired
 	ServletContext context;
+	
+	private StorageService storageService;
+
+	@Autowired
+	public void FileUploadController(StorageService storageService) {
+		this.storageService = storageService;
+	}
 
 	// update exercise info
 	@RequestMapping(value = "/update-exercise/info", method = RequestMethod.GET)
@@ -138,40 +149,15 @@ public class UpdateExerciseController {
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
 		if (!audio.isEmpty()) {
-			// delete old audio file
-			File audioFile = new File(absolutePath +"/audio/"+ eq.getAudio());
-			if(audioFile.exists()) audioFile.delete();
+
+			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 			
-			String audioStorePath = absolutePath + "/audio/" + "audio_" + exerciseQuestionId + "_update" + ".mp3";
-			storeFile(audio, audioStorePath);
-			eq.setAudio("audio_" + exerciseQuestionId + "_update" + ".mp3");
 		}
 		// if photo change will update
 		if (!photo.isEmpty()) {
 			
-			/*
-			// delete old photo file
-			File photoFile = new File(absolutePath + "/photo/" + eq.getPhoto());
-			if(photoFile.delete()){
-    			System.out.println(photoFile.getName() + " is deleted!");
-    		}else{
-    			System.out.println("Delete operation is failed.");
-    		}
-			String photoName = eq.getPhoto();
-			int i = 0;
-			if(photoName.contains("update")) { // if updated before
-				// get last character
-				int startIndex = photoName.indexOf("update_")+ 7;  // 7 is length of update_
-				int endIndex = photoName.indexOf(".");
-				i = Integer.parseInt(photoName.substring(startIndex,endIndex));
-				i++;
-			}
-			*/
+			uploadPhoto(eq, absolutePath, photo, exerciseQuestionId);
 			
-			String photoStorePath = absolutePath + "/photo/" + "photo_" + exerciseQuestionId + "_update"+ ".jpg";
-
-			storeFile(photo, photoStorePath);
-			eq.setPhoto("photo_" + exerciseQuestionId + "_update" + ".jpg");
 		}
 		// update exercise question
 		exerciseQuestionDao.save(eq);
@@ -203,9 +189,8 @@ public class UpdateExerciseController {
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
 		if (!audio.isEmpty()) {
-			String audioStorePath = absolutePath + "/audio/" + "audio_" + exerciseQuestionId + "_update" + ".mp3";
-			storeFile(audio, audioStorePath);
-			eq.setAudio("audio_" + exerciseQuestionId + "_update" + ".mp3");
+			
+			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 		}
 		// update exercise question
 		exerciseQuestionDao.save(eq);
@@ -237,9 +222,8 @@ public class UpdateExerciseController {
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
 		if (!audio.isEmpty()) {
-			String audioStorePath = absolutePath + "/audio/" + "audio_" + exerciseQuestionId + "_update" + ".mp3";
-			storeFile(audio, audioStorePath);
-			eq.setAudio("audio_" + exerciseQuestionId + "_update" + ".mp3");
+
+			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 		}
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -413,6 +397,34 @@ public class UpdateExerciseController {
 		} else {
 			// return "Unable to upload. File is empty.";
 		}
+	}
+	
+	private void uploadAudio(ExerciseQuestion eq, String absolutePath, MultipartFile audio, int  exerciseQuestionId) {
+		String audioStorePath = absolutePath + "/audio/"+ "audio_"+exerciseQuestionId + ".mp3";
+		
+		Path pathAudio = Paths.get(audioStorePath);
+		String fileAudioName = storageService.store(pathAudio, audio);
+
+		S3Service audio_s3 = new S3Service();
+
+		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
+		System.out.println(pathAudioFile);
+		String audio_url = audio_s3.uploadS3(pathAudioFile, "exer", "audio", exerciseQuestionId);
+		eq.setAudio(audio_url);
+	}
+	private void uploadPhoto (ExerciseQuestion eq, String absolutePath, MultipartFile photo, int  exerciseQuestionId) {
+		String photoStorePath = absolutePath + "/photo/"+ photo.getOriginalFilename();
+		
+		Path pathPhoto = Paths.get(photoStorePath);
+		String filePhotoName = storageService.store(pathPhoto, photo);
+
+		S3Service photo_s3 = new S3Service();
+		
+		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
+		System.out.println(pathPhotoFile);			
+
+		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exer","photo", exerciseQuestionId);
+		eq.setPhoto(photo_url);
 	}
 
 }

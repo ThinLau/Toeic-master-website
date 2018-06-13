@@ -59,8 +59,11 @@
     					var paragraph = result.data.paragraph;
     					var paragraph2 = result.data.paragraph2;
 
-    					var audioPath = "/upload/audio/"+ result.data.audio;
-    					var photoPath = "/upload/photo/"+ result.data.photo;
+    					var audioPath = result.data.audio;
+    					var photoPath = result.data.photo;
+    					
+    					console.log('11111audio path: '+audioPath);
+    					console.log('11111photo path: '+photoPath);
 
     					$("#jquery_jplayer_2").jPlayer('destroy');
     					switch(part){
@@ -295,8 +298,8 @@
     					var paragraph = result.data.paragraph;
     					var paragraph2 = result.data.paragraph2;
 
-    					var audioPath = "/upload/audio/"+ result.data.audio;
-    					var photoPath = "/upload/photo/"+ result.data.photo;
+    					var audioPath = result.data.audio;
+    					var photoPath = result.data.photo;
 
     					switch(part){
     						case 1:  // part 1: photo

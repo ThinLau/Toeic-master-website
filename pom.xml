@@ -25,6 +25,20 @@
 	</properties>
 
 	<dependencies>
+	
+		<dependency>
+		  <groupId>com.amazonaws</groupId>
+		  <artifactId>aws-java-sdk</artifactId>
+		  <version>1.9.2</version>
+		</dependency> 
+		
+		<!-- https://mvnrepository.com/artifact/software.amazon.ion/ion-java -->
+		<dependency>
+		    <groupId>software.amazon.ion</groupId>
+		    <artifactId>ion-java</artifactId>
+		    <version>1.1.2</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>

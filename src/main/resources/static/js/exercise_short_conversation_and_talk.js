@@ -127,7 +127,7 @@
       			success: function(result){
     				if(result.status == "Done"){
     				
-    					 audioPath = "/upload/audio/"+ result.data.audio;
+    					 audioPath = result.data.audio;
     				
     					// set mp3 for jplayer
     					$("#jquery_jplayer_1").jPlayer({

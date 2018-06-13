@@ -3,6 +3,8 @@ package com.toeicmaster.springmvc.controller;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +28,10 @@ import com.toeicmaster.springmvc.dao.ExaminationQuestionDetailDao;
 import com.toeicmaster.springmvc.model.Examination;
 import com.toeicmaster.springmvc.model.ExaminationQuestion;
 import com.toeicmaster.springmvc.model.ExaminationQuestionDetail;
+import com.toeicmaster.springmvc.model.ExerciseQuestion;
 import com.toeicmaster.springmvc.model.User;
+import com.toeicmaster.springmvc.service.S3Service;
+import com.toeicmaster.springmvc.service.StorageService;
 
 @Controller
 public class CreateExaminationController {
@@ -39,6 +44,15 @@ public class CreateExaminationController {
 
 	@Autowired
 	ExaminationQuestionDetailDao examQuestionDetailDao;
+	
+	private StorageService storageService;
+
+	@Autowired
+	public void FileUploadController(StorageService storageService) {
+		this.storageService = storageService;
+	}
+	
+	private int quesNum = 0;
 
 	@RequestMapping(value = "/new-examination-page", method = RequestMethod.GET)
 	public String newExercisePage(HttpSession session, Model model) {
@@ -178,14 +192,17 @@ public class CreateExaminationController {
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 
-		String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
+		/*String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
 		storeFile(audio, audioStorePath);
-		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");
+		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
+		
+		uploadAudio(eq, absolutePath, audio, examQuestionId);
 		// save photo file
-		String photoStorePath = absolutePath + "/photo/" + "exam_photo_" + examId + "_" + examQuestionId + ".jpg";
-
+		
+		uploadPhoto(eq, absolutePath, photo, examQuestionId);
+		/*String photoStorePath = absolutePath + "/photo/" + "exam_photo_" + examId + "_" + examQuestionId + ".jpg";
 		storeFile(photo, photoStorePath);
-		eq.setPhoto("exam_photo_" + examId + "_" + examQuestionId + ".jpg");
+		eq.setPhoto("exam_photo_" + examId + "_" + examQuestionId + ".jpg");*/
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -224,9 +241,11 @@ public class CreateExaminationController {
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 
-		String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
+		/*String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
 		storeFile(audio, audioStorePath);
-		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");
+		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
+		
+		uploadAudio(eq, absolutePath, audio, examQuestionId);
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -270,9 +289,11 @@ public class CreateExaminationController {
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 
-		String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
+		/*String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examId + "_" + examQuestionId + ".mp3";
 		storeFile(audio, audioStorePath);
-		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");
+		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
+		
+		uploadAudio(eq, absolutePath, audio, examQuestionId);
 
 		examQuestionDao.save(eq);
 
@@ -473,4 +494,32 @@ public class CreateExaminationController {
 		}
 	}
 
+private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartFile audio, int  examQuestionId) {
+		
+		String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();
+		
+		Path pathAudio = Paths.get(audioStorePath);
+		String fileAudioName = storageService.store(pathAudio, audio);
+
+		S3Service audio_s3 = new S3Service();
+
+		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
+		System.out.println(pathAudioFile);
+		String audio_url = audio_s3.uploadS3(pathAudioFile, "exam", "audio", examQuestionId);
+		eq.setAudio(audio_url);
+	}
+	private void uploadPhoto (ExaminationQuestion eq, String absolutePath, MultipartFile photo, int  examQuestionId) {
+		String photoStorePath = absolutePath + "/photo/"+ photo.getOriginalFilename();
+		
+		Path pathPhoto = Paths.get(photoStorePath);
+		String filePhotoName = storageService.store(pathPhoto, photo);
+
+		S3Service photo_s3 = new S3Service();
+		
+		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
+		System.out.println(pathPhotoFile);			
+
+		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exam","photo", examQuestionId);
+		eq.setPhoto(photo_url);
+	}
 }

@@ -94,7 +94,7 @@
             <div class="form-group row">
               <div class="col-md-6">
               	 <audio controls="controls"  id="audio">
-					  <source th:src="@{'/upload/audio/' + ${eq.audio}}" type="audio/mpeg"></source>
+					  <source th:src="@{${eq.audio}}" type="audio/mpeg"></source>
 				 </audio> 	
               </div>
               <div class="col-md-6">

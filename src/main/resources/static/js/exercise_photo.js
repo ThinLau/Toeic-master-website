@@ -115,10 +115,11 @@
       			success: function(result){
     				if(result.status == "Done"){
     				
-    					 audioPath = "/upload/audio/"+ result.data.audio;
-    					var photoPath = "/upload/photo/"+ result.data.photo;
-    					console.log('audio path: '+audioPath);
-    					console.log('photo path: '+photoPath);
+    					 audioPath = result.data.audio;
+    					 
+    					var photoPath = result.data.photo;
+    					console.log('11111audio path: '+audioPath);
+    					console.log('11111photo path: '+photoPath);
     					// set mp3 for jplayer
     					$("#jquery_jplayer_1").jPlayer({
     				          ready: function (event) {

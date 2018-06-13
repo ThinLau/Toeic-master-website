@@ -3,6 +3,8 @@ package com.toeicmaster.springmvc.controller;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,10 +31,12 @@ import com.toeicmaster.springmvc.model.Exercise;
 import com.toeicmaster.springmvc.model.ExerciseQuestion;
 import com.toeicmaster.springmvc.model.ExerciseQuestionDetail;
 import com.toeicmaster.springmvc.model.User;
+import com.toeicmaster.springmvc.service.S3Service;
+import com.toeicmaster.springmvc.service.StorageService;
 
 
 @Controller
-public class UserController<StorageService> {
+public class UserController {
 
 	@Autowired
 	UserDao userDao;
@@ -48,6 +52,13 @@ public class UserController<StorageService> {
 
 	@Autowired
     ServletContext context;
+	
+	private StorageService storageService;
+
+	@Autowired
+	public void FileUploadController(StorageService storageService) {
+		this.storageService = storageService;
+	}
 	
 	// user call create exercise page
 	@RequestMapping(value="/new-exercise-page", method=RequestMethod.GET)
@@ -183,18 +194,15 @@ public class UserController<StorageService> {
 		eq.setExerciseId(exerciseId);
 		exerciseQuestionDao.save(eq);
 		int exerciseQuestionId = eq.getId();
-		// save audio file
+		
 		
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		
-		String audioStorePath = absolutePath + "/audio/"+"audio_"+exerciseQuestionId+".mp3";
-		storeFile(audio, audioStorePath);
-		eq.setAudio("audio_"+exerciseQuestionId+".mp3");
-		// save photo file
-		String photoStorePath = absolutePath + "/photo/"+"photo_"+exerciseQuestionId+".jpg";
+		// save audio file
+		uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 		
-		storeFile(photo, photoStorePath);
-		eq.setPhoto("photo_"+exerciseQuestionId+".jpg");
+		// save photo file
+		uploadPhoto(eq, absolutePath, photo, exerciseQuestionId);
 		
 		exerciseQuestionDao.save(eq);
 		// save exercise question detail
@@ -234,9 +242,7 @@ public class UserController<StorageService> {
 		// save audio file
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		
-		String audioStorePath = absolutePath + "/audio/"+"audio_"+exerciseQuestionId+".mp3";
-		storeFile(audio, audioStorePath);
-		eq.setAudio("audio_"+exerciseQuestionId+".mp3");
+		uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 
 		exerciseQuestionDao.save(eq);
 		
@@ -279,9 +285,7 @@ public class UserController<StorageService> {
 		// save audio file
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		
-		String audioStorePath = absolutePath + "/audio/"+"audio_"+exerciseQuestionId+".mp3";
-		storeFile(audio, audioStorePath);
-		eq.setAudio("audio_"+exerciseQuestionId+".mp3");
+		uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
 
 		exerciseQuestionDao.save(eq);
 		
@@ -492,5 +496,33 @@ public class UserController<StorageService> {
      }
 	}
 	
+	private void uploadAudio(ExerciseQuestion eq, String absolutePath, MultipartFile audio, int  exerciseQuestionId) {
+		
+		String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();
+		
+		Path pathAudio = Paths.get(audioStorePath);
+		String fileAudioName = storageService.store(pathAudio, audio);
+
+		S3Service audio_s3 = new S3Service();
+
+		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
+		System.out.println(pathAudioFile);
+		String audio_url = audio_s3.uploadS3(pathAudioFile, "exer", "audio", exerciseQuestionId);
+		eq.setAudio(audio_url);
+	}
+	private void uploadPhoto (ExerciseQuestion eq, String absolutePath, MultipartFile photo, int  exerciseQuestionId) {
+		String photoStorePath = absolutePath + "/photo/"+ photo.getOriginalFilename();
+		
+		Path pathPhoto = Paths.get(photoStorePath);
+		String filePhotoName = storageService.store(pathPhoto, photo);
+
+		S3Service photo_s3 = new S3Service();
+		
+		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
+		System.out.println(pathPhotoFile);			
+
+		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exer","photo", exerciseQuestionId);
+		eq.setPhoto(photo_url);
+	}
 	
 }
