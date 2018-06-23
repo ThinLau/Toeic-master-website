@@ -16,8 +16,14 @@
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
     <!-- Custom CSS -->
      <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
+     
+     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+     
+      
+     
 
 </head> 
 
@@ -45,50 +51,134 @@
     <!-- content -->
     <div class="col-md-9">
        <div class="profile-content">
-          <h3>Thông tin bài tập</h3>
-          <br/>
-          <form th:object="${exercise}" th:action="@{/save-exercise}" method="POST">
-            <div class="form-group">
-              <label class="small" for="fullname">Tên bài tập</label>
-              <input th:field="*{name}" type="text" class="form-control" id="exercise-name"/>
-            </div>
-            <div class="form-group">
-              <label class="small" for="birthday">Số câu hỏi</label>
-              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
-            </div>
-             <div class="form-group">
-                <label for="part">Phần</label>
-                <select th:field="*{part}" class="form-control" id="part">
-                  <option value ="1">Part 1: Photographs</option>
-                  <option value ="2">Part 2: Question response</option>
-                  <option value ="3">Part 3: Short conversation</option>
-                  <option value ="4">Part 4: Short talk</option>
-                   <option value ="5">Part 5: Incomplete sentence</option>
-                  <option value ="6">Part 6: Text completion</option>
-                  <option value ="7">Part 7: Single passage</option>
-                  <option value ="8">Part 8: Double passage</option>
-                </select>
-              </div>
-            
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary form-control">Lưu lại</button>
-            </div>
-          </form>
-
+	       <ul class="nav nav-tabs" style="font-size: 16px;">
+			    <li class="active" th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-input">Nhập thủ công</a></li>
+			    <li th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-file">Nhập file</a></li>
+			</ul>
+		
+		  <div class="tab-content">
+		  	   <div id="create-exer-input" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}">
+		          <div class="exercise">
+			          <h3 style="text-align: center; color: red">Thông tin bài tập</h3>
+			          <br/>
+			          <form th:object="${exercise}" th:action="@{/save-exercise}" method="POST">
+			            <div class="form-group">
+			              <label class="small" for="fullname">Tên bài tập</label>
+			              <input th:field="*{name}" type="text" class="form-control" id="exercise-name"/>
+			            </div>
+			            <div class="form-group">
+			              <label class="small" for="birthday">Số câu hỏi</label>
+			              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
+			            </div>
+			             <div class="form-group">
+			                <label for="part">Phần</label>
+			                <select th:field="*{part}" class="form-control" id="part">
+			                  <option value ="1">Part 1: Photographs</option>
+			                  <option value ="2">Part 2: Question response</option>
+			                  <option value ="3">Part 3: Short conversation</option>
+			                  <option value ="4">Part 4: Short talk</option>
+			                   <option value ="5">Part 5: Incomplete sentence</option>
+			                  <option value ="6">Part 6: Text completion</option>
+			                  <option value ="7">Part 7: Single passage</option>
+			                  <option value ="8">Part 8: Double passage</option>
+			                </select>
+			              </div>          
+			              <div class="form-group">
+			              	<button type="submit" class="btn btn-primary form-control">Lưu lại</button>
+			              </div>
+			          </form>
+			       </div>
+	           </div>
+	           <div id="create-exer-file" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}">
+	           		<h3 style="text-align: center; color: red">Nhập File</h3>
+		          	<br/>
+		          	<form th:action="@{/save-exercise-file}" method="POST" enctype="multipart/form-data">
+			          	<div class="row">						          			                
+					          		<div class="form-group">	
+						          		<label class="col-md-2" style="margin-top: 5px" for="part">Phần:</label>						         
+						          			<div class="col-md-5">
+						          				<div class="form-group">							                
+									                <select class="form-control" id="part" name="part"  >
+														  <option value ="1">Part 1: Photographs</option>
+										                  <option value ="2">Part 2: Question response</option>
+										                  <option value ="3">Part 3: Short conversation</option>
+										                  <option value ="4">Part 4: Short talk</option>
+										                  <option value ="5">Part 5: Incomplete sentence</option>
+										                  <option value ="6">Part 6: Text completion</option>
+										                  <option value ="7">Part 7: Single passage</option>
+										                  <option value ="8">Part 8: Double passage</option>														 
+													</select>
+												</div>
+								             </div>
+								             <div class="col-xs-1">							             	
+										        <div class="form-group">
+										        	 <input type="hidden" id="id_href" />
+										             <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
+										             <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
+										             	<i class="fa fa-picture-o" aria-hidden="true"></i>		
+										             </button>			        		
+							     				</div>	
+								            </div>
+								            <div class="col-xs-1">							             	
+										        <div class="form-group">							        	
+										             <a class="btn btn-success" type="button" href="/download?url=https://s3-ap-southeast-1.amazonaws.com/toeic-master-web/Instruction_inputFile.xlsx"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
+							     				</div>	
+								            </div>								      
+					              </div>				       							            
+				         </div>
+			             <div style="size: 40px" id="cc"></div> 
+			             <div class="row">  
+			          		<div class="form-group">
+			          			<label class="col-md-2" style="margin-top: 5px;">Nhập file Exel:</label>    
+			          			<div class="col-md-10">  
+				          			<div class="form-group"> 			
+										<div  class="fileUpload btn btn-primary">
+										    <span>Upload</span>
+										    <input name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
+										</div>		
+										<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+									</div>
+								</div>
+							</div>
+						</div>
+		          		<div class="row">  
+			          		<div class="form-group">
+								<label class="col-md-2" style="margin-top: 5px;">Nhập Sheet: </label>	
+								<div class="col-md-6">						
+									<input class="form-control" type="text" name="sheetname" />					
+								</div>		
+							</div>	
+						</div>	    
+						<div class="row">     
+							<div class="col-md-5">   		
+				          		<div class="form-group" style="margin-top: 20px">
+				              		<button type="submit" class="btn btn-primary form-control">Lưu lại</button>
+				              	</div>
+				            </div>
+			            </div>
+		          	</form>
+	           </div>
+		   </div>
        </div>
     </div>
-
-
-
   </div>
 </div>
-<center>
-<strong>Powered by <a>ThinLau</a></strong>
-</center>
-<br/>
-<br/>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <img id="image_part" alt="" src="/assets/img/part1.PNG" />
+      </div>
+    </div>
+  </div>
 
     
+<script type="text/javascript">
+	document.getElementById("uploadBtn").onchange = function () {
+	    document.getElementById("uploadFile").value = this.value;
+	};
+</script>
 
 <!-- JS Global Compulsory -->           
 <script type="text/javascript" src="assets/plugins/jquery-3.2.1.min.js"></script>
@@ -96,5 +186,58 @@
 
 
 </body>
+
+<script type="text/javascript">
+	$( "select" )
+	.change(function() {
+	   var part;
+	  $( "select option:selected" ).each(function() {
+		  part = $( this ).val();
+	  });
+			  if(part == 1)
+				{
+				$("#id_href").val("https://www.google.com.vn/");	
+				
+				$("#image_part").attr("src","/assets/img/part1.PNG");
+	//			$(".instructionImage").attr('href','https://www.google.com.vn/');	
+				}
+			else if(part == 2)
+				{
+					$("#id_href").val("https://translate.google.com/");	
+					
+					$("#image_part").attr("src","/assets/img/part2.PNG");
+				}
+			else if(part == 3)
+				{
+					$("#image_part").attr("src","/assets/img/part3.PNG");
+				}
+			else if(part == 4)
+				{
+					$("#image_part").attr("src","/assets/img/part4.PNG");
+				}
+			else if(part == 5)
+				{
+					$("#image_part").attr("src","/assets/img/part5.PNG");
+	
+				}
+			else if(part == 6)
+				{
+					$("#image_part").attr("src","/assets/img/part6.PNG");
+
+				}
+			else if(part == 7)
+				{
+					$("#image_part").attr("src","/assets/img/part7.PNG");
+
+				}
+			else if(part == 8)
+				{
+					$("#image_part").attr("src","/assets/img/part8.PNG");
+
+				}
+	})
+	.trigger( "change" );
+
+</script>
 
 </html> 

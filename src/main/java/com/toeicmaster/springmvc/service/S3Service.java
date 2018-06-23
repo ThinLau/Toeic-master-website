@@ -7,6 +7,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -36,8 +37,8 @@ public class S3Service {
 		// s3 = AmazonS3ClientBuilder.standard()
 		// .withCredentials(new AWSStaticCredentialsProvider(credentials))
 		// .build();
-		Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-		s3.setRegion(usWest2);
+		Region AP_SOUTHEAST_1 = Region.getRegion(Regions.AP_SOUTHEAST_1);
+		s3.setRegion(AP_SOUTHEAST_1);
 	}
 
 	public java.io.InputStream getFile(String bucketName, String key) {
@@ -46,8 +47,8 @@ public class S3Service {
 	}
 
 	public String uploadS3(String path, String form, String value, int id) {
-		String bucketName = "toeic-master-website";
-		String exer_folder1 = "exercises";
+		String bucketName = "toeic-master-web";
+		String exer_folder1 = "exercise";
 		String exer_folder2_1 = "audio";
 		String exer_folder2_2 = "photo";
 		
@@ -74,13 +75,13 @@ public class S3Service {
 				String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_1 +"/").append("audio_"+id+".mp3").toString();
 				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
 				
-				URL = "https://s3-us-west-2.amazonaws.com/" + bucketName + "/" + object_key;
+				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
 				return URL;
 			} else {
 				String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_2 +"/").append("photo_"+id+".jpg").toString();
 				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
 				
-				URL = "https://s3-us-west-2.amazonaws.com/" + bucketName + "/" + object_key;
+				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
 				return URL;
 			}
 		} else if(form == "exam") {
@@ -88,17 +89,48 @@ public class S3Service {
 				String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_1 +"/").append("audio_"+id+".mp3").toString();
 				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
 				
-				URL = "https://s3-us-west-2.amazonaws.com/" + bucketName + "/" + object_key;
+				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
 				return URL;
 			} else {
 				String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_2 +"/").append("photo_"+id+".jpg").toString();
 				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
 				
-				URL = "https://s3-us-west-2.amazonaws.com/" + bucketName + "/" + object_key;
+				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
 				return URL;
 			}
 		}
 		return URL;
 	}
-
+	public void deleteS3(String type, int id, String audio_url, String photo_url) {
+		String bucketName = "toeic-master-web";
+		String exer_folder1 = "exercise";
+		String exer_folder2_1 = "audio";
+		String exer_folder2_2 = "photo";
+		
+		String exam_folder1 = "examination";
+		String exam_folder2_1 = "audio";
+		String exam_folder2_2 = "photo";
+		String object_key = "";
+			
+		if(type == "exer") {
+			
+			if(audio_url != null) {
+				object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_1 +"/").append("audio_"+id+".mp3").toString();
+				s3.deleteObject(new DeleteObjectRequest(bucketName, object_key));
+			}
+			if (photo_url != null){
+				object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_2 +"/").append("photo_"+id+".jpg").toString();
+				s3.deleteObject(new DeleteObjectRequest(bucketName, object_key));							
+			}
+		} else if(type == "exam") {	
+			if(audio_url != null) {
+				object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_1 +"/").append("audio_"+id+".mp3").toString();
+				s3.deleteObject(new DeleteObjectRequest(bucketName, object_key));		
+			}
+			if(photo_url == null) {
+				object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_2 +"/").append("photo_"+id+".jpg").toString();
+				s3.deleteObject(new DeleteObjectRequest(bucketName, object_key));										
+			}
+		}		
+	}
 }

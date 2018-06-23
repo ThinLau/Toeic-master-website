@@ -19,14 +19,14 @@
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet"  th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
     <!-- Custom CSS -->
      <link rel="stylesheet" th:href="@{/css/user_css.css}" />
-
-
+     
+      <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 </head> 
 
 <body>
-
 
 <div class="container">
     <div class="row profile">
@@ -50,46 +50,118 @@
     <!-- content -->
     <div class="col-md-9">
        <div class="profile-content">
-          <h3>Thông tin bài thi</h3>
-          <br/>
-          <form th:object="${exam}" th:action="@{/save-examination}" method="POST">
-            <div class="form-group">
-              <label class="small" for="fullname">Tên bài thi</label>
-              <input th:field="*{name}" type="text" class="form-control" id="exercise-name" placeholder="Tên bài thi"/>
-            </div>
-            <div class="form-group">
-              <label class="small" for="birthday">Số câu hỏi</label>
-              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
-            </div>
-             <div class="form-group">
-              <label class="small" for="birthday">Thời gian làm bài (phút)</label>
-              <input th:field="*{timeOut}" type="number" class="form-control" id="total-time" />
-            </div>
-            
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary form-control">Lưu lại</button>
-            </div>
-          </form>
-          
-
+       		<ul class="nav nav-tabs" style="font-size: 16px;">
+			    <li class="active" th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-input">Nhập thủ công</a></li>
+			    <li th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-file">Nhập file</a></li>
+			</ul>
+       		<div class="tab-content">
+		  	   <div id="create-exer-input" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}">
+		          <div class="exercise">
+       
+			          <h3>Thông tin bài thi</h3>
+			          <br/>
+			          <form th:object="${exam}" th:action="@{/save-examination}" method="POST">
+			            <div class="form-group">
+			              <label class="small" for="fullname">Tên bài thi</label>
+			              <input th:field="*{name}" type="text" class="form-control" id="exercise-name" placeholder="Tên bài thi"/>
+			            </div>
+			            <div class="form-group">
+			              <label class="small" for="birthday">Số câu hỏi</label>
+			              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
+			            </div>
+			             <div class="form-group">
+			              <label class="small" for="birthday">Thời gian làm bài (phút)</label>
+			              <input th:field="*{timeOut}" type="number" class="form-control" id="total-time" />
+			            </div>
+			            
+			            <div class="form-group">
+			              <button type="submit" class="btn btn-primary form-control">Lưu lại</button>
+			            </div>
+			          </form>
+          			</div>
+          		</div>
+          		
+          		<div id="create-exer-file" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}">
+	           		<h3 style="text-align: center; color: red">Nhập File</h3>
+		          	<br/>
+		          	<form th:action="@{/save-exam-file}" method="POST" enctype="multipart/form-data">
+			          	<div class="row">						          			                
+					          		<div class="form-group">	
+						          		<label class="col-md-3" style="margin-top: 5px" for="part">Xem hướng dẫn:</label>						         
+						          			
+								             <div class="col-xs-1">							             	
+										        <div class="form-group">
+										        	 <input type="hidden" id="id_href" />
+										             <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
+										             <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
+										             	<i class="fa fa-picture-o" aria-hidden="true"></i>		
+										             </button>			        		
+							     				</div>	
+								            </div>
+								            <div class="col-xs-1">							             	
+										        <div class="form-group">							        	
+										             <a class="btn btn-success" type="button" href="/download?url=https://s3-ap-southeast-1.amazonaws.com/toeic-master-web/Instruction_inputFile.xlsx"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
+							     				</div>	
+								            </div>								      
+					              </div>				       							            
+				         </div>			            
+			             <div class="row">  
+			          		<div class="form-group">
+			          			<label class="col-md-3" style="margin-top: 5px;">Nhập file Exel:</label>    
+			          			<div class="col-md-9">  
+				          			<div class="form-group"> 			
+										<div  class="fileUpload btn btn-primary">
+										    <span>Upload</span>
+										    <input name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
+										</div>		
+										<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+									</div>
+								</div>
+							</div>
+						</div>
+		          		<div class="row">  
+			          		<div class="form-group">
+								<label class="col-md-3" style="margin-top: 5px;">Nhập Sheet: </label>	
+								<div class="col-md-6">						
+									<input class="form-control" type="text" name="sheetname" />					
+								</div>		
+							</div>	
+						</div>	    
+						<div class="row">     
+							<div class="col-md-5">   		
+				          		<div class="form-group" style="margin-top: 20px">
+				              		<button type="submit" class="btn btn-primary form-control">Lưu lại</button>
+				              	</div>
+				            </div>
+			            </div>
+		          	</form>
+	            </div>
+          	</div>
        </div>
     </div>
-
-
-
   </div>
 </div>
-<center>
-<strong>Powered by <a>Toiec</a></strong>
-</center>
-<br/>
-<br/>
 
-    
 
 <!-- JS Global Compulsory -->           
 <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <img id="image_part" alt="" src="/assets/img/part1.PNG" />
+      </div>
+    </div>
+  </div>
+
+    
+<script type="text/javascript">
+	document.getElementById("uploadBtn").onchange = function () {
+	    document.getElementById("uploadFile").value = this.value;
+	};
+</script>
 
 
 </body>
