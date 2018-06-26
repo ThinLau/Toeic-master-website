@@ -33,7 +33,6 @@
     <!-- Jplayer skin-->
     <link th:href="@{/assets/plugins/jplayer/skin/css/jplayer.blue.monday.css}" rel="stylesheet" type="text/css" />
 
-	 
      
     <!-- JS Global Compulsory -->  
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>         
@@ -47,14 +46,17 @@
     
   
    	 <!--  <script type="text/javascript" th:src="@{/js/do_examination.js}"></script> -->
-   	 <script type="text/javascript" th:src="@{/js/test.js}"></script>
+   	
+  	 <!-- <script type="text/javascript" th:src="@{/js/paint_background.js}"></script> -->
+   	  <script type="text/javascript" th:src="@{/js/test.js}"></script>
+   	 
 
    
 
 </head> 
 
 <body>
-
+				
 <!--=== Top ===-->    
 <div class="wrapper">
     <div th:replace="fragments/layout :: header"></div>
@@ -159,11 +161,11 @@
                   <div class="panel-heading">
                       <h3 class="panel-title"><i class="fa fa-tasks"></i>Bảng đáp án</h3>
                   </div>
-                  <div class="panel-body" style="height: 410px;overflow: auto;">
+                  <div class="panel-body" style="height: 410px;overflow: auto;" id="numbersques">
 					<th:block th:each="i : ${numbers}">
-						<div th:id="${'question_' + i}" style="margin-bottom: 3px;">
-							<a th:text="${i + '. '}" class="anwser-number showQuestionContent" title="Click để xem nội dung câu hỏi"  th:attr="data-id=${i}" ></a>
-							<span class="choice"><input type="radio" th:name="${'answer_'+ i}" value="A" /> A  <i class="status_A"   aria-hidden="true"></i></span>&nbsp;&nbsp;
+						<div th:id="${'question_' + i}" style="margin-bottom: 3px; padding-left: 8px;">
+							<a style="text-align: right;" th:text="${i + '. '}" class="anwser-number showQuestionContent" title="Click để xem nội dung câu hỏi"  th:attr="data-id=${i}" ></a>
+							<span style="margin-left: 8px" class="choice"><input type="radio" th:name="${'answer_'+ i}" value="A" /> A  <i class="status_A"   aria-hidden="true"></i></span>&nbsp;&nbsp;
 							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="B" /> B <i class="status_B"  aria-hidden="true"></i></span>&nbsp;
 							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="C" /> C <i class="status_C"  aria-hidden="true"></i> </span>&nbsp;
 							<span class="choice"><input type="radio" th:name="${'answer_' + i}" value="D" /> D <i class ="status_D"  aria-hidden="true"></i> </span>
@@ -171,6 +173,7 @@
 					</th:block>
 					
                   </div>
+                  
 
                 </div>  <!--  end panel -->
 
@@ -179,9 +182,7 @@
 	                    <span id="result"></span>
 	         </div>
 
-            </div>  <!-- end col panel -->
-
-			
+            </div>  <!-- end col panel -->			
 			
 			<!-- Modal showQuestionContent -->
 			<div id="myModal" class="modal fade" role="dialog">
@@ -253,9 +254,9 @@
                           	
                            </div>
                       </div>
-			       	
-			       	
+                                            			     		       	
 			      </div>
+			      			      
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			      </div>
@@ -266,20 +267,25 @@
        <!--=== Copyright ===-->
       
         
-  </div>
+  		</div>
 
-  <div th:replace="fragments/layout :: footer"></div>
+  		<div th:replace="fragments/layout :: footer"></div>
 
-</div><!--/container-->     
+	</div><!--/container-->     
     <!--=== End Content Part ===-->
-
-    
-
 
 </div>
 
-
-
+				<input type="hidden"  th:value="${numberOfQuestion}" id="numberOfQuestion"/>
+				<input type="hidden" th:value="${exam.numberOfQuestion}" id="numberOfExamQuestionDetail"/>
+                  <div class="panel-body" >
+					<th:block th:each="j : ${numsExamQuestions}">
+						<div  style="margin-bottom: 3px;">
+							<input type="hidden" th:value="${j.subQuestion}" th:id="${'ques_' + j.num}"/>				
+						</div>
+					</th:block>
+					
+                  </div>
 
 </body>
 

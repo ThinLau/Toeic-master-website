@@ -63,7 +63,7 @@ public class ExaminationRestWebController {
 		
 		ExaminationQuestionDetail questionDetail = examinationQuestionDetailDao.findByExamIdAndNumInExam(examId, numInExam);
 		int examQuestionId = questionDetail.getExamQuestionId();
-		ExaminationQuestion examQuestion = examinationQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion examQuestion = examinationQuestionDao.findById(examQuestionId);
 		// Create Response Object
 		Response response = new Response("Done", examQuestion);
 		return response;
@@ -74,7 +74,7 @@ public class ExaminationRestWebController {
 			@RequestParam("examResult") double examResult, HttpSession session) {
 		User entity = (User) session.getAttribute("user");
 		if(entity != null) {
-			ExAlreadyDo ex = exAlreadyDoDao.findOne(exAlreadyDoId);
+			ExAlreadyDo ex = exAlreadyDoDao.findById(exAlreadyDoId);
 			if (ex != null) {
 				ex.setStatus(examResult);
 				exAlreadyDoDao.save(ex);

@@ -11,4 +11,5 @@ import com.toeicmaster.springmvc.model.Instruction;
 public interface InstructionDao extends CrudRepository<Instruction,Integer>  {
 	Page<Instruction> findByType(String type, Pageable pageAble);
 	List<Instruction> findByAuthor(String username);
+	Instruction getInstruById(int id);
 }

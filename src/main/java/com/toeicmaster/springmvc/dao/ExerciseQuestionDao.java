@@ -11,4 +11,7 @@ public interface ExerciseQuestionDao extends CrudRepository<ExerciseQuestion, In
 	ExerciseQuestion findByNumAndExerciseId(int num, int exerciseId);
 	
 	List<ExerciseQuestion> findByExerciseId(int exerciseId);
+
+	ExerciseQuestion findById(int exerciseQuestionId);
+	
 }

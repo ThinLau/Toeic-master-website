@@ -20,6 +20,8 @@
 
               num --;
               $('#btn-next').show();
+              
+              
 	             
 	          if(num == 1)
 	            	$('#btn-previous').hide();
@@ -27,22 +29,108 @@
 	          $("#jquery_jplayer_1").jPlayer('destroy');
 	          
 	          initQuestion(num);
+	          
+	          changeColorNext(num);
           })
-
+          	           	              	               
     	  // when click the next button
     	  $('#btn-next').off('click').on('click',function(e){
               e.preventDefault();
               
+              var n_numberOfQuestion = $("#numberOfQuestion").val();
+                           
               $('#btn-previous').show();
               num ++;
+             
+              if(num == n_numberOfQuestion) $('#btn-next').hide();
 
               $("#jquery_jplayer_1").jPlayer('destroy');
               
               initQuestion(num);
+                        
+              changeColorNext(num);
               
           }) // end btn-next click event
-          
-          
+              
+   //           var n_numExamQuestion = 1;
+          	  var n_subExamQuestionDetail = 1;          	
+          	  var n_subQuestion;
+          	  var n_i;
+          	  var t = 0;
+          	  $("#question_" + 1).css("background-color", "#F0E68C");
+              function changeColorNext(n_numExamQuestion) {
+				
+            	  if( t > n_numExamQuestion ){
+            		 
+            		  console.log(n_numExamQuestion + " previous");
+            		  n_subExamQuestionDetail = n_subExamQuestionDetail - n_subQuestion;
+            		  console.log(n_subExamQuestionDetail + " n_subExamQuestionDetail");
+            		  
+            		 
+            		  console.log(n_subQuestion + " n_subQuestion cu "+ t);
+            		  t = n_numExamQuestion;
+            		  
+            		  var subBefore = n_subQuestion;
+            		  console.log(subBefore + " subBefore");
+            		  n_subQuestion = parseInt($("#ques_"+ n_numExamQuestion).val());
+            		  console.log(n_subQuestion + " n_subQuestion moi " + n_numExamQuestion);
+            		  
+						for(n_i = n_subExamQuestionDetail; n_i > n_subExamQuestionDetail - n_subQuestion; n_i--){
+							 console.log("#question_" + n_i);
+					    	 $("#question_" + n_i).css("background-color", "#F0E68C");	
+					    	 var n_j;
+					    	 for(n_j = n_subExamQuestionDetail + 1; n_j <= n_subExamQuestionDetail + subBefore; n_j++){
+					    		 $("#question_" + n_j).css("background-color", "white");	
+					    	 }
+						}								
+            	  } else {
+            		  
+            		  console.log(n_numExamQuestion + " next");
+	            	  t = n_numExamQuestion;  
+	            	  n_subQuestion = parseInt($("#ques_"+ n_numExamQuestion).val());
+	            	             	
+						n_subExamQuestionDetail = n_subExamQuestionDetail + n_subQuestion; 
+						console.log(n_subExamQuestionDetail);
+						
+						for(n_i = (n_subExamQuestionDetail - n_subQuestion); n_i <= n_subExamQuestionDetail; n_i++){
+					    	 $("#question_" + n_i).css("background-color", "#F0E68C");	
+					    	 var n_j;
+					    	 for(n_j = n_i-n_subQuestion; n_j >= 0; n_j--){
+					    		 $("#question_" + n_j).css("background-color", "white");	
+					    	 }
+						}												
+            	  }
+					
+			   }
+          	 
+              /*var n_numExamQuestion = 1;
+          	  var n_subExamQuestionDetail = 1;          	
+          	  var n_subQuestion;	
+          	  var n_i;
+          	  $("#question_" + 1).css("background-color", "	#F0E68C");
+          function changeColorNext() {
+		
+				if(n_numExamQuestion < 10){
+					
+					n_subQuestion = parseInt($("#ques_"+ (n_numExamQuestion + 1)).val());
+					
+					n_subExamQuestionDetail = n_subExamQuestionDetail + n_subQuestion; 
+					console.log(n_subExamQuestionDetail);
+					
+					for(n_i = (n_subExamQuestionDetail - n_subQuestion); n_i <= n_subExamQuestionDetail; n_i++){
+				    	 $("#question_" + n_i).css("background-color", "#F0E68C");	
+				    	 var n_j;
+				    	 for(n_j = n_i-n_subQuestion; n_j >= 0; n_j--){
+				    		 $("#question_" + n_j).css("background-color", "white");	
+				    	 }
+					}
+					
+					
+					n_numExamQuestion++;
+				}
+				
+		   }*/
+                                   
            $('.showQuestionContent').off('click').on('click',function(e){
         	  var numInExam =  $(e.target).attr('data-id');
         	 $("#myModal .modal-title").html('Nội dung cho câu hỏi số: '+numInExam );
@@ -193,9 +281,7 @@
         	 
         	
               
-          }) 
-          
-       
+          })                 
     	  
            // when click the finish button
     	  $('#btn-finish').off('click').on('click',function(e){
@@ -203,6 +289,12 @@
               
               if(!isSubmit) submit();
               
+              /*var f_numberOfQuestion = $("#numberOfExamQuestionDetail").val();
+              var f_i;
+              for(f_i = 1 ; f_i <= f_numberOfQuestion; f_i ++){					
+			     $("#question_" + f_i).css("background-color", "#F0E68C");				    
+			 }			
+			                                                   */
           }) // end btn-finish click event
           
        function submit(){
@@ -333,7 +425,7 @@
     							getQuestion(examQuestionId,2,'.question-area1');
     							break;
     						case 3: case 4:  // part 3 and part 4: short conversation and short talk
-    							console.log('into part 3: + num ='+ num);
+    							
     							$(".image").css("display", "none");
     							$(".audio").css("display", "block");
     							$(".conversation").css("display", "none");

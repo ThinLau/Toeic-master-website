@@ -33,7 +33,7 @@ public class AdminController {
 	
 	@RequestMapping(value="/change-account-status", method=RequestMethod.GET)
 	public String blockAccount(Model model, @RequestParam("id") int userId) {
-		User user = userDao.findOne(userId);
+		User user = userDao.findById(userId);
 
 		if(user.getStatus() == 1) {
 			user.setStatus(0);

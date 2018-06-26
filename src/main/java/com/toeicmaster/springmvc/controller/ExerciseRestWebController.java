@@ -42,8 +42,8 @@ public class ExerciseRestWebController {
 			 HttpSession session, @RequestParam("exAlreadyDoId") int exAlreadyDoId ){
 		User entity = (User) session.getAttribute("user");
 		if(entity != null) {
-			Exercise exercise = exerciseDao.findOne(exerciseId);
-			ExAlreadyDo ex = exAlreadyDoDao.findOne(exAlreadyDoId);
+			Exercise exercise = exerciseDao.findById(exerciseId);
+			ExAlreadyDo ex = exAlreadyDoDao.findById(exAlreadyDoId);
 			if (ex != null) {
 				double currentExStatus = ex.getStatus();
 				double percent = round(100 * ((double) num / Integer.parseInt(exercise.getNumberOfQuestion())), 2);

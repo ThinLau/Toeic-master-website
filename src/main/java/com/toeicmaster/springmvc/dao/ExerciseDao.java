@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import com.toeicmaster.springmvc.model.Examination;
 import com.toeicmaster.springmvc.model.Exercise;
 
 public interface ExerciseDao extends CrudRepository<Exercise,Integer> {
@@ -16,5 +17,9 @@ public interface ExerciseDao extends CrudRepository<Exercise,Integer> {
 	// get part id by exercise id
 	@Query(value = "select part from exercise  where id = ?1" , nativeQuery = true)
 	int getPartIdById(int id);
+	
+	Exercise findById(int exerciseId);
+	
+
 	
 }

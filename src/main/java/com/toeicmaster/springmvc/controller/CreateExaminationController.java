@@ -64,6 +64,7 @@ public class CreateExaminationController {
 	}
 	
 	private int quesNum = 0;
+	private int examNumberOfQuestion = 0;
 
 	@RequestMapping(value = "/new-examination-page", method = RequestMethod.GET)
 	public String newExercisePage(HttpSession session, Model model) {
@@ -76,6 +77,7 @@ public class CreateExaminationController {
 		model.addAttribute("exam", exam);
 		model.addAttribute("user", user);
 		model.addAttribute("module", "new-examination");
+		model.addAttribute( "exam_module","create-exam-input");
 		return "user/examination/create_new_examination";
 	}
 
@@ -666,7 +668,7 @@ public class CreateExaminationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+		model.addAttribute( "exam_module","create-exam-file");
 		model.addAttribute("user", user);
 		return "redirect:/new-examination-page";
 	}
@@ -677,7 +679,7 @@ public class CreateExaminationController {
 		if (session.getAttribute("user") == null)
 			return "login/login";
 
-		Examination exam = examDao.findOne(examId);
+		Examination exam = examDao.findById(examId);
 		model.addAttribute("exam", exam);
 		return "user/examination/examination_info";
 	}
@@ -685,7 +687,7 @@ public class CreateExaminationController {
 	@RequestMapping(value = "/update-examination", method = RequestMethod.POST)
 	public String upadateExerciseInfo(HttpSession session, Model model, @ModelAttribute("exam") Examination exam) {
 
-		Examination entity = examDao.findOne(exam.getId());
+		Examination entity = examDao.findById(exam.getId());
 		int examId = exam.getId();
 		if (entity != null) {
 			entity.setName(exam.getName());
@@ -749,7 +751,7 @@ public class CreateExaminationController {
 
 		}
 
-		Examination exam = examDao.findOne(examId);
+		Examination exam = examDao.findById(examId);
 		model.addAttribute("exam", exam);
 		model.addAttribute("currQuestion", currQuestion);
 		model.addAttribute("num", num);
@@ -761,10 +763,9 @@ public class CreateExaminationController {
 	public String saveExaminationPhotoQuestion(@PathVariable("part") String partName, @PathVariable("num") int num,
 			@PathVariable("currQuestion") int currQuestion, @RequestParam("id") int examId, Model model, 
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam("image_question") MultipartFile photo, @RequestParam Map<String, String> maps) {
-
+		
 		// save examination question
-		ExaminationQuestion eq = new ExaminationQuestion();
-
+		ExaminationQuestion eq = new ExaminationQuestion();				
 		eq.setNum(num);
 		eq.setSubQuestion(1);
 		eq.setExamId(examId);
@@ -779,13 +780,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadAudio(eq, absolutePath, audio, examQuestionId);
-		// save photo file
-		
-		uploadPhoto(eq, absolutePath, photo, examQuestionId);
-		/*String photoStorePath = absolutePath + "/photo/" + "exam_photo_" + examId + "_" + examQuestionId + ".jpg";
-		storeFile(photo, photoStorePath);
-		eq.setPhoto("exam_photo_" + examId + "_" + examQuestionId + ".jpg");*/
+		uploadfileS3(eq, absolutePath, audio, photo, examQuestionId);				
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -801,7 +796,21 @@ public class CreateExaminationController {
 		eqd.setExamQuestionId(examQuestionId);
 
 		examQuestionDetailDao.save(eqd);
-
+		
+		try {
+			File Pfile = convertMultiPartToFile(photo);
+			File Afile = convertMultiPartToFile(audio);
+			Afile.delete();
+			Pfile.delete();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		
+		Examination exam = examDao.findById(examId);	
+		examNumberOfQuestion++;
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
+		
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
 
@@ -828,7 +837,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadAudio(eq, absolutePath, audio, examQuestionId);
+		uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -844,6 +853,11 @@ public class CreateExaminationController {
 		eqd.setExamQuestionId(examQuestionId);
 
 		examQuestionDetailDao.save(eqd);
+		
+		Examination exam = examDao.findById(examId);
+		examNumberOfQuestion++;
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
 
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
@@ -876,7 +890,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadAudio(eq, absolutePath, audio, examQuestionId);
+		uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
 
 		examQuestionDao.save(eq);
 
@@ -896,6 +910,11 @@ public class CreateExaminationController {
 
 			examQuestionDetailDao.save(eqd);
 		}
+		
+		Examination exam = examDao.findById(examId);
+		examNumberOfQuestion = examNumberOfQuestion + 3;
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
 
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
@@ -930,6 +949,11 @@ public class CreateExaminationController {
 		eqd.setExamQuestionId(examQuestionId);
 
 		examQuestionDetailDao.save(eqd);
+		
+		Examination exam = examDao.findById(examId);
+		examNumberOfQuestion++;
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
 
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
@@ -971,6 +995,11 @@ public class CreateExaminationController {
 			examQuestionDetailDao.save(eqd);
 		}
 
+		Examination exam = examDao.findById(examId);
+		examNumberOfQuestion = examNumberOfQuestion + subQuestion;
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
+		
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
 
@@ -1012,6 +1041,11 @@ public class CreateExaminationController {
 			examQuestionDetailDao.save(eqd);
 		}
 
+		Examination exam = examDao.findById(examId);
+		examNumberOfQuestion = examNumberOfQuestion + subQuestion; 
+		exam.setNumberOfQuestion(examNumberOfQuestion);
+		examDao.save(exam);
+		
 		return "redirect:/new-examination/" + partName + "?id=" + examId;
 	}
 
@@ -1054,6 +1088,11 @@ public class CreateExaminationController {
 				examQuestionDetailDao.save(eqd);
 			}
 
+			Examination exam = examDao.findById(examId);
+			examNumberOfQuestion = examNumberOfQuestion + subQuestion; 
+			exam.setNumberOfQuestion(examNumberOfQuestion);
+			examDao.save(exam);
+			
 			return "redirect:/new-examination/" + partName + "?id=" + examId;
 		}
 	
@@ -1077,32 +1116,30 @@ public class CreateExaminationController {
 		}
 	}
 
-private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartFile audio, int  examQuestionId) {
+	private void uploadfileS3(ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
 		
-		String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();
-		
+		/*String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();		
 		Path pathAudio = Paths.get(audioStorePath);
-		String fileAudioName = storageService.store(pathAudio, audio);
-
-		S3Service audio_s3 = new S3Service();
-
+		String fileAudioName = storageService.store(pathAudio, audio);	
 		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
-		System.out.println(pathAudioFile);
-		String audio_url = audio_s3.uploadS3(pathAudioFile, "exam", "audio", examQuestionId);
+		System.out.println(pathAudioFile);*/
+	
+		S3Service file_s3 = new S3Service();
+		
+		String audio_url = file_s3.uploadS3(audio, "exam", "audio", examQuestionId);
 		eq.setAudio(audio_url);
+		if(photo != null) {
+			String photo_url = file_s3.uploadS3(photo, "exam", "photo", examQuestionId);
+			eq.setPhoto(photo_url);
+		}
+
 	}
-	private void uploadPhoto (ExaminationQuestion eq, String absolutePath, MultipartFile photo, int  examQuestionId) {
-		String photoStorePath = absolutePath + "/photo/"+ photo.getOriginalFilename();
-		
-		Path pathPhoto = Paths.get(photoStorePath);
-		String filePhotoName = storageService.store(pathPhoto, photo);
-
-		S3Service photo_s3 = new S3Service();
-		
-		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
-		System.out.println(pathPhotoFile);			
-
-		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exam","photo", examQuestionId);
-		eq.setPhoto(photo_url);
+	
+	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+	    File convFile = new File(file.getOriginalFilename());
+	    FileOutputStream fos = new FileOutputStream(convFile);
+	    fos.write(file.getBytes());
+	    fos.close();
+	    return convFile;
 	}
 }

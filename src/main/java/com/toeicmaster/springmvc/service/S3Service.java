@@ -1,5 +1,11 @@
 package com.toeicmaster.springmvc.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
@@ -46,7 +52,7 @@ public class S3Service {
 		return object.getObjectContent();
 	}
 
-	public String uploadS3(String path, String form, String value, int id) {
+	public String uploadS3(MultipartFile mulfile, String form, String value, int id) {
 		String bucketName = "toeic-master-web";
 		String exer_folder1 = "exercise";
 		String exer_folder2_1 = "audio";
@@ -57,48 +63,56 @@ public class S3Service {
 		String exam_folder2_2 = "photo";
 
 		
-		java.io.File f = new java.io.File(path);
+//		java.io.File f = new java.io.File(path);
 
-		String key = f.getName();
-		// upload private
-		// s3.putObject(new PutObjectRequest(bucketName, key,f));
-		// upload public
-		/*s3.putObject(
-				new PutObjectRequest(bucketName, f.getName(), f).withCannedAcl(CannedAccessControlList.PublicRead));*/
-		
-//		String object_key = new StringBuilder().append(exer_folder1 +"/").append(f.getName()).toString();
-//		s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
+//		String key = f.getName();
+		String key = mulfile.getOriginalFilename();
 		
 		String URL = "";
-		if(form == "exer") {
-			if(value == "audio") {
-				String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_1 +"/").append("audio_"+id+".mp3").toString();
-				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
-				
-				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
-				return URL;
-			} else {
-				String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_2 +"/").append("photo_"+id+".jpg").toString();
-				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
-				
-				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
-				return URL;
+		
+		try {
+			File file = convertMultiPartToFile(mulfile);
+			
+			if(form == "exer") {
+				if(value == "audio") {
+					String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_1 +"/").append("audio_"+id+".mp3").toString();
+					s3.putObject(new PutObjectRequest(bucketName,object_key,file).withCannedAcl(CannedAccessControlList.PublicRead));
+					
+					URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
+					return URL;
+				} else {
+					String object_key = new StringBuilder().append(exer_folder1 +"/").append(exer_folder2_2 +"/").append("photo_"+id+".jpg").toString();
+					s3.putObject(new PutObjectRequest(bucketName,object_key,file).withCannedAcl(CannedAccessControlList.PublicRead));
+					
+					URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
+					return URL;
+				}
+			} else if(form == "exam") {
+				if(value == "audio") {
+					String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_1 +"/").append("audio_"+id+".mp3").toString();
+					s3.putObject(new PutObjectRequest(bucketName,object_key,file).withCannedAcl(CannedAccessControlList.PublicRead));
+					
+					URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
+					return URL;
+				} else {
+					String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_2 +"/").append("photo_"+id+".jpg").toString();
+					s3.putObject(new PutObjectRequest(bucketName,object_key,file).withCannedAcl(CannedAccessControlList.PublicRead));
+					
+					URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
+					return URL;
+				}
 			}
-		} else if(form == "exam") {
-			if(value == "audio") {
-				String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_1 +"/").append("audio_"+id+".mp3").toString();
-				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
-				
-				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
-				return URL;
-			} else {
-				String object_key = new StringBuilder().append(exam_folder1 +"/").append(exam_folder2_2 +"/").append("photo_"+id+".jpg").toString();
-				s3.putObject(new PutObjectRequest(bucketName,object_key,f).withCannedAcl(CannedAccessControlList.PublicRead));
-				
-				URL = "https://s3-ap-southeast-1.amazonaws.com/" + bucketName + "/" + object_key;
-				return URL;
-			}
+			
+			file.delete();
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		
+		
+		
+		
 		return URL;
 	}
 	public void deleteS3(String type, int id, String audio_url, String photo_url) {
@@ -132,5 +146,12 @@ public class S3Service {
 				s3.deleteObject(new DeleteObjectRequest(bucketName, object_key));										
 			}
 		}		
+	}
+	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+	    File convFile = new File(file.getOriginalFilename());
+	    FileOutputStream fos = new FileOutputStream(convFile);
+	    fos.write(file.getBytes());
+	    fos.close();
+	    return convFile;
 	}
 }

@@ -77,12 +77,12 @@
                       	<p class="part-sumary">In each question, you will look at a photograph and then listen to 4 sentences. Choose the sentence that best describes the photograph.</p>
     
 						<!--  get the exercise id -->
-						<input id="exercise-id" type="hidden" th:value="${exercise.id}"/>
-						<input id="exalreadydo-id" type="hidden" th:value="${exAlreadyDoId}"/>
+						<input id="exercise-id" type="hidden" th:value="${exercise.id}" required="required"/>
+						<input id="exalreadydo-id" type="hidden" th:value="${exAlreadyDoId}" required="required"/>
 
 						<!--  the image for photo area -->
 						<div class="image">
-	                          <img style="max-width: 350px;" id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh"/>
+	                          <img style="max-width: 350px;" id="exercise-image" th:src="@{/assets/img/venice.jpg}" alt="khong hinh" />
 	                    </div>
                         
                         <div class="audio">

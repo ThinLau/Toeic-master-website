@@ -51,7 +51,7 @@ public class UpdateExaminationController {
 	@RequestMapping(value = "/update-examination/info", method = RequestMethod.GET)
 	public String exerciseInfo(HttpSession session, @RequestParam("id") int examId, Model model) {
 
-		Examination exam = examDao.findOne(examId);
+		Examination exam = examDao.findById(examId);
 		model.addAttribute("exam", exam);
 		return "user/update/examination/examination_info";
 	}
@@ -59,7 +59,7 @@ public class UpdateExaminationController {
 	@RequestMapping(value = "/update-examination-info", method = RequestMethod.POST)
 	public String upadateExerciseInfo(HttpSession session, Model model, @ModelAttribute("exam") Examination exam) {
 
-		Examination entity = examDao.findOne(exam.getId());
+		Examination entity = examDao.findById(exam.getId());
 		int examId = exam.getId();
 		if (entity != null) {
 			entity.setName(exam.getName());
@@ -78,7 +78,7 @@ public class UpdateExaminationController {
 			@RequestParam("id") int examId, Model model) {
 
 		String result = "error_page";
-		Examination exam = examDao.findOne(examId);
+		Examination exam = examDao.findById(examId);
 		List<ExaminationQuestion> eqs = examQuestionDao.findByExamIdAndPart(examId, part);
 
 		int partSize = eqs.size();
@@ -129,11 +129,11 @@ public class UpdateExaminationController {
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
-		if (!audio.isEmpty()) {
+		if (!audio.isEmpty() || !photo.isEmpty()) {
 			/*// delete old audio file
 			File audioFile = new File(absolutePath + "/audio/" + eq.getAudio());
 			if (audioFile.exists())
@@ -143,17 +143,8 @@ public class UpdateExaminationController {
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
 			
-			uploadAudio(eq, absolutePath, audio, examQuestionId);
-		}
-		// if photo change will update
-		if (!photo.isEmpty()) {
-			/*String photoStorePath = absolutePath + "/photo/" + "exam_photo_" + examQuestionId + "_update" + ".jpg";
-
-			storeFile(photo, photoStorePath);
-			eq.setPhoto("exam_photo_" + examQuestionId + "_update" + ".jpg");*/
-			
-			uploadPhoto(eq, absolutePath, photo, examQuestionId);
-		}
+			uploadfileS3(eq, absolutePath, audio, photo, examQuestionId);
+		}		
 		// update exercise question
 		examQuestionDao.save(eq);
 
@@ -178,7 +169,7 @@ public class UpdateExaminationController {
 			@RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
@@ -186,8 +177,8 @@ public class UpdateExaminationController {
 			/*String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examQuestionId + "_update" + ".mp3";
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
+			uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
 			
-			uploadAudio(eq, absolutePath, audio, examQuestionId);
 		}
 		// update exercise question
 		examQuestionDao.save(eq);
@@ -212,7 +203,7 @@ public class UpdateExaminationController {
 			@RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 
 		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
@@ -221,7 +212,7 @@ public class UpdateExaminationController {
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
 			
-			uploadAudio(eq, absolutePath, audio, examQuestionId);
+			uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
 		}
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -252,7 +243,7 @@ public class UpdateExaminationController {
 	public String updateIncompleteSentence(Model model, @PathVariable("examQuestionId") int examQuestionId,
 			@RequestParam("num") int num, @RequestParam Map<String, String> maps) {
 
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 
 		// update exercise question detail. photo part just have one question.
 		ExaminationQuestionDetail eqd = examQuestionDetailDao.findByExamQuestionId(examQuestionId).get(0);
@@ -275,7 +266,7 @@ public class UpdateExaminationController {
 			@RequestParam("num") int num, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -306,7 +297,7 @@ public class UpdateExaminationController {
 			@RequestParam("num") int num, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
 		examQuestionDao.save(eq);
@@ -338,7 +329,7 @@ public class UpdateExaminationController {
 				@RequestParam("num") int num, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExaminationQuestion eq = examQuestionDao.findOne(examQuestionId);
+		ExaminationQuestion eq = examQuestionDao.findById(examQuestionId);
 		eq.setParagraph(maps.get("paragraph1"));
 		eq.setParagraph2(maps.get("paragraph2"));
 		// update exercise question
@@ -383,7 +374,25 @@ public class UpdateExaminationController {
 		}
 	}
 	
-private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartFile audio, int  examQuestionId) {
+	private void uploadfileS3(ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
+			
+			/*String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();		
+			Path pathAudio = Paths.get(audioStorePath);
+			String fileAudioName = storageService.store(pathAudio, audio);	
+			String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
+			System.out.println(pathAudioFile);*/
+		
+			S3Service file_s3 = new S3Service();
+			
+			String audio_url = file_s3.uploadS3(audio, "exam", "audio", examQuestionId);
+			eq.setAudio(audio_url);
+			if(photo != null) {
+				String photo_url = file_s3.uploadS3(photo, "exam", "photo", examQuestionId);
+				eq.setPhoto(photo_url);
+			}
+	
+	}	
+/*private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartFile audio, int  examQuestionId) {
 		
 		String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();
 		
@@ -394,7 +403,7 @@ private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartF
 
 		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
 		System.out.println(pathAudioFile);
-		String audio_url = audio_s3.uploadS3(pathAudioFile, "exam", "audio", examQuestionId);
+		String audio_url = audio_s3.uploadS3(audio, "exam", "audio", examQuestionId);
 		eq.setAudio(audio_url);
 	}
 	private void uploadPhoto (ExaminationQuestion eq, String absolutePath, MultipartFile photo, int  examQuestionId) {
@@ -408,8 +417,8 @@ private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartF
 		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
 		System.out.println(pathPhotoFile);			
 
-		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exam","photo", examQuestionId);
+		String photo_url = photo_s3.uploadS3(photo, "exam","photo", examQuestionId);
 		eq.setPhoto(photo_url);
-	}
+	}*/
 
 }

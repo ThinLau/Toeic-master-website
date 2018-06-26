@@ -66,7 +66,7 @@ public class InstructionController {
 	@RequestMapping(value = "/see-the-instructions/{id}", method = RequestMethod.GET)
 	public String seeTheInstructions(@PathVariable("id") int instructionId, Model model) {
 
-		Instruction instruction = instructionDao.findOne(instructionId);
+		Instruction instruction = instructionDao.getInstruById(instructionId);
 
 		model.addAttribute("module", "instruction");
 		model.addAttribute("instruction", instruction);
@@ -76,7 +76,7 @@ public class InstructionController {
 	// get update instruction page
 	@RequestMapping(value = "/update", method = RequestMethod.GET)
 	public String update(@RequestParam("id") int instructionId, Model model) {
-		Instruction ins = instructionDao.findOne(instructionId);
+		Instruction ins = instructionDao.getInstruById(instructionId);
 		model.addAttribute("instruction", ins);
 		return "user/update/instruction/update_instruction";
 	}
@@ -85,7 +85,7 @@ public class InstructionController {
 	public String saveExercise(HttpSession session, Model model, @RequestParam Map<String, String> maps,
 			@RequestParam("id") int instructionId) {
 	
-		Instruction entity = instructionDao.findOne(instructionId);
+		Instruction entity = instructionDao.getInstruById(instructionId);
 		if(entity != null) {
 			entity.setName(maps.get("name"));
 			entity.setType(maps.get("type"));

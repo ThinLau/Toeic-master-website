@@ -26,7 +26,7 @@ public class ExerciseQuestionService {
 	}
 
 	public ExerciseQuestion findTask(int id) {
-		return exerciseQuestionDao.findOne(id);
+		return exerciseQuestionDao.findById(id);
 	}
 
 	public void save(ExerciseQuestion task) {

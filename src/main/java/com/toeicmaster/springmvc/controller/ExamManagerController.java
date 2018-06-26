@@ -60,6 +60,8 @@ public class ExamManagerController {
 	@Autowired
 	ExAlreadyDoDao exAlreadyDoDao;
 	
+	S3Service Am_s3 = new S3Service();			
+	
 	private StorageService storageService;
 
 	@Autowired
@@ -110,15 +112,14 @@ public class ExamManagerController {
 					
 			exerciseQuestionDetailDao.delete(questionDetails);
 			
-			S3Service exer_s3 = new S3Service();			
-			exer_s3.deleteS3("exer", question.getId(), question.getAudio(),question.getPhoto());
+				
+			Am_s3.deleteS3("exer", question.getId(), question.getAudio(),question.getPhoto());
 		}
 		exerciseQuestionDao.delete(questions);
 		
-		/*List<ExAlreadyDo> exDo = exAlreadyDoDao.findExerciseId(exerciseId, user.getId());		
-		exAlreadyDoDao.delete(exDo);
-*/
-		Exercise exercise = exerciseDao.findOne(exerciseId);
+		exAlreadyDoDao.deleteExerciseAlreadyDo(exerciseId, user.getId());
+
+		Exercise exercise = exerciseDao.findById(exerciseId);
 		exerciseDao.delete(exercise);
 
 		redirectAttributes.addFlashAttribute("manager_module", "exercise_manager");
@@ -127,8 +128,9 @@ public class ExamManagerController {
 
 	// delete examination
 	@RequestMapping(value = "delete-examination", method = RequestMethod.GET)
-	public String deleteExamination(RedirectAttributes redirectAttributes, @RequestParam("id") int examId) {
+	public String deleteExamination(HttpSession session, RedirectAttributes redirectAttributes, @RequestParam("id") int examId) {
 
+		User user = (User) session.getAttribute("user");
 		// delete examintion_question_detail -> delete examination_question -> delete
 		// examination
 		List<ExaminationQuestion> questions = examinationQuestionDao.findByExamId(examId);
@@ -136,13 +138,15 @@ public class ExamManagerController {
 			List<ExaminationQuestionDetail> questionDetails = examinationQuestionDetailDao
 					.findByExamQuestionId(question.getId());
 			examinationQuestionDetailDao.delete(questionDetails);
+			
+			
+			Am_s3.deleteS3("exam", question.getId(), question.getAudio(),question.getPhoto());
 		}
 		examinationQuestionDao.delete(questions);
 		
-		/*ExAlreadyDo exDo = exAlreadyDoDao.findOne(examId);		
-		exAlreadyDoDao.delete(exDo);*/
+		exAlreadyDoDao.deleteExamAlreadyDo(examId, user.getId());
 		
-		Examination exam = examinationDao.findOne(examId);
+		Examination exam = examinationDao.findById(examId);
 		examinationDao.delete(exam);
 
 		redirectAttributes.addFlashAttribute("manager_module", "examination_manager");
@@ -153,7 +157,7 @@ public class ExamManagerController {
 	@RequestMapping(value = "delete-instruction", method = RequestMethod.GET)
 	public String deleteInstruction(RedirectAttributes redirectAttributes, @RequestParam("id") int id) {
 
-		Instruction instruction = instructionDao.findOne(id);
+		Instruction instruction = instructionDao.getInstruById(id);
 
 		instructionDao.delete(instruction);
 

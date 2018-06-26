@@ -60,7 +60,7 @@ public class UpdateExerciseController {
 	@RequestMapping(value = "/update-exercise/info", method = RequestMethod.GET)
 	public String updateExerciseInfo(HttpSession session, @RequestParam("id") int exerciseId, Model model) {
 
-		Exercise exercise = exerciseDao.findOne(exerciseId);
+		Exercise exercise = exerciseDao.findById(exerciseId);
 		model.addAttribute("module", "exercise-info");
 		model.addAttribute("exercise", exercise);
 		return "user/update/exercise/update_exercise_info";
@@ -69,7 +69,7 @@ public class UpdateExerciseController {
 	@RequestMapping(value = "/update-exercise-info", method = RequestMethod.POST)
 	public String upadateExerciseInfo(HttpSession session, Model model, @ModelAttribute("exercise") Exercise exercise) {
 
-		Exercise entity = exerciseDao.findOne(exercise.getId());
+		Exercise entity = exerciseDao.findById(exercise.getId());
 		int exerciseId = exercise.getId();
 		if (entity != null) {
 			entity.setName(exercise.getName());
@@ -92,7 +92,7 @@ public class UpdateExerciseController {
 	@RequestMapping(value = "/update-exercise/question", method = RequestMethod.GET)
 	private String returnQuestionPage(@RequestParam("id") int exerciseId, @RequestParam("num") int num, Model model) {
 		
-		Exercise exercise = exerciseDao.findOne(exerciseId);
+		Exercise exercise = exerciseDao.findById(exerciseId);
 
 		ExerciseQuestion eq = exerciseQuestionDao.findByNumAndExerciseId(num, exerciseId);
 		
@@ -144,21 +144,15 @@ public class UpdateExerciseController {
 			@RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+		ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 
-		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
+//		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
-		if (!audio.isEmpty()) {
+		if (!audio.isEmpty() || !photo.isEmpty()) {
 
-			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
+			uploadfileS3(eq, audio, photo, exerciseQuestionId);
 			
-		}
-		// if photo change will update
-		if (!photo.isEmpty()) {
-			
-			uploadPhoto(eq, absolutePath, photo, exerciseQuestionId);
-			
-		}
+		}		
 		// update exercise question
 		exerciseQuestionDao.save(eq);
 
@@ -184,13 +178,12 @@ public class UpdateExerciseController {
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+		ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 
-		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
 		if (!audio.isEmpty()) {
 			
-			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
+			uploadfileS3(eq, audio, null, exerciseQuestionId);
 		}
 		// update exercise question
 		exerciseQuestionDao.save(eq);
@@ -217,13 +210,12 @@ public class UpdateExerciseController {
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
-		ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+		ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 
-		String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
 		// if audio change will update
 		if (!audio.isEmpty()) {
 
-			uploadAudio(eq, absolutePath, audio, exerciseQuestionId);
+			uploadfileS3(eq, audio, null, exerciseQuestionId);
 		}
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -256,7 +248,7 @@ public class UpdateExerciseController {
 		public String updateIncompleteSentence(Model model, @PathVariable("exerciseQuestionId") int exerciseQuestionId,
 				 @RequestParam Map<String, String> maps) {
 
-			ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+			ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 
 			// update exercise question detail. photo part just have one question.
 			ExerciseQuestionDetail eqd = exerciseQuestionDetailDao.findByExerciseQuestionId(exerciseQuestionId).get(0);
@@ -282,7 +274,7 @@ public class UpdateExerciseController {
 				 @RequestParam Map<String, String> maps) {
 
 			// save exercise question
-			ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+			ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 
 			eq.setParagraph(maps.get("paragraph"));
 			// update exercise question
@@ -315,7 +307,7 @@ public class UpdateExerciseController {
 				@RequestParam Map<String, String> maps) {
 
 			// save exercise question
-			ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+			ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 			eq.setParagraph(maps.get("paragraph"));
 			// update exercise question
 			exerciseQuestionDao.save(eq);
@@ -348,7 +340,7 @@ public class UpdateExerciseController {
 				@RequestParam Map<String, String> maps) {
 
 			// save exercise question
-			ExerciseQuestion eq = exerciseQuestionDao.findOne(exerciseQuestionId);
+			ExerciseQuestion eq = exerciseQuestionDao.findById(exerciseQuestionId);
 			eq.setParagraph(maps.get("paragraph1"));
 			eq.setParagraph2(maps.get("paragraph2"));
 			// update exercise question
@@ -399,7 +391,20 @@ public class UpdateExerciseController {
 		}
 	}
 	
-	private void uploadAudio(ExerciseQuestion eq, String absolutePath, MultipartFile audio, int  exerciseQuestionId) {
+	private void uploadfileS3(ExerciseQuestion eq, MultipartFile audio, MultipartFile photo, int exerciseQuestionId) {
+		
+		S3Service file_s3 = new S3Service();
+		
+		String audio_url = file_s3.uploadS3(audio, "exer", "audio", exerciseQuestionId);
+		eq.setAudio(audio_url);
+		
+		if (photo != null) {
+			String photo_url = file_s3.uploadS3(photo, "exer","photo", exerciseQuestionId);
+			eq.setPhoto(photo_url);
+		}
+	}	
+	
+/*	private void uploadAudio(ExerciseQuestion eq, String absolutePath, MultipartFile audio, int  exerciseQuestionId) {
 		String audioStorePath = absolutePath + "/audio/"+ "audio_"+exerciseQuestionId + ".mp3";
 		
 		Path pathAudio = Paths.get(audioStorePath);
@@ -409,7 +414,7 @@ public class UpdateExerciseController {
 
 		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
 		System.out.println(pathAudioFile);
-		String audio_url = audio_s3.uploadS3(pathAudioFile, "exer", "audio", exerciseQuestionId);
+		String audio_url = audio_s3.uploadS3(audio, "exer", "audio", exerciseQuestionId);
 		eq.setAudio(audio_url);
 	}
 	private void uploadPhoto (ExerciseQuestion eq, String absolutePath, MultipartFile photo, int  exerciseQuestionId) {
@@ -423,8 +428,8 @@ public class UpdateExerciseController {
 		String pathPhotoFile = absolutePath + "/photo/"+ File.separator + filePhotoName;
 		System.out.println(pathPhotoFile);			
 
-		String photo_url = photo_s3.uploadS3(pathPhotoFile, "exer","photo", exerciseQuestionId);
+		String photo_url = photo_s3.uploadS3(photo, "exer","photo", exerciseQuestionId);
 		eq.setPhoto(photo_url);
-	}
+	}*/
 
 }

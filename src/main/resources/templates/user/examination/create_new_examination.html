@@ -51,11 +51,11 @@
     <div class="col-md-9">
        <div class="profile-content">
        		<ul class="nav nav-tabs" style="font-size: 16px;">
-			    <li class="active" th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-input">Nhập thủ công</a></li>
-			    <li th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}"><a data-toggle="tab" href="#create-exer-file">Nhập file</a></li>
+			    <li class="active" th:classappend="${exam_module == 'create-exam-input' ? 'active' : ''}"><a data-toggle="tab" href="#create-exam-input">Nhập thủ công</a></li>
+			    <li th:classappend="${exam_module == 'create-exam-file' ? 'active' : ''}"><a data-toggle="tab" href="#create-exam-file">Nhập file</a></li>
 			</ul>
        		<div class="tab-content">
-		  	   <div id="create-exer-input" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-input' ? 'active' : ''}">
+		  	   <div id="create-exam-input" class="tab-pane fade in " th:classappend="${exam_module == 'create-exam-input' ? 'active' : ''}">
 		          <div class="exercise">
        
 			          <h3>Thông tin bài thi</h3>
@@ -81,7 +81,7 @@
           			</div>
           		</div>
           		
-          		<div id="create-exer-file" class="tab-pane fade in " th:classappend="${manager_module == 'create-exer-file' ? 'active' : ''}">
+          		<div id="create-exam-file" class="tab-pane fade in " th:classappend="${exam_module == 'create-exam-file' ? 'active' : ''}">
 	           		<h3 style="text-align: center; color: red">Nhập File</h3>
 		          	<br/>
 		          	<form th:action="@{/save-exam-file}" method="POST" enctype="multipart/form-data">
