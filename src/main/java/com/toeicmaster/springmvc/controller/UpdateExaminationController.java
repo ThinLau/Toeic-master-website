@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,8 @@ public class UpdateExaminationController {
 	ExaminationQuestionDetailDao examQuestionDetailDao;
 	
 	private StorageService storageService;
+	
+	int sameExam = 0;
 
 	@Autowired
 	public void FileUploadController(StorageService storageService) {
@@ -51,8 +54,10 @@ public class UpdateExaminationController {
 	@RequestMapping(value = "/update-examination/info", method = RequestMethod.GET)
 	public String exerciseInfo(HttpSession session, @RequestParam("id") int examId, Model model) {
 
+		model.addAttribute("sameExam", sameExam);	
 		Examination exam = examDao.findById(examId);
 		model.addAttribute("exam", exam);
+		sameExam = 0;
 		return "user/update/examination/examination_info";
 	}
 
@@ -60,15 +65,21 @@ public class UpdateExaminationController {
 	public String upadateExerciseInfo(HttpSession session, Model model, @ModelAttribute("exam") Examination exam) {
 
 		Examination entity = examDao.findById(exam.getId());
-		int examId = exam.getId();
-		if (entity != null) {
-			entity.setName(exam.getName());
-			entity.setNumberOfQuestion(exam.getNumberOfQuestion());
-			entity.setTimeOut(exam.getTimeOut());
-			examDao.save(entity);
-			examId = entity.getId();
+		int examId = exam.getId();		
+		if (entity != null) {		
+			if(exam.getName() == "" || examDao.findName(exam.getName()).size() >=1 ) {				
+				sameExam = 1;					
+			} else {			
+				entity.setName(exam.getName());
+				entity.setNumberOfQuestion(exam.getNumberOfQuestion());
+				entity.setTimeOut(exam.getTimeOut());
+				examDao.save(entity);
+				examId = entity.getId();
+				
+				sameExam = 0;				
+			}			
 		}
-
+		model.addAttribute("sameExam", sameExam);	
 		model.addAttribute("exam", exam);
 		return "redirect:/update-examination/info?id=" + examId;
 	}
@@ -124,7 +135,7 @@ public class UpdateExaminationController {
 
 	// update part 1: photo
 	@RequestMapping(value = "/update-examination-photo-part/{examQuestionId}", method = RequestMethod.POST)
-	public String saveQuestion(Model model, @PathVariable("examQuestionId") int examQuestionId,
+	public String saveQuestion( HttpServletRequest request,Model model, @PathVariable("examQuestionId") int examQuestionId,
 			@RequestParam("num") int num, @RequestParam("image_question") MultipartFile photo,
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
@@ -143,7 +154,7 @@ public class UpdateExaminationController {
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
 			
-			uploadfileS3(eq, absolutePath, audio, photo, examQuestionId);
+			uploadfileS3(request, eq, absolutePath, audio, photo, examQuestionId);
 		}		
 		// update exercise question
 		examQuestionDao.save(eq);
@@ -164,7 +175,7 @@ public class UpdateExaminationController {
 
 	// update part 2: question response
 	@RequestMapping(value = "/update-examination-question-response-part/{examQuestionId}", method = RequestMethod.POST)
-	public String updateQuestionResponse(Model model, @PathVariable("examQuestionId") int examQuestionId,
+	public String updateQuestionResponse(HttpServletRequest request,Model model, @PathVariable("examQuestionId") int examQuestionId,
 			@RequestParam("num") int num, @RequestParam("audio_question") MultipartFile audio,
 			@RequestParam Map<String, String> maps) {
 
@@ -177,7 +188,7 @@ public class UpdateExaminationController {
 			/*String audioStorePath = absolutePath + "/audio/" + "exam_audio_" + examQuestionId + "_update" + ".mp3";
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
-			uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
+			uploadfileS3(request, eq, absolutePath, audio, null, examQuestionId);
 			
 		}
 		// update exercise question
@@ -198,7 +209,7 @@ public class UpdateExaminationController {
 
 	// update part 3 & 4: short talk and conversation
 	@RequestMapping(value = "/update-examination-short-conversation-talk-part/{examQuestionId}", method = RequestMethod.POST)
-	public String updateShortConversationAndTalk(Model model, @PathVariable("examQuestionId") int examQuestionId,
+	public String updateShortConversationAndTalk(HttpServletRequest request,Model model, @PathVariable("examQuestionId") int examQuestionId,
 			@RequestParam("num") int num, @RequestParam("audio_question") MultipartFile audio,
 			@RequestParam Map<String, String> maps) {
 
@@ -212,7 +223,7 @@ public class UpdateExaminationController {
 			storeFile(audio, audioStorePath);
 			eq.setAudio("exam_audio_" + examQuestionId + "_update" + ".mp3");*/
 			
-			uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
+			uploadfileS3(request, eq, absolutePath, audio, null, examQuestionId);
 		}
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -374,23 +385,17 @@ public class UpdateExaminationController {
 		}
 	}
 	
-	private void uploadfileS3(ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
+	private void uploadfileS3(HttpServletRequest request,ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
 			
-			/*String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();		
-			Path pathAudio = Paths.get(audioStorePath);
-			String fileAudioName = storageService.store(pathAudio, audio);	
-			String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
-			System.out.println(pathAudioFile);*/
+		S3Service file_s3 = new S3Service();
 		
-			S3Service file_s3 = new S3Service();
-			
-			String audio_url = file_s3.uploadS3(audio, "exam", "audio", examQuestionId);
-			eq.setAudio(audio_url);
-			if(photo != null) {
-				String photo_url = file_s3.uploadS3(photo, "exam", "photo", examQuestionId);
-				eq.setPhoto(photo_url);
-			}
-	
+		String audio_url = file_s3.uploadS3(request, audio, "exam", "audio", examQuestionId);
+		eq.setAudio(audio_url);
+		
+		if (photo != null) {
+			String photo_url = file_s3.uploadS3(request, photo, "exam","photo", examQuestionId);
+			eq.setPhoto(photo_url);
+		}					
 	}	
 /*private void uploadAudio(ExaminationQuestion eq, String absolutePath, MultipartFile audio, int  examQuestionId) {
 		

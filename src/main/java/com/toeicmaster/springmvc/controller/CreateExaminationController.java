@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -65,6 +66,8 @@ public class CreateExaminationController {
 	
 	private int quesNum = 0;
 	private int examNumberOfQuestion = 0;
+	int sameExam = 0;
+	String iputOrfile = "input";
 
 	@RequestMapping(value = "/new-examination-page", method = RequestMethod.GET)
 	public String newExercisePage(HttpSession session, Model model) {
@@ -77,7 +80,14 @@ public class CreateExaminationController {
 		model.addAttribute("exam", exam);
 		model.addAttribute("user", user);
 		model.addAttribute("module", "new-examination");
-		model.addAttribute( "exam_module","create-exam-input");
+		
+		if (iputOrfile == "input")
+			model.addAttribute( "exam_module","create-exam-input");
+		else
+			model.addAttribute( "exam_module","create-exam-file");
+		model.addAttribute("sameExam",sameExam);
+		sameExam = 0;
+		iputOrfile = "input";
 		return "user/examination/create_new_examination";
 	}
 
@@ -85,7 +95,14 @@ public class CreateExaminationController {
 	public String saveExercise(HttpSession session, Model model, @ModelAttribute("exam") Examination exam) {
 		if (session.getAttribute("user") == null)
 			return "login/login";
-
+		
+		String return_page = "";
+		if(examDao.findName(exam.getName()).size() >= 1) {
+			sameExam = 1;			
+			model.addAttribute("sameExam", sameExam);
+			return_page = "redirect:/new-examination-page";	
+		} else {
+		
 		DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = new Date();
 
@@ -98,582 +115,15 @@ public class CreateExaminationController {
 
 		examDao.save(exam);
 
-		model.addAttribute("exam", exam);
-		return "redirect:/new-examination/info?id=" + exam.getId();
-	}
-	
-	@RequestMapping(value="/save-exam-file", method=RequestMethod.POST)
-	public String saveExerciseFile(HttpSession session , Model model, 
-			@RequestParam("file") MultipartFile file, @RequestParam("sheetname") String sheetname) {
-		if(session.getAttribute("user") == null)
-			return "login/login";
-		Examination exam = new Examination();
-		ExaminationQuestion eq = new ExaminationQuestion();
-		ExaminationQuestionDetail eqd = new ExaminationQuestionDetail();
-		User user = (User) session.getAttribute("user");
-		int temp = 0;	
-		int num = 0;
-				
-		try {
-			Workbook workbook = null;
-			try {
-				workbook = WorkbookFactory.create(file.getInputStream());
-			} catch (InvalidFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			Sheet worksheet = workbook.getSheet(sheetname);	
-			
-			Row row; 
-			row = (Row) worksheet.getRow(0);			
-			exam.setName(row.getCell(2).toString());
-			
-			row = (Row) worksheet.getRow(1);
-			int timeOut = (int) Double.parseDouble(row.getCell(2).toString());
-			exam.setTimeOut(timeOut);
-			
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			Date date = new Date();
-			String dateCreate = dateFormat.format(date);
-			exam.setDateCreate(dateCreate);
-			
-			exam.setNumberOfQuestion(200);
-			exam.setAuthor(user.getId());
-
-			examDao.save(exam);
-			
-			int num_in_exam = 0;
-			int numsmallQues = 0;
-			String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
-			
-			//Part 1
-			
-			/*for(int i=3; i< 3+10; i++) {
-				num_in_exam++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());
-				eq.setSubQuestion(1);
-				eq.setNum(i-2);			
-				eq.setPart(1);				
-				examQuestionDao.save(eq);
-				
-				row = (Row) worksheet.getRow(i);
-				
-				if( row.getCell(1)==null) { eq.setPhoto(null);}  //suppose excel cell is empty then its set to 0 the variable
-                else {
-             	   File fi = new File(row.getCell(1).toString());
-             	   FileInputStream input = new FileInputStream(fi);
-             	   MultipartFile photoFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
-
-             	   uploadPhoto(eq, absolutePath, photoFile, eq.getId());
-                }	
-				
-				if( row.getCell(2)==null) { eq.setAudio(null);}  //suppose excel cell is empty then its set to 0 the variable
-                   else {           
-                	   File fi = new File(row.getCell(2).toString());
-                	   System.out.println(fi.getName());
-                	   
-                	   FileInputStream input = new FileInputStream(fi);
-                	   MultipartFile audioFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
-                	   
-                	   System.out.println(audioFile.getOriginalFilename());
-                	   uploadAudio(eq, absolutePath, audioFile, eq.getId());
-                   }		
-				
-				examQuestionDao.save(eq);
-				
-				eqd = new ExaminationQuestionDetail();	
-				temp++;
-				
-				String option_1;
-				if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_1 = row.getCell(7).toString();
-				
-				String option_2;
-				if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_2 = row.getCell(8).toString();
-				
-				String option_3;
-				if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_3 = row.getCell(9).toString();
-				
-				String option_4;
-				if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_4 = row.getCell(10).toString();
-				
-				String correct_answer;
-				if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else correct_answer = row.getCell(11).toString();
-					
-				eqd.setNum(temp);
-				eqd.setNumInExam(num_in_exam);
-				eqd.setOption1(option_1);
-				eqd.setOption2(option_2);
-				eqd.setOption3(option_3);
-				eqd.setOption4(option_4);
-				eqd.setCorrectAnswer(correct_answer);
-				eqd.setExamQuestionId(eq.getId());
-				eqd.setExamId(exam.getId());
-				examQuestionDetailDao.save(eqd);					
-			}
-			//------------------//------------------------//----------------
-			// Part 2
-			temp = 0;
-			num = 0;
-			for (int i = 13; i < (13 + 30); i++) {
-				num_in_exam++;
-				num++;
-				eq = new ExaminationQuestion();				
-				eq.setExamId(exam.getId());
-				eq.setSubQuestion(1);
-				eq.setNum(num);				
-				eq.setPart(2);
-				examQuestionDao.save(eq);
-				row = (Row) worksheet.getRow(i);
-								
-				if( row.getCell(2)==null) { eq.setAudio(null);}  //suppose excel cell is empty then its set to 0 the variable
-                   else {           
-                	   File fi = new File(row.getCell(2).toString());
-                	   System.out.println(fi.getName());
-                	   
-                	   FileInputStream input = new FileInputStream(fi);
-                	   MultipartFile audioFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
-                	   
-                	   System.out.println(audioFile.getOriginalFilename());
-                	   uploadAudio(eq, absolutePath, audioFile, eq.getId());
-                   }	
-				examQuestionDao.save(eq);				
-			
-				eqd = new ExaminationQuestionDetail();	
-				temp++;
-				
-				String option_1;
-				if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_1 = row.getCell(7).toString();
-				
-				String option_2;
-				if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_2 = row.getCell(8).toString();
-				
-				String option_3;
-				if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_3 = row.getCell(9).toString();												
-				
-				String correct_answer;
-				if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else correct_answer = row.getCell(11).toString();
-					
-				eqd.setNum(temp);
-				eqd.setNumInExam(num_in_exam);
-				eqd.setOption1(option_1);
-				eqd.setOption2(option_2);
-				eqd.setOption3(option_3);						
-				eqd.setCorrectAnswer(correct_answer);
-				eqd.setExamQuestionId(eq.getId());
-				eq.setExamId(exam.getId());
-				examQuestionDetailDao.save(eqd);
-			}
-			//------------------------------//--------------------------------------
-			// Part 3
-								
-			num = 0;
-			for (int i = 43; i < 43+30; i=i+3)
-			{
-				row = (Row) worksheet.getRow(i);
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(3);
-				eq.setParagraph(row.getCell(3).toString());		
-				eq.setPart(3);
-				examQuestionDao.save(eq);
-				
-				
-				if( row.getCell(2)==null) { eq.setAudio(null);}  //suppose excel cell is empty then its set to 0 the variable
-                   else {           
-                	   File fi = new File(row.getCell(2).toString());
-                	   System.out.println(fi.getName());
-                	   
-                	   FileInputStream input = new FileInputStream(fi);
-                	   MultipartFile audioFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
-                	   
-                	   System.out.println(audioFile.getOriginalFilename());
-                	   uploadAudio(eq, absolutePath, audioFile, eq.getId());
-                	   examQuestionDao.save(eq);		
-                   }	
-				
-				for(int j= i; j< i+3; j++) {		
-					num_in_exam++;
-					
-					row = (Row) worksheet.getRow(j);
-					eqd = new ExaminationQuestionDetail();	
-					temp++;
-					
-					String question;
-					if( row.getCell(6)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else question = row.getCell(6).toString();
-					
-					String option_1;
-					if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_1 = row.getCell(7).toString();
-					
-					String option_2;
-					if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_2 = row.getCell(8).toString();
-					
-					String option_3;
-					if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_3 = row.getCell(9).toString();
-					
-					String option_4;
-					if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_4 = row.getCell(10).toString();
-					
-					String correct_answer;
-					if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else correct_answer = row.getCell(11).toString();
-						
-					eqd.setNum(temp);
-					eqd.setNumInExam(num_in_exam);
-					eqd.setQuestion(question);
-					eqd.setOption1(option_1);
-					eqd.setOption2(option_2);
-					eqd.setOption3(option_3);
-					eqd.setOption4(option_4);
-					eqd.setCorrectAnswer(correct_answer);
-					eqd.setExamQuestionId(eq.getId());
-					eqd.setExamId(exam.getId());
-					examQuestionDetailDao.save(eqd);
-				}			
-			}
-			//----------------------------//---------------------------
-			//Part 4
-			
-			num = 0;
-			for (int i = 73; i < 73+30; i=i+3)
-			{
-				row = (Row) worksheet.getRow(i);
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(3);
-				eq.setParagraph(row.getCell(3).toString());		
-				eq.setPart(4);
-				examQuestionDao.save(eq);
-				
-				
-				if( row.getCell(2)==null) { eq.setAudio(null);}  //suppose excel cell is empty then its set to 0 the variable
-                   else {           
-                	   File fi = new File(row.getCell(2).toString());
-                	   System.out.println(fi.getName());
-                	   
-                	   FileInputStream input = new FileInputStream(fi);
-                	   MultipartFile audioFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
-                	   
-                	   System.out.println(audioFile.getOriginalFilename());
-                	   uploadAudio(eq, absolutePath, audioFile, eq.getId());
-                	   examQuestionDao.save(eq);		
-                   }	
-				
-				for(int j= i; j< i+3; j++) {		
-					num_in_exam++;
-					
-					row = (Row) worksheet.getRow(j);
-					eqd = new ExaminationQuestionDetail();	
-					temp++;
-					
-					String question;
-					if( row.getCell(6)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else question = row.getCell(6).toString();
-					
-					String option_1;
-					if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_1 = row.getCell(7).toString();
-					
-					String option_2;
-					if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_2 = row.getCell(8).toString();
-					
-					String option_3;
-					if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_3 = row.getCell(9).toString();
-					
-					String option_4;
-					if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_4 = row.getCell(10).toString();
-					
-					String correct_answer;
-					if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else correct_answer = row.getCell(11).toString();
-						
-					eqd.setNum(temp);
-					eqd.setNumInExam(num_in_exam);
-					eqd.setQuestion(question);
-					eqd.setOption1(option_1);
-					eqd.setOption2(option_2);
-					eqd.setOption3(option_3);
-					eqd.setOption4(option_4);
-					eqd.setCorrectAnswer(correct_answer);
-					eqd.setExamQuestionId(eq.getId());
-					eqd.setExamId(exam.getId());
-					examQuestionDetailDao.save(eqd);
-				}			
-			}
-			//-------------------------------------//----------------------------------------
-			//Part5
-			
-			num = 0;
-			for(int i = 103; i < (103+40) ; i++) {
-				row = (Row) worksheet.getRow(i);
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(1);				
-				eq.setPart(5);
-				examQuestionDao.save(eq);
-				
-				eqd = new ExaminationQuestionDetail();	
-				temp++;
-				num_in_exam++;
-				
-				String question;
-				if( row.getCell(6)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else question = row.getCell(6).toString();
-				
-				
-				String option_1;
-				if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_1 = row.getCell(7).toString();
-				
-				String option_2;
-				if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_2 = row.getCell(8).toString();
-				
-				String option_3;
-				if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_3 = row.getCell(9).toString();
-				
-				String option_4;
-				if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else option_4 = row.getCell(10).toString();
-				
-				String correct_answer;
-				if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-	                else correct_answer = row.getCell(11).toString();
-					
-				eqd.setNum(temp);
-				eqd.setNumInExam(num_in_exam);
-				eqd.setQuestion(question);
-				eqd.setOption1(option_1);
-				eqd.setOption2(option_2);
-				eqd.setOption3(option_3);
-				eqd.setOption4(option_4);
-				eqd.setCorrectAnswer(correct_answer);
-				eqd.setExamId(exam.getId());
-				eqd.setExamQuestionId(eq.getId());
-				examQuestionDetailDao.save(eqd);
-			}
-			//--------------------------//-------------------------------------------
-			//Part 6
-						
-			num = 0;
-			numsmallQues = 0;
-			for (int i = 143; i < (143 + 12); i = (i + numsmallQues))
-			{					
-				row = (Row) worksheet.getRow(i);
-				
-				numsmallQues = (int) Double.parseDouble(row.getCell(5).toString());	 	// so cau hoi nho
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(numsmallQues);
-				eq.setParagraph(row.getCell(3).toString());
-				eq.setPart(6);
-				examQuestionDao.save(eq);
-															
-				for(int j= i; j< i + numsmallQues; j++) {													
-					row = (Row) worksheet.getRow(j);
-					eqd = new ExaminationQuestionDetail();	
-					temp++;	
-					num_in_exam++;
-					
-					String option_1;
-					if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_1 = row.getCell(7).toString();
-					
-					String option_2;
-					if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_2 = row.getCell(8).toString();
-					
-					String option_3;
-					if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_3 = row.getCell(9).toString();
-					
-					String option_4;
-					if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_4 = row.getCell(10).toString();
-					
-					String correct_answer;
-					if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else correct_answer = row.getCell(11).toString();
-						
-					eqd.setNum(temp);
-					eqd.setNumInExam(num_in_exam);
-					eqd.setOption1(option_1);
-					eqd.setOption2(option_2);
-					eqd.setOption3(option_3);
-					eqd.setOption4(option_4);
-					eqd.setCorrectAnswer(correct_answer);
-					eqd.setExamQuestionId(eq.getId());
-					eqd.setExamId(exam.getId());
-					examQuestionDetailDao.save(eqd);
-				}				
-			}*/
-			//-----------------------------------//------------------------------
-			//Part7
-			
-			num = 0;
-			numsmallQues = 0;
-			for (int i = 155; i < (155 + 28); i= (i + numsmallQues))
-			{					
-				row = (Row) worksheet.getRow(i);
-				// so cau hoi nho
-				numsmallQues = (int) Double.parseDouble(row.getCell(5).toString());	
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(numsmallQues);
-				eq.setParagraph(row.getCell(3).toString());
-				eq.setPart(7);
-				examQuestionDao.save(eq);
-															
-				for(int j= i; j< (i + numsmallQues); j++) {													
-					row = (Row) worksheet.getRow(j);
-					eqd = new ExaminationQuestionDetail();	
-					temp++;
-					num_in_exam++;
-					
-					String question;
-					if( row.getCell(6)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else question = row.getCell(6).toString();
-					
-					String option_1;
-					if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_1 = row.getCell(7).toString();
-					
-					String option_2;
-					if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_2 = row.getCell(8).toString();
-					
-					String option_3;
-					if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_3 = row.getCell(9).toString();
-					
-					String option_4;
-					if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_4 = row.getCell(10).toString();
-					
-					String correct_answer;
-					if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else correct_answer = row.getCell(11).toString();
-						
-					eqd.setNum(temp);
-					eqd.setNumInExam(num_in_exam);
-					eqd.setQuestion(question);
-					eqd.setOption1(option_1);
-					eqd.setOption2(option_2);
-					eqd.setOption3(option_3);
-					eqd.setOption4(option_4);
-					eqd.setCorrectAnswer(correct_answer);
-					eqd.setExamQuestionId(eq.getId());
-					eqd.setExamId(exam.getId());
-					examQuestionDetailDao.save(eqd);
-				}			
-			}
-			//-------------------------------------//-----------------------
-			//Part8
-			
-			/*numsmallQues = 0;
-			num = 0;
-			for (int i = 183; i < (183 + 20); i = i+ numsmallQues)
-			{					
-				row = (Row) worksheet.getRow(i);
-				// so cau hoi nho
-				numsmallQues = (int) Double.parseDouble(row.getCell(5).toString());	
-				temp = 0;
-				num++;
-				eq = new ExaminationQuestion();
-				eq.setExamId(exam.getId());				
-				eq.setNum(num);	
-				eq.setSubQuestion(numsmallQues);
-				eq.setParagraph(row.getCell(3).toString());
-				eq.setParagraph2(row.getCell(4).toString());
-				eq.setPart(8);
-				examQuestionDao.save(eq);
-															
-				for(int j= i; j< (i + numsmallQues); j++) {													
-					row = (Row) worksheet.getRow(j);
-					eqd = new ExaminationQuestionDetail();	
-					temp++;
-					
-					String question;
-					if( row.getCell(6)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else question = row.getCell(6).toString();
-					
-					String option_1;
-					if( row.getCell(7)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_1 = row.getCell(7).toString();
-					
-					String option_2;
-					if( row.getCell(8)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_2 = row.getCell(8).toString();
-					
-					String option_3;
-					if( row.getCell(9)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_3 = row.getCell(9).toString();
-					
-					String option_4;
-					if( row.getCell(10)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else option_4 = row.getCell(10).toString();
-					
-					String correct_answer;
-					if( row.getCell(11)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
-		                else correct_answer = row.getCell(11).toString();
-						
-					eqd.setNum(temp);
-					eqd.setNumInExam(num_in_exam);
-					eqd.setQuestion(question);
-					eqd.setOption1(option_1);
-					eqd.setOption2(option_2);
-					eqd.setOption3(option_3);
-					eqd.setOption4(option_4);
-					eqd.setCorrectAnswer(correct_answer);
-					eqd.setExamQuestionId(eq.getId());
-					eqd.setExamId(exam.getId());
-					examQuestionDetailDao.save(eqd);
-				}
-			}				*/
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		sameExam = 0;
+		model.addAttribute("exam", exam);	
+		model.addAttribute("sameExam",sameExam);
+		return_page =  "redirect:/new-examination/info?id=" + exam.getId();
 		}
-		model.addAttribute( "exam_module","create-exam-file");
-		model.addAttribute("user", user);
-		return "redirect:/new-examination-page";
+		iputOrfile = "input";
+		return return_page;
 	}
 	
-
 	@RequestMapping(value = "/new-examination/info", method = RequestMethod.GET)
 	public String exerciseInfo(HttpSession session, @RequestParam("id") int examId, Model model) {
 		if (session.getAttribute("user") == null)
@@ -760,7 +210,7 @@ public class CreateExaminationController {
 
 	// save photo question.
 	@RequestMapping(value = "/save-examination-photo-part/{part}/{num}/{currQuestion}", method = RequestMethod.POST)
-	public String saveExaminationPhotoQuestion(@PathVariable("part") String partName, @PathVariable("num") int num,
+	public String saveExaminationPhotoQuestion(HttpServletRequest request,@PathVariable("part") String partName, @PathVariable("num") int num,
 			@PathVariable("currQuestion") int currQuestion, @RequestParam("id") int examId, Model model, 
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam("image_question") MultipartFile photo, @RequestParam Map<String, String> maps) {
 		
@@ -780,7 +230,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadfileS3(eq, absolutePath, audio, photo, examQuestionId);				
+		uploadfileS3(request, eq, absolutePath, audio, photo, examQuestionId);				
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -796,16 +246,7 @@ public class CreateExaminationController {
 		eqd.setExamQuestionId(examQuestionId);
 
 		examQuestionDetailDao.save(eqd);
-		
-		try {
-			File Pfile = convertMultiPartToFile(photo);
-			File Afile = convertMultiPartToFile(audio);
-			Afile.delete();
-			Pfile.delete();
-		} catch (IOException e) {			
-			e.printStackTrace();
-		}
-		
+						
 		Examination exam = examDao.findById(examId);	
 		examNumberOfQuestion++;
 		exam.setNumberOfQuestion(examNumberOfQuestion);
@@ -816,7 +257,7 @@ public class CreateExaminationController {
 
 	// save question response question.
 	@RequestMapping(value = "/save-examination-question-response-part/{part}/{num}/{currQuestion}", method = RequestMethod.POST)
-	public String saveExaminationQuestionResponseQuestion(@PathVariable("currQuestion") int currQuestion, 
+	public String saveExaminationQuestionResponseQuestion(HttpServletRequest request, @PathVariable("currQuestion") int currQuestion, 
 			@PathVariable("part") String partName, @PathVariable("num") int num, @RequestParam("id") int examId, Model model,
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
@@ -837,7 +278,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
+		uploadfileS3(request, eq, absolutePath, audio, null, examQuestionId);
 
 		examQuestionDao.save(eq);
 		// save exam question detail
@@ -864,7 +305,7 @@ public class CreateExaminationController {
 
 	// save short conversation and short talk question.
 	@RequestMapping(value = "/save-examination-short-conversation-and-talk-part/{part}/{num}/{currQuestion}", method = RequestMethod.POST)
-	public String saveExaminationShortConversationAndTalkQuestion(@PathVariable("part") String partName,
+	public String saveExaminationShortConversationAndTalkQuestion(HttpServletRequest request, @PathVariable("part") String partName,
 			@PathVariable("num") int num, @RequestParam("id") int examId, Model model, @PathVariable("currQuestion") int currQuestion,
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
@@ -890,7 +331,7 @@ public class CreateExaminationController {
 		storeFile(audio, audioStorePath);
 		eq.setAudio("exam_audio_" + examId + "_" + examQuestionId + ".mp3");*/
 		
-		uploadfileS3(eq, absolutePath, audio, null, examQuestionId);
+		uploadfileS3(request, eq, absolutePath, audio, null, examQuestionId);
 
 		examQuestionDao.save(eq);
 
@@ -1116,30 +557,563 @@ public class CreateExaminationController {
 		}
 	}
 
-	private void uploadfileS3(ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
+	private void uploadfileS3(HttpServletRequest request, ExaminationQuestion eq, String absolutePath, MultipartFile audio, MultipartFile photo, int  examQuestionId) {
 		
-		/*String audioStorePath = absolutePath + "/audio/"+ audio.getOriginalFilename();		
-		Path pathAudio = Paths.get(audioStorePath);
-		String fileAudioName = storageService.store(pathAudio, audio);	
-		String pathAudioFile = absolutePath + "/audio/"+ File.separator + fileAudioName;
-		System.out.println(pathAudioFile);*/
-	
 		S3Service file_s3 = new S3Service();
 		
-		String audio_url = file_s3.uploadS3(audio, "exam", "audio", examQuestionId);
+		String audio_url = file_s3.uploadS3(request, audio, "exam", "audio", examQuestionId);
 		eq.setAudio(audio_url);
-		if(photo != null) {
-			String photo_url = file_s3.uploadS3(photo, "exam", "photo", examQuestionId);
+		
+		if (photo != null) {
+			String photo_url = file_s3.uploadS3(request, photo, "exam","photo", examQuestionId);
 			eq.setPhoto(photo_url);
-		}
-
+		}		
 	}
 	
-	private File convertMultiPartToFile(MultipartFile file) throws IOException {
-	    File convFile = new File(file.getOriginalFilename());
-	    FileOutputStream fos = new FileOutputStream(convFile);
-	    fos.write(file.getBytes());
-	    fos.close();
-	    return convFile;
+	
+	
+	@RequestMapping(value="/save-exam-file", method=RequestMethod.POST)
+	public String saveExerciseFile(HttpSession session , Model model, 
+			@RequestParam("file") MultipartFile file) {
+		if(session.getAttribute("user") == null)
+			return "login/login";
+		Examination exam = new Examination();
+		ExaminationQuestion eq = new ExaminationQuestion();
+		ExaminationQuestionDetail eqd = new ExaminationQuestionDetail();
+		User user = (User) session.getAttribute("user");
+		int temp = 0;	
+		int num = 0;
+		String return_page = "redirect:/new-examination-page";
+				
+		try {
+			Workbook workbook = null;
+			try {
+				workbook = WorkbookFactory.create(file.getInputStream());
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Sheet worksheet = workbook.getSheetAt(0);	
+			
+			Row row; 
+			row = (Row) worksheet.getRow(1);		
+			
+						
+			if (row == null || examDao.findName(row.getCell(1).toString()).size() >=1 || row.getCell(1).toString() == "") { 
+				sameExam = 1;	
+				model.addAttribute("sameExam", sameExam);
+				return_page = "redirect:/new-examination-page";										
+			} else if (row.getCell(2).toString() == "") { 
+					sameExam = 2;	
+					model.addAttribute("sameExam", sameExam);
+					return_page = "redirect:/new-examination-page";												
+				} else if (row.getCell(3).toString() == "") { 
+						sameExam = 3;	
+						model.addAttribute("sameExam", sameExam);
+						return_page = "redirect:/new-examination-page";														
+					} else {													
+						exam.setName(row.getCell(1).toString());									
+						DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+						Date date = new Date();
+						String dateCreate = dateFormat.format(date);
+						exam.setDateCreate(dateCreate);			
+						exam.setNumberOfQuestion((int) Double.parseDouble(row.getCell(3).toString()));
+						int timeOut = (int) Double.parseDouble(row.getCell(2).toString());
+						exam.setTimeOut(timeOut);		
+						exam.setAuthor(user.getId());
+						examDao.save(exam);											
+						
+						int num_in_exam = 0;
+						int numsmallQues = 0;
+			//			String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
+						
+						//Part 1
+						
+						for(int i=3; i< 3+10; i++) {
+							num_in_exam++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());
+							eq.setSubQuestion(1);
+							eq.setNum(i-2);			
+							eq.setPart(1);				
+							examQuestionDao.save(eq);
+							
+							row = (Row) worksheet.getRow(i);
+							/*
+							if( row.getCell(1)==null) { eq.setPhoto(null);}  //suppose excel cell is empty then its set to 0 the variable
+			                else {
+			             	   File fi = new File(row.getCell(1).toString());
+			             	   FileInputStream input = new FileInputStream(fi);
+			             	   MultipartFile photoFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
+			
+			             	   uploadPhoto(eq, absolutePath, photoFile, eq.getId());
+			                }	
+							
+							if( row.getCell(2)==null) { eq.setAudio(null);}  //suppose excel cell is empty then its set to 0 the variable
+			                   else {           
+			                	   File fi = new File(row.getCell(2).toString());
+			                	   System.out.println(fi.getName());
+			                	   
+			                	   FileInputStream input = new FileInputStream(fi);
+			                	   MultipartFile audioFile = new MockMultipartFile(fi.getName(),fi.getName(), "text/plain", IOUtils.toByteArray(input));                	                   	   
+			                	   
+			                	   System.out.println(audioFile.getOriginalFilename());
+			                	   uploadAudio(eq, absolutePath, audioFile, eq.getId());
+			                   }		
+							
+							examQuestionDao.save(eq);*/
+							
+							eqd = new ExaminationQuestionDetail();	
+							temp++;
+							
+							String option_1;
+							if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_1 = row.getCell(5).toString();
+							
+							String option_2;
+							if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_2 = row.getCell(6).toString();
+							
+							String option_3;
+							if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_3 = row.getCell(7).toString();
+							
+							String option_4;
+							if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_4 = row.getCell(8).toString();
+							
+							String correct_answer;
+							if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else correct_answer = row.getCell(9).toString();
+								
+							eqd.setNum(temp);
+							eqd.setNumInExam(num_in_exam);
+							eqd.setOption1(option_1);
+							eqd.setOption2(option_2);
+							eqd.setOption3(option_3);
+							eqd.setOption4(option_4);
+							eqd.setCorrectAnswer(correct_answer);
+							eqd.setExamQuestionId(eq.getId());
+							eqd.setExamId(exam.getId());
+							examQuestionDetailDao.save(eqd);					
+						}
+						//------------------//------------------------//----------------
+						// Part 2
+						temp = 0;
+						num = 0;
+						for (int i = 13; i < (13 + 30); i++) {
+							num_in_exam++;
+							num++;
+							eq = new ExaminationQuestion();				
+							eq.setExamId(exam.getId());
+							eq.setSubQuestion(1);
+							eq.setNum(num);				
+							eq.setPart(2);
+							examQuestionDao.save(eq);
+							row = (Row) worksheet.getRow(i);
+								
+						
+							eqd = new ExaminationQuestionDetail();	
+							temp++;
+							
+							String option_1;
+							if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_1 = row.getCell(5).toString();
+							
+							String option_2;
+							if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_2 = row.getCell(6).toString();
+							
+							String option_3;
+							if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_3 = row.getCell(7).toString();												
+							
+							String correct_answer;
+							if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else correct_answer = row.getCell(9).toString();
+								
+							eqd.setNum(temp);
+							eqd.setNumInExam(num_in_exam);
+							eqd.setOption1(option_1);
+							eqd.setOption2(option_2);
+							eqd.setOption3(option_3);						
+							eqd.setCorrectAnswer(correct_answer);
+							eqd.setExamQuestionId(eq.getId());
+							eq.setExamId(exam.getId());
+							examQuestionDetailDao.save(eqd);
+						}
+						//------------------------------//--------------------------------------
+						// Part 3
+											
+						num = 0;
+						for (int i = 43; i < 43+30; i=i+3)
+						{
+							row = (Row) worksheet.getRow(i);
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(3);
+							eq.setParagraph(row.getCell(3).toString());		
+							eq.setPart(3);
+							examQuestionDao.save(eq);
+							
+							
+							for(int j= i; j< i+3; j++) {		
+								num_in_exam++;
+								
+								row = (Row) worksheet.getRow(j);
+								eqd = new ExaminationQuestionDetail();	
+								temp++;
+								
+								String question;
+								if( row.getCell(4)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else question = row.getCell(4).toString();
+								
+								String option_1;
+								if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_1 = row.getCell(5).toString();
+								
+								String option_2;
+								if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_2 = row.getCell(6).toString();
+								
+								String option_3;
+								if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_3 = row.getCell(7).toString();
+								
+								String option_4;
+								if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_4 = row.getCell(8).toString();
+								
+								String correct_answer;
+								if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else correct_answer = row.getCell(9).toString();
+									
+								eqd.setNum(temp);
+								eqd.setNumInExam(num_in_exam);
+								eqd.setQuestion(question);
+								eqd.setOption1(option_1);
+								eqd.setOption2(option_2);
+								eqd.setOption3(option_3);
+								eqd.setOption4(option_4);
+								eqd.setCorrectAnswer(correct_answer);
+								eqd.setExamQuestionId(eq.getId());
+								eqd.setExamId(exam.getId());
+								examQuestionDetailDao.save(eqd);
+							}			
+						}
+						//----------------------------//---------------------------
+						//Part 4
+						
+						num = 0;
+						for (int i = 73; i < 73+30; i=i+3)
+						{
+							row = (Row) worksheet.getRow(i);
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(3);
+							eq.setParagraph(row.getCell(3).toString());		
+							eq.setPart(4);
+							examQuestionDao.save(eq);
+							
+											
+							for(int j= i; j< i+3; j++) {		
+								num_in_exam++;
+								
+								row = (Row) worksheet.getRow(j);
+								eqd = new ExaminationQuestionDetail();	
+								temp++;
+								
+								String question;
+								if( row.getCell(4)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else question = row.getCell(4).toString();
+								
+								String option_1;
+								if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_1 = row.getCell(5).toString();
+								
+								String option_2;
+								if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_2 = row.getCell(6).toString();
+								
+								String option_3;
+								if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_3 = row.getCell(7).toString();
+								
+								String option_4;
+								if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_4 = row.getCell(8).toString();
+								
+								String correct_answer;
+								if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else correct_answer = row.getCell(9).toString();
+									
+								eqd.setNum(temp);
+								eqd.setNumInExam(num_in_exam);
+								eqd.setQuestion(question);
+								eqd.setOption1(option_1);
+								eqd.setOption2(option_2);
+								eqd.setOption3(option_3);
+								eqd.setOption4(option_4);
+								eqd.setCorrectAnswer(correct_answer);
+								eqd.setExamQuestionId(eq.getId());
+								eqd.setExamId(exam.getId());
+								examQuestionDetailDao.save(eqd);
+							}			
+						}
+						//-------------------------------------//----------------------------------------
+						//Part5
+						
+						num = 0;
+						for(int i = 103; i < (103+40) ; i++) {
+							row = (Row) worksheet.getRow(i);
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(1);				
+							eq.setPart(5);
+							examQuestionDao.save(eq);
+							
+							eqd = new ExaminationQuestionDetail();	
+							temp++;
+							num_in_exam++;
+							
+							String question;
+							if( row.getCell(4)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else question = row.getCell(4).toString();
+							
+							String option_1;
+							if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_1 = row.getCell(5).toString();
+							
+							String option_2;
+							if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_2 = row.getCell(6).toString();
+							
+							String option_3;
+							if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_3 = row.getCell(7).toString();
+							
+							String option_4;
+							if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else option_4 = row.getCell(8).toString();
+							
+							String correct_answer;
+							if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+				                else correct_answer = row.getCell(9).toString();
+								
+							eqd.setNum(temp);
+							eqd.setNumInExam(num_in_exam);
+							eqd.setQuestion(question);
+							eqd.setOption1(option_1);
+							eqd.setOption2(option_2);
+							eqd.setOption3(option_3);
+							eqd.setOption4(option_4);
+							eqd.setCorrectAnswer(correct_answer);
+							eqd.setExamId(exam.getId());
+							eqd.setExamQuestionId(eq.getId());
+							examQuestionDetailDao.save(eqd);
+						}
+						//--------------------------//-------------------------------------------
+						//Part 6
+									
+						num = 0;
+						numsmallQues = 0;
+						for (int i = 143; i < (143 + 12); i = (i + numsmallQues))
+						{					
+							row = (Row) worksheet.getRow(i);
+							
+							numsmallQues = (int) Double.parseDouble(row.getCell(3).toString());	 	// so cau hoi nho
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(numsmallQues);
+							eq.setParagraph(row.getCell(1).toString());
+							eq.setPart(6);
+							examQuestionDao.save(eq);
+																		
+							for(int j= i; j< i + numsmallQues; j++) {													
+								row = (Row) worksheet.getRow(j);
+								eqd = new ExaminationQuestionDetail();	
+								temp++;	
+								num_in_exam++;
+													
+								String option_1;
+								if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_1 = row.getCell(5).toString();
+								
+								String option_2;
+								if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_2 = row.getCell(6).toString();
+								
+								String option_3;
+								if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_3 = row.getCell(7).toString();
+								
+								String option_4;
+								if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_4 = row.getCell(8).toString();
+								
+								String correct_answer;
+								if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else correct_answer = row.getCell(9).toString();
+									
+								eqd.setNum(temp);
+								eqd.setNumInExam(num_in_exam);
+								eqd.setOption1(option_1);
+								eqd.setOption2(option_2);
+								eqd.setOption3(option_3);
+								eqd.setOption4(option_4);
+								eqd.setCorrectAnswer(correct_answer);
+								eqd.setExamQuestionId(eq.getId());
+								eqd.setExamId(exam.getId());
+								examQuestionDetailDao.save(eqd);
+							}				
+						}
+						//-----------------------------------//------------------------------
+						//Part7
+						
+						num = 0;
+						numsmallQues = 0;
+						for (int i = 155; i < (155 + 28); i= (i + numsmallQues))
+						{					
+							row = (Row) worksheet.getRow(i);
+							// so cau hoi nho
+							numsmallQues = (int) Double.parseDouble(row.getCell(3).toString());	
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(numsmallQues);
+							eq.setParagraph(row.getCell(1).toString());
+							eq.setPart(7);
+							examQuestionDao.save(eq);
+																		
+							for(int j= i; j< (i + numsmallQues); j++) {													
+								row = (Row) worksheet.getRow(j);
+								eqd = new ExaminationQuestionDetail();	
+								temp++;
+								num_in_exam++;
+								
+								String question;
+								if( row.getCell(4)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else question = row.getCell(4).toString();
+								
+								String option_1;
+								if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_1 = row.getCell(5).toString();
+								
+								String option_2;
+								if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_2 = row.getCell(6).toString();
+								
+								String option_3;
+								if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_3 = row.getCell(7).toString();
+								
+								String option_4;
+								if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_4 = row.getCell(8).toString();
+								
+								String correct_answer;
+								if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else correct_answer = row.getCell(9).toString();
+									
+								eqd.setNum(temp);
+								eqd.setNumInExam(num_in_exam);
+								eqd.setQuestion(question);
+								eqd.setOption1(option_1);
+								eqd.setOption2(option_2);
+								eqd.setOption3(option_3);
+								eqd.setOption4(option_4);
+								eqd.setCorrectAnswer(correct_answer);
+								eqd.setExamQuestionId(eq.getId());
+								eqd.setExamId(exam.getId());
+								examQuestionDetailDao.save(eqd);
+							}			
+						}
+						//-------------------------------------//-----------------------
+						//Part8
+						
+						numsmallQues = 0;
+						num = 0;
+						for (int i = 183; i < (183 + 20); i = i+ numsmallQues)
+						{					
+							row = (Row) worksheet.getRow(i);
+							// so cau hoi nho
+							numsmallQues = (int) Double.parseDouble(row.getCell(3).toString());	
+							temp = 0;
+							num++;
+							eq = new ExaminationQuestion();
+							eq.setExamId(exam.getId());				
+							eq.setNum(num);	
+							eq.setSubQuestion(numsmallQues);
+							eq.setParagraph(row.getCell(1).toString());
+							eq.setParagraph2(row.getCell(2).toString());
+							eq.setPart(8);
+							examQuestionDao.save(eq);
+																		
+							for(int j= i; j< (i + numsmallQues); j++) {													
+								row = (Row) worksheet.getRow(j);
+								eqd = new ExaminationQuestionDetail();	
+								temp++;
+								
+								String question;
+								if( row.getCell(4)==null) { question = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else question = row.getCell(4).toString();
+								
+								String option_1;
+								if( row.getCell(5)==null) { option_1 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_1 = row.getCell(5).toString();
+								
+								String option_2;
+								if( row.getCell(6)==null) { option_2 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_2 = row.getCell(6).toString();
+								
+								String option_3;
+								if( row.getCell(7)==null) { option_3 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_3 = row.getCell(7).toString();
+								
+								String option_4;
+								if( row.getCell(8)==null) { option_4 = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else option_4 = row.getCell(8).toString();
+								
+								String correct_answer;
+								if( row.getCell(9)==null) { correct_answer = "null";}  //suppose excel cell is empty then its set to 0 the variable
+					                else correct_answer = row.getCell(9).toString();
+									
+								eqd.setNum(temp);
+								eqd.setNumInExam(num_in_exam);
+								eqd.setQuestion(question);
+								eqd.setOption1(option_1);
+								eqd.setOption2(option_2);
+								eqd.setOption3(option_3);
+								eqd.setOption4(option_4);
+								eqd.setCorrectAnswer(correct_answer);
+								eqd.setExamQuestionId(eq.getId());
+								eqd.setExamId(exam.getId());
+								examQuestionDetailDao.save(eqd);
+							}
+						}	
+						return_page = "redirect:/update-examination/1?num=" + 1 + "&id=" + exam.getId();
+					}			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		iputOrfile = "file";		
+		model.addAttribute("user", user);
+		return return_page;
 	}
 }

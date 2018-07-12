@@ -13,9 +13,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
-  
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
@@ -27,13 +26,11 @@
 <link rel="stylesheet" href="../assets/plugins/bootstrap/css/bootstrap.min.css"/>
 <!-- Custom CSS -->
  <link rel="stylesheet" href="../css/user_css.css"/>
-
-
 </head> 
 
 <body>
 
-
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
 
@@ -43,6 +40,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài thi:</p>
              <p th:text="${exam.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -98,10 +96,11 @@
              <!-- file input -->
             <div class="form-group row">
               <div class="col-md-6">
-              	<div style="height: 100px;">
-                	<img id="image" th:src="@{${eq.photo}}" style="margin-left: 20px;" width="95px" height="95px"/>
+              	<div style="height: 100px;">                	
+                	<img id="image"  th:if="${not #lists.isEmpty(eq.photo)}" th:src="@{${eq.photo}}" style="margin-left: 20px;" width="95px" height="95px"/>
+                	<img id="image"  th:if="${#lists.isEmpty(eq.photo)}" th:src="@{/assets/img/empty.PNG}" style="margin-left: 20px;" width="95px" height="95px"/>
                	</div>
-                <input id = "photo-file" class="photo-file-input form-control-file" type="file" name="image_question" accept=".jpg"/>
+                <input id = "photo-file" required="required" class="photo-file-input form-control-file" type="file" name="image_question" accept=".jpg"/>
               </div>
               <div class="col-md-6">
               	<div style="height: 100px;">
@@ -109,7 +108,7 @@
 					  <source id="audioSource" th:src="@{${eq.audio}}" type="audio/mpeg"></source>
 					</audio> 
 				</div>
-                <input id="audio-file" class=" audio-file-input form-control-file" type="file" name="audio_question" accept=".mp3"/>
+                <input id="audio-file" required="required" class=" audio-file-input form-control-file" type="file" name="audio_question" accept=".mp3"/>
               </div>
             </div>  <!-- end file input -->
 
@@ -124,7 +123,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
       
@@ -137,7 +136,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+                      <input required="required" type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
                     </div>
                 </div>
 
@@ -150,7 +149,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
                 
@@ -163,7 +162,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option4" th:value="${eqds[0].option4}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option4" th:value="${eqds[0].option4}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 

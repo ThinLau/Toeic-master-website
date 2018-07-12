@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -27,13 +27,11 @@
 	<script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 
 	<script type="text/javascript" th:src="@{/assets/plugins/ckeditor/ckeditor.js}"></script> 
     <script type="text/javascript" th:src="@{/js/examination_passage_question.js}"></script> 
-  
-
 </head> 
 
 <body>
 
-
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
 
@@ -43,6 +41,7 @@
         
       <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài thi:</p>
              <p th:text="${exam.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -95,7 +94,7 @@
             <div class="form-group row">
               <div class="col-md-12">
               	 <label class="small " for="paragraph1">Passage 1:</label>
-	              <textarea class="form-control" th:utext="${eq.paragraph}" rows="6" cols="80" name="paragraph1" id="paragraph1">
+	              <textarea required="required" class="form-control" th:utext="${eq.paragraph}" rows="6" cols="80" name="paragraph1" id="paragraph1">
 					Nội dung passage 1.</textarea>
 			  </div>
             </div> 
@@ -103,7 +102,7 @@
              <div class="form-group row">
               <div class="col-md-12">
               	 <label class="small " for="paragraph1">Passage 2:</label>
-	              <textarea class="form-control" rows="6" th:utext="${eq.paragraph2}" cols="80" name="paragraph2" id="paragraph2">
+	              <textarea required="required" class="form-control" rows="6" th:utext="${eq.paragraph2}" cols="80" name="paragraph2" id="paragraph2">
 					Nội dung passage 2.</textarea>
 			  </div>
           	</div>  
@@ -118,7 +117,7 @@
 		                <span class ="question-number" th:text="${'Câu '+ eqd.numInExam +': '}" style="font-size: 22px;">CÂU 1.1:</span>
 		             </div>
 					<div class="col-md-10">
-	                	<input type="text" th:value="${eqd.question}" th:name="${'question-content-' + (iterStat.index + 1) }" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+	                	<input required="required" type="text" th:value="${eqd.question}" th:name="${'question-content-' + (iterStat.index + 1) }" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
 	           		</div>
 	            </div>
 	            <!-- choices -->
@@ -132,7 +131,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" th:value="${eqd.option1}" th:name="${'option1_' + (iterStat.index + 1)}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" th:value="${eqd.option1}" th:name="${'option1_' + (iterStat.index + 1)}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	      
@@ -145,7 +144,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" th:value="${eqd.option2}"  th:name="${'option2_' + (iterStat.index + 1)}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+	                      <input required="required" type="text" th:value="${eqd.option2}"  th:name="${'option2_' + (iterStat.index + 1)}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
 	                    </div>
 	                </div>
 	
@@ -158,7 +157,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" th:value="${eqd.option3}"  th:name="${'option3_' + (iterStat.index + 1)}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" th:value="${eqd.option3}"  th:name="${'option3_' + (iterStat.index + 1)}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	                
@@ -171,7 +170,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" th:value="${eqd.option4}"  th:name="${'option4_' + (iterStat.index + 1)}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" th:value="${eqd.option4}"  th:name="${'option4_' + (iterStat.index + 1)}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 	              

@@ -32,7 +32,7 @@
 	          
 	          changeColorNext(num);
           })
-          	           	              	               
+                   	           	              	               
     	  // when click the next button
     	  $('#btn-next').off('click').on('click',function(e){
               e.preventDefault();
@@ -539,16 +539,18 @@
 					$(questionArea +' #'+subquestion_id).append(question_sentence);
 					// add 4 choice for the sentence
 					
-					$(questionArea +' #'+subquestion_id).append('<div class="choice_A"></div>');
-					$(questionArea +' #'+subquestion_id).append('<div class="choice_B"></div>');
-					$(questionArea +' #'+subquestion_id).append('<div class="choice_C"></div>');
-					$(questionArea +' #'+subquestion_id).append('<div class="choice_D"></div>'); 			
+					$(questionArea +' #'+subquestion_id).append('<div class="choice_A" required="required"></div>');
+					$(questionArea +' #'+subquestion_id).append('<div class="choice_B" required="required"></div>');
+					$(questionArea +' #'+subquestion_id).append('<div class="choice_C" required="required"></div>');
+					if(part != 2)
+						$(questionArea +' #'+subquestion_id).append('<div class="choice_D"></div>'); 			
 					
 					// add choice element
 					appendChoice(questionArea +' #'+subquestion_id+' .choice_A','A',i,question.option1);
 					appendChoice(questionArea +' #'+subquestion_id+' .choice_B','B',i,question.option2);
 					appendChoice(questionArea +' #'+subquestion_id+' .choice_C','C',i,question.option3);
-					appendChoice(questionArea +' #'+subquestion_id+' .choice_D','D',i,question.option4);
+					if(part != 2)
+						appendChoice(questionArea +' #'+subquestion_id+' .choice_D','D',i,question.option4);
 					
 					
 					// set right answer icon. 

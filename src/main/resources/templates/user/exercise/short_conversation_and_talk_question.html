@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+    <title>Toeic Master</title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -30,7 +30,7 @@
 
 <body>
 
-
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
 
@@ -40,6 +40,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài tập:</p>
              <p th:text="${exercise.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -68,10 +69,10 @@
             <!-- file input -->
             <div class="form-group row">
               <div class="col-md-12">
-                <input class=" audio-file-input form-control-file" type="file" name="audio_question" value ="chọn audio file" accept=".mp3"/>
+                <input required="required" class=" audio-file-input form-control-file" type="file" name="audio_question" value ="chọn audio file" accept=".mp3"/>
               </div>
               <div class="col-md-12" style="margin-top: 12px;">
-	              <textarea class="form-control" rows="10" cols="80" name="paragraph" id="paragraph">Nội dung đoạn hội thoại.</textarea>
+	              <textarea required="required" class="form-control" rows="10" cols="80" name="paragraph" id="paragraph">Nội dung đoạn hội thoại.</textarea>
 			</div>
 
             </div>  <!-- end file input -->
@@ -85,7 +86,7 @@
 		                <span class ="question-number" th:text="${'Câu '+ num + '.1: '}" style="font-size: 22px;">CÂU 1.1:</span>
 		             </div>
 					<div class="col-md-10">
-	                	<input type="text" name="question-content-1" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+	                	<input required="required" type="text" name="question-content-1" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
 	           		</div>
 	            </div>
 	            <!-- choices -->
@@ -99,7 +100,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option1_1" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option1_1" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	      
@@ -112,7 +113,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option2_1" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+	                      <input required="required" type="text" name="option2_1" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
 	                    </div>
 	                </div>
 	
@@ -125,7 +126,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option3_1" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option3_1" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	                
@@ -138,7 +139,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option4_1" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option4_1" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 	              
@@ -152,7 +153,7 @@
 		                <span class ="question-number" th:text="${'Câu '+ num + '.2: '}" style="font-size: 22px;">CÂU 1.1:</span>
 		             </div>
 					<div class="col-md-10">
-	                	<input type="text" name="question-content-2" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+	                	<input required="required" type="text" name="question-content-2" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
 	           		</div>
 	            </div>
 	            <!-- choices -->
@@ -166,7 +167,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option1_2" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option1_2" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	      
@@ -179,7 +180,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option2_2" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+	                      <input required="required" type="text" name="option2_2" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
 	                    </div>
 	                </div>
 	
@@ -192,7 +193,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option3_2" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option3_2" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	                
@@ -205,7 +206,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option4_2" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option4_2" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 	              
@@ -219,7 +220,7 @@
 		                <span class ="question-number" th:text="${'Câu '+ num + '.3: '}" style="font-size: 22px;">CÂU 1.1:</span>
 		             </div>
 					<div class="col-md-10">
-	                	<input type="text" name="question-content-3" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+	                	<input required="required" type="text" name="question-content-3" class="form-control" placeholder="Nhập nội dung câu hỏi"/>
 	           		</div>
 	            </div>
 	            <!-- choices -->
@@ -233,7 +234,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option1_3" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option1_3" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	      
@@ -246,7 +247,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option2_3" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+	                      <input required="required" type="text" name="option2_3" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
 	                    </div>
 	                </div>
 	
@@ -259,7 +260,7 @@
 	                        </label>
 	                      </div>
 	                    <div class="col-md-10">
-	                      <input type="text" name="option3_3" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+	                      <input required="required" type="text" name="option3_3" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
 	                    </div>
 	                </div>
 	                
@@ -272,7 +273,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option4_3" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option4_3" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 	              

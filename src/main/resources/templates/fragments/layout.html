@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Toeic Master - Free Practice for TOEIC® tests</title>
+<title>Toeic Master</title>
 
 <!-- Meta -->
 <meta charset="utf-8" />
@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <!-- Favicon -->
-<link rel="shortcut icon" th:href="@{/favicon.ico}" />
+<link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
 <!-- Bootstrap CSS-->
 <link rel="stylesheet"
@@ -107,6 +107,38 @@
 
 
 	
+	<!--=== Header ===-->
+	<div class="header" th:fragment="header2" >
+
+		<!-- Navbar -->
+		<div class="navbar navbar-default" role="navigation" style="height: 100px; margin-bottom: 10px">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="row">
+					<div class="navbar-header col-md-offset-1">
+
+						<a class="navbar-brand" th:href="@{/}"> <img id="logo-header"
+							th:src="@{/assets/img/banner-2.png}" style="display: block;"
+							alt="Logo" /> <span class="hidden-xs hidden-sm hidden-md"
+							style="display: block; float: right;">as easy as <span
+								style="color: red;">pie</span></span> <!-- <h1>Exam English &#10003;</h1> -->
+						</a>
+						<button type="button" class="navbar-toggle" data-toggle="collapse"
+							data-target=".navbar-responsive-collapse">
+							<span class="sr-only">Toggle navigation</span> <span
+								class="fa fa-bars"></span>
+						</button>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		<!-- End Navbar -->
+	</div>
+	<!--=== End Header ===-->
+	
+
+	
 	<!--/breadcrumbs-->
 	<!--=== End Breadcrumbs ===-->
 
@@ -142,7 +174,7 @@
 			<div class="row">
 				<div class="col-md-10">
 					<p>
-						2017 &copy; Toeic Master Website -- Tiểu luận chuyên ngành 2017.
+						2018 &copy; Toeic Master Website -- Khóa luận tốt nghiệp 2018.
 						<!-- IF login -->
 						<a th:unless="${session.user == null}" class="footerlink"
 							th:href="@{/user-info}" style="margin-left: 40px;">Trang cá

@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+    <title>Toeic Master </title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../favicon.ico" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -22,11 +22,13 @@
     <link rel="stylesheet" th:href="@{/assets/plugins/font-awesome/css/font-awesome.min.css}"/>
     <!-- Custom CSS -->
      <link rel="stylesheet" th:href="@{/css/user_css.css}" />
-     
       <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
 </head> 
 
 <body>
+
+<div th:replace="fragments/layout :: header2"></div>
 
 <div class="container">
     <div class="row profile">
@@ -36,6 +38,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tài khoản:</p>
              <p th:text="${user.username}">Lầu Hôn Thìn</p>
           </div>
         </div>
@@ -58,20 +61,20 @@
 		  	   <div id="create-exam-input" class="tab-pane fade in " th:classappend="${exam_module == 'create-exam-input' ? 'active' : ''}">
 		          <div class="exercise">
        
-			          <h3>Thông tin bài thi</h3>
+			          <h3 style="text-align: center;color: red; text-transform: uppercase" > Thông tin bài thi</h3>
 			          <br/>
 			          <form th:object="${exam}" th:action="@{/save-examination}" method="POST">
 			            <div class="form-group">
-			              <label class="small" for="fullname">Tên bài thi</label>
-			              <input th:field="*{name}" type="text" class="form-control" id="exercise-name" placeholder="Tên bài thi"/>
+			              <label class="small" for="fullname">Tên bài thi:</label>
+			              <input required="required" th:field="*{name}" type="text" class="form-control" id="exercise-name" placeholder="Tên bài thi"/>
 			            </div>
 			            <div class="form-group">
-			              <label class="small" for="birthday">Số câu hỏi</label>
-			              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
+			              <label class="small" for="birthday">Số câu hỏi:</label>
+			              <input required="required" th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
 			            </div>
 			             <div class="form-group">
-			              <label class="small" for="birthday">Thời gian làm bài (phút)</label>
-			              <input th:field="*{timeOut}" type="number" class="form-control" id="total-time" />
+			              <label class="small" for="birthday">Thời gian làm bài (phút):</label>
+			              <input required="required" th:field="*{timeOut}" type="number" class="form-control" id="total-time" />
 			            </div>
 			            
 			            <div class="form-group">
@@ -85,50 +88,66 @@
 	           		<h3 style="text-align: center; color: red">Nhập File</h3>
 		          	<br/>
 		          	<form th:action="@{/save-exam-file}" method="POST" enctype="multipart/form-data">
-			          	<div class="row">						          			                
+		          		<div class="col-md-8" style="margin-top: 30px">
+			          		<div class="row">						          			                
 					          		<div class="form-group">	
-						          		<label class="col-md-3" style="margin-top: 5px" for="part">Xem hướng dẫn:</label>						         
-						          			
-								             <div class="col-xs-1">							             	
-										        <div class="form-group">
-										        	 <input type="hidden" id="id_href" />
-										             <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
-										             <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
-										             	<i class="fa fa-picture-o" aria-hidden="true"></i>		
-										             </button>			        		
-							     				</div>	
-								            </div>
-								            <div class="col-xs-1">							             	
-										        <div class="form-group">							        	
-										             <a class="btn btn-success" type="button" href="/download?url=https://s3-ap-southeast-1.amazonaws.com/toeic-master-web/Instruction_inputFile.xlsx"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
-							     				</div>	
-								            </div>								      
-					              </div>				       							            
-				         </div>			            
-			             <div class="row">  
-			          		<div class="form-group">
-			          			<label class="col-md-3" style="margin-top: 5px;">Nhập file Exel:</label>    
-			          			<div class="col-md-9">  
-				          			<div class="form-group"> 			
-										<div  class="fileUpload btn btn-primary">
-										    <span>Upload</span>
-										    <input name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
-										</div>		
-										<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+						          		<label class="col-md-4" style="margin-top: 5px" for="part">Xem hướng dẫn:</label>
+						          		<div class="col-md-4">	
+						          			<div class="row">					         				          			
+									             <div class="col-xs-1">							             	
+											        <div class="form-group">
+											        	 <input type="hidden" id="id_href" />
+											             <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
+											             <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
+											             	<i class="fa fa-picture-o" aria-hidden="true"></i>		
+											             </button>			        		
+								     				</div>	
+									            </div>
+									            <div class="col-xs-offset-1 col-xs-1">							             	
+											        <div class="form-group">							        	
+											             <a class="btn btn-success" type="button" href="/download?url=9"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
+								     				</div>	
+									            </div>	
+									         </div>	
+									     </div>						      
+					              </div>	
+					          </div>			       							            
+				         		            
+				             <div class="row">  
+				          		<div class="form-group">
+				          			<label class="col-md-4" style="margin-top: 5px;">Nhập file Exel:</label>    
+				          			<div class="col-md-8">  
+					          			<div class="form-group"> 			
+											<div  class="fileUpload btn btn-primary">
+											    <span>Upload</span>
+											    <input required="required" name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
+											</div>		
+											<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-		          		<div class="row">  
-			          		<div class="form-group">
-								<label class="col-md-3" style="margin-top: 5px;">Nhập Sheet: </label>	
-								<div class="col-md-6">						
-									<input class="form-control" type="text" name="sheetname" />					
-								</div>		
-							</div>	
-						</div>	    
+			          		<!-- <div class="row">  
+				          		<div class="form-group">
+									<label class="col-md-3" style="margin-top: 5px;">Nhập Sheet: </label>	
+									<div class="col-md-6">						
+										<input class="form-control" type="text" name="sheetname" />					
+									</div>		
+								</div>	
+							</div>	 -->  
+						</div>	
+						<div class="col-md-4">
+							<div class="instruction-file">
+								<h3 style="text-align: center; color: red; margin-top: 5px">
+									<strong>CHÚ Ý!</strong>
+								</h3>
+								<p style="text-align: justify;">
+									Bạn nên tạo file Exel với duy nhất một Sheet hoặc Sheet chứa dữ liệu bạn muốn tạo phải nằm tại vị trí đầu tiên của file. 
+								</p>
+							</div>
+						</div>  
 						<div class="row">     
-							<div class="col-md-5">   		
+							<div class="col-md-offset-1 col-md-5">   		
 				          		<div class="form-group" style="margin-top: 20px">
 				              		<button type="submit" class="btn btn-primary form-control">Lưu lại</button>
 				              	</div>
@@ -151,7 +170,7 @@
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <img id="image_part" alt="" src="/assets/img/part1.PNG" />
+        <img id="image_part" alt="" src="/assets/img/CauTrucDeThi.PNG" />
       </div>
     </div>
   </div>
@@ -161,6 +180,23 @@
 	document.getElementById("uploadBtn").onchange = function () {
 	    document.getElementById("uploadFile").value = this.value;
 	};
+</script>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+    var same = /*[[${sameExam}]]*/ 'default';
+    console.log(same);
+    if(same == 1){
+		alert("Tên Bài thi bị trùng hoặc trống. Vui lòng khởi tạo tên khác!");
+	} else if(same == 2){
+		alert("Thời gian bị trống. Vui lòng nhập thời gian làm bài!");
+	} else if(same == 3){
+		alert("Số câu hỏi bị trống. Vui lòng nhập số câu hỏi!");
+	}
+
+/*]]>*/
 </script>
 
 

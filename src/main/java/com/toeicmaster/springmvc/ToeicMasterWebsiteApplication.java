@@ -8,9 +8,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
-
+@SpringBootApplication(scanBasePackages = { "com.toeicmaster.springmvc" })
 @EnableConfigurationProperties(com.toeicmaster.springmvc.service.StorageProperties.class)
-@SpringBootApplication
 public class ToeicMasterWebsiteApplication extends SpringBootServletInitializer {
 	
 	@Override

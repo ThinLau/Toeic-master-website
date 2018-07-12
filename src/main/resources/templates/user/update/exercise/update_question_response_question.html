@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -36,6 +36,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài tập:</p>
              <p th:text="${exercise.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -70,7 +71,7 @@
 				 </audio> 	
               </div>
               <div class="col-md-6">
-                <input id="audio-file" class=" audio-file-input form-control-file" type="file" name="audio_question" accept=".mp3"/>
+                <input required="required" id="audio-file" class=" audio-file-input form-control-file" type="file" name="audio_question" accept=".mp3"/>
               </div>
             </div>  <!-- end file input -->
 
@@ -85,7 +86,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
       
@@ -98,7 +99,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+                      <input required="required" type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
                     </div>
                 </div>
 
@@ -111,7 +112,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
                 

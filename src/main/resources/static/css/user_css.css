@@ -38,6 +38,7 @@ body {
   color: #5a7391;
   font-size: 16px;
   font-weight: 600;
+  padding:0px 20px 0px 20px;
   margin-bottom: 7px;
 }
 
@@ -111,7 +112,18 @@ body {
 .profile-content {
   padding: 20px 20px 50px 20px;
   background: #fff;
-  
+}
+
+.profile-content label{
+	font-size: 15px;
+	margin-bottom: 7px;
+}
+
+
+.pro-content {
+	padding: 20px 20px 50px 20px;
+ 	 background: #fff;
+
 }
 
 
@@ -289,4 +301,10 @@ body {
     cursor: pointer;
     opacity: 0;
     filter: alpha(opacity=0);
+}
+.instruction-file {
+	border: 2px solid #0000a0;
+    padding: 13px;
+    border-radius: 20px;
+    background: #ffff80;
 }

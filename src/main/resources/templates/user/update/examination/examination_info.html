@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -21,14 +21,11 @@
     <link rel="stylesheet"  href="../assets/plugins/bootstrap/css/bootstrap.min.css" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
     <!-- Custom CSS -->
      <link rel="stylesheet" href="../css/user_css.css" th:href="@{/css/user_css.css}"/> 
-
-
-
 </head> 
 
 <body>
 
-
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
 
@@ -38,6 +35,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài thi:</p>
              <p th:text="${exam.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -68,21 +66,21 @@
     <!-- content -->
     <div class="col-md-9">
        <div class="profile-content">
-          <h3>Thông tin bài thi</h3>
+          <h3 style="text-align: center; color: red">Thông tin bài thi</h3>
           <br/>
           <form th:object="${exam}" th:action="@{/update-examination-info}" method="POST">
           	 <input type="hidden" class="form-control" id="exercise-id" th:field="*{id}"/>
             <div class="form-group">
-              <label class="small" for="fullname">Tên bài thi</label>
-              <input type="text" class="form-control" id="exercise-name" th:field="*{name}"/>
+              <label class="small" for="fullname">Tên bài thi:</label>
+              <input required="required" type="text" class="form-control" id="exercise-name" th:field="*{name}"/>
             </div>
             <div class="form-group">
-              <label class="small" for="birthday">Số câu hỏi</label>
-              <input type="number" class="form-control" id="birthday" th:field="*{numberOfQuestion}" />
+              <label class="small" for="birthday">Số câu hỏi:</label>
+              <input required="required" type="number" class="form-control" id="birthday" th:field="*{numberOfQuestion}" />
             </div>
             <div class="form-group">
-              <label class="small" for="birthday">Thời gian</label>
-              <input type="number" class="form-control" id="birthday" th:field="*{timeOut}" />
+              <label class="small" for="birthday">Thời gian:</label>
+              <input required="required" type="number" class="form-control" id="birthday" th:field="*{timeOut}" />
             </div>
             
             <div class="form-group">
@@ -97,14 +95,20 @@
 
   </div>
 </div>
-<center>
-<strong>Powered by <a>Toeic</a></strong>
-</center>
-<br/>
-<br/>
 
-    
+<script th:inline="javascript">
+/*<![CDATA[*/
 
+    var same = /*[[${sameExam}]]*/ 'default';
+    console.log(same);
+    if(same == 1){
+		alert("Tên Bài thi bị trùng hoặc trống. Vui lòng khởi tạo tên khác!");
+    }
+
+/*]]>*/
+</script>
+
+   
 <!-- JS Global Compulsory -->           
 <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/plugins/bootstrap/js/bootstrap.min.js}"></script> 

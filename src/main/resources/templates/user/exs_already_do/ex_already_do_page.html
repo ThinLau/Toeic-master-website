@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests - Bài đã làm</title>
+    <title>Toeic Master</title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -13,18 +13,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
     <!-- Custom CSS -->
      <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
-
 </head> 
 
 <body>
 
-
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
     <div class="col-md-3">
@@ -33,6 +32,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tài khoản:</p>
              <p th:text="${user.username}">Lầu Hôn Thìn</p>
           </div>
         </div>
@@ -113,26 +113,17 @@
 		  	              </tbody>
 		  	            </table>
 		              </div>
-		            </div>
-		     
-		    </div>	
+		            </div>		     
+		     </div>	
 		   
 		  </div>
-          
-
+         
        </div> <!-- end profile-content div -->
     </div>
   </div>
 </div>
 <br/>
-<br/>
-<center>
-<strong>Powered by <a>ThinLau</a></strong>
-</center>
-<br/>
-<br/>
-
-    
+<br/>  
 
 <!-- JS Global Compulsory -->           
 <script type="text/javascript" th:src="@{/assets/plugins/jquery-3.2.1.min.js}"></script>

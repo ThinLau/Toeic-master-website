@@ -20,6 +20,7 @@ public interface ExerciseDao extends CrudRepository<Exercise,Integer> {
 	
 	Exercise findById(int exerciseId);
 	
-
+	@Query(value = "select * from exercise  where name = ?1", nativeQuery = true)
+	List<Exercise> findName(String exerName);
 	
 }

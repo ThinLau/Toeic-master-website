@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+    <title>Toeic Master</title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
@@ -32,6 +32,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài HD:</p>
              <p th:text="${instruction.name}">Lầu Hôn Thìn</p>
           </div>
         </div>
@@ -63,7 +64,7 @@
           <form th:object="${instruction}" th:action="@{/instruction/update-instruction(id=${instruction.id})}" method="POST">
             <div class="form-group">
               <label class="small" for="name">Tên bài hướng dẫn</label>
-              <input th:field="*{name}" type="text" class="form-control" id="name" name="name"/>
+              <input required="required" th:field="*{name}" type="text" class="form-control" id="name" name="name"/>
             </div>
              <div class="form-group">
                 <label for="part">Hướng dẫn cho phần</label>
@@ -76,7 +77,7 @@
              <!-- paragraph -->
             <div class="form-group row" >
               <div class="col-md-12">
-	              <textarea class="form-control" rows="10" cols="80" th:field="*{content}" name="content" id="content">
+	              <textarea required="required" class="form-control" rows="10" cols="80" th:field="*{content}" name="content" id="content">
 					Nội dung đoạn văn.</textarea>
 			  </div>
             </div> 
@@ -93,11 +94,6 @@
 
   </div>
 </div>
-<center>
-<strong>Powered by <a>ThinLau</a></strong>
-</center>
-<br/>
-<br/>
       
       
 <script>

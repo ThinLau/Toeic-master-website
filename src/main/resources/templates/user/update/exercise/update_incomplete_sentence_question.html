@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+    <title>Toeic Master</title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
   
 
@@ -36,6 +36,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tên bài tập:</p>
              <p th:text="${exercise.name}">Bài photo practice 1 thực hành làm theo mẫu câu cho trước </p>
           </div>
         </div>
@@ -64,7 +65,7 @@
               <hr/>
 
 			<div  style="margin-bottom: 15px;"> 
-                <input type="text" th:value="${eqds[0].question}" name="question-content"  class="form-control" placeholder="Nhập nội dung câu hỏi"/>
+                <input required="required" type="text" th:value="${eqds[0].question}" name="question-content"  class="form-control" placeholder="Nhập nội dung câu hỏi"/>
               </div>
             
              <!-- choices -->
@@ -78,7 +79,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option1" th:value="${eqds[0].option1}" class="option1 form-control" placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
       
@@ -91,7 +92,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
+                      <input required="required" type="text" name="option2" th:value="${eqds[0].option2}" class="option2 form-control"  placeholder="Nhập đáp án gợi"/>
                     </div>
                 </div>
 
@@ -104,7 +105,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option3" th:value="${eqds[0].option3}" class="option3 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
                 
@@ -117,7 +118,7 @@
                         </label>
                       </div>
                     <div class="col-md-10">
-                      <input type="text" name="option4" th:value="${eqds[0].option4}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
+                      <input required="required" type="text" name="option4" th:value="${eqds[0].option4}" class="option4 form-control"  placeholder="Nhập đáp án gợi ý"/>
                     </div>
                 </div>
 

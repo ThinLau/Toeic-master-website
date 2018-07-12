@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,10 @@ public class UpdateExerciseController {
 	@Autowired
 	ServletContext context;
 	
+	String absolutePath = new File("src/main/resources/static/upload").getAbsolutePath();
+	
 	private StorageService storageService;
+	int sameExer = 0;
 
 	@Autowired
 	public void FileUploadController(StorageService storageService) {
@@ -63,6 +67,8 @@ public class UpdateExerciseController {
 		Exercise exercise = exerciseDao.findById(exerciseId);
 		model.addAttribute("module", "exercise-info");
 		model.addAttribute("exercise", exercise);
+		model.addAttribute("sameExer", sameExer);
+		sameExer = 0;
 		return "user/update/exercise/update_exercise_info";
 	}
 
@@ -72,13 +78,19 @@ public class UpdateExerciseController {
 		Exercise entity = exerciseDao.findById(exercise.getId());
 		int exerciseId = exercise.getId();
 		if (entity != null) {
-			entity.setName(exercise.getName());
-			entity.setNumberOfQuestion(exercise.getNumberOfQuestion());
-			entity.setPart(exercise.getPart());
-			exerciseDao.save(entity);
-			exerciseId = entity.getId();
+			if(exercise.getName() == "" || exerciseDao.findName(exercise.getName()).size() >=1 ) {
+				sameExer = 1;
+			} else {		
+				entity.setName(exercise.getName());
+				entity.setNumberOfQuestion(exercise.getNumberOfQuestion());
+				entity.setPart(exercise.getPart());
+				exerciseDao.save(entity);
+				exerciseId = entity.getId();
+				
+				sameExer = 0;
+			}
 		}
-
+		model.addAttribute("sameExer", sameExer);
 		model.addAttribute("exercise", exercise);
 		return "redirect:/update-exercise/info?id=" + exerciseId;
 	}
@@ -139,7 +151,7 @@ public class UpdateExerciseController {
 	// update question for each part
 	// update part 1: photo
 	@RequestMapping(value = "/update-photo-question-exercise/{exerciseQuestionId}", method = RequestMethod.POST)
-	public String saveQuestion(Model model, @PathVariable("exerciseQuestionId") int exerciseQuestionId,
+	public String saveQuestion(HttpServletRequest request,Model model, @PathVariable("exerciseQuestionId") int exerciseQuestionId,
 			@RequestParam("image_question") MultipartFile photo, @RequestParam("audio_question") MultipartFile audio,
 			@RequestParam Map<String, String> maps) {
 
@@ -150,7 +162,7 @@ public class UpdateExerciseController {
 		// if audio change will update
 		if (!audio.isEmpty() || !photo.isEmpty()) {
 
-			uploadfileS3(eq, audio, photo, exerciseQuestionId);
+			uploadfileS3(request, eq, audio, photo, exerciseQuestionId);
 			
 		}		
 		// update exercise question
@@ -174,7 +186,7 @@ public class UpdateExerciseController {
 
 	// update part 2: question response
 	@RequestMapping(value = "/update-question-response-exercise/{exerciseQuestionId}", method = RequestMethod.POST)
-	public String updateQuestionResponse(Model model, @PathVariable("exerciseQuestionId") int exerciseQuestionId,
+	public String updateQuestionResponse(HttpServletRequest request,Model model, @PathVariable("exerciseQuestionId") int exerciseQuestionId,
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
 		// save exercise question
@@ -183,7 +195,7 @@ public class UpdateExerciseController {
 		// if audio change will update
 		if (!audio.isEmpty()) {
 			
-			uploadfileS3(eq, audio, null, exerciseQuestionId);
+			uploadfileS3(request, eq, audio, null, exerciseQuestionId);
 		}
 		// update exercise question
 		exerciseQuestionDao.save(eq);
@@ -205,7 +217,7 @@ public class UpdateExerciseController {
 
 	// update part 3 & 4: short talk and conversation
 	@RequestMapping(value = "/update-short-conversation-and-talk-exercise/{exerciseQuestionId}", method = RequestMethod.POST)
-	public String updateShortConversationAndTalk(Model model,
+	public String updateShortConversationAndTalk(HttpServletRequest request,Model model,
 			@PathVariable("exerciseQuestionId") int exerciseQuestionId,
 			@RequestParam("audio_question") MultipartFile audio, @RequestParam Map<String, String> maps) {
 
@@ -215,7 +227,7 @@ public class UpdateExerciseController {
 		// if audio change will update
 		if (!audio.isEmpty()) {
 
-			uploadfileS3(eq, audio, null, exerciseQuestionId);
+			uploadfileS3(request, eq, audio, null, exerciseQuestionId);
 		}
 		eq.setParagraph(maps.get("paragraph"));
 		// update exercise question
@@ -391,15 +403,17 @@ public class UpdateExerciseController {
 		}
 	}
 	
-	private void uploadfileS3(ExerciseQuestion eq, MultipartFile audio, MultipartFile photo, int exerciseQuestionId) {
+	private void uploadfileS3(HttpServletRequest request,ExerciseQuestion eq, MultipartFile audio, MultipartFile photo, int exerciseQuestionId) {
+		
+		
 		
 		S3Service file_s3 = new S3Service();
 		
-		String audio_url = file_s3.uploadS3(audio, "exer", "audio", exerciseQuestionId);
+		String audio_url = file_s3.uploadS3(request, audio, "exer", "audio", exerciseQuestionId);
 		eq.setAudio(audio_url);
 		
 		if (photo != null) {
-			String photo_url = file_s3.uploadS3(photo, "exer","photo", exerciseQuestionId);
+			String photo_url = file_s3.uploadS3(request, photo, "exer","photo", exerciseQuestionId);
 			eq.setPhoto(photo_url);
 		}
 	}	

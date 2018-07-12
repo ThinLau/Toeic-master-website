@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org"> 
 
 <head>
-    <title>Toeic Master - Free Practice for TOEIC® tests </title>
+    <title>Toeic Master</title>
 
     <!-- Meta -->
     <meta charset="utf-8"/>
@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <link rel="shortcut icon" th:href="@{/toeic.png}"/>
 
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" th:href="@{/assets/plugins/bootstrap/css/bootstrap.min.css}"/>
@@ -21,14 +21,11 @@
      <link rel="stylesheet" th:href="@{/css/user_css.css}"/>
      
      <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-     
-      
-     
-
 </head> 
 
 <body>
 
+<div th:replace="fragments/layout :: header2"></div>
 <div class="container">
     <div class="row profile">
     <div class="col-md-3">
@@ -37,6 +34,7 @@
         
         <div class="profile-usertitle">
           <div class="profile-usertitle-name">
+          	 <p style="color: red; margin-bottom: -1px">Tài khoản:</p>
              <p th:text="${user.username}">Lầu Hôn Thìn</p>
           </div>
         </div>
@@ -59,19 +57,19 @@
 		  <div class="tab-content">
 		  	   <div id="create-exer-input" class="tab-pane fade in " th:classappend="${exercise_module == 'create-exer-input' ? 'active' : ''}">
 		          <div class="exercise">
-			          <h3 style="text-align: center; color: red">Thông tin bài tập</h3>
+			          <h3 style="text-align: center;color: red; text-transform: uppercase">Thông tin bài tập</h3>
 			          <br/>
 			          <form th:object="${exercise}" th:action="@{/save-exercise}" method="POST">
 			            <div class="form-group">
-			              <label class="small" for="fullname">Tên bài tập</label>
-			              <input th:field="*{name}" type="text" class="form-control" id="exercise-name"/>
+			              <label class="small" for="fullname">Tên bài tập:</label>
+			              <input required="required" th:field="*{name}" type="text" class="form-control" id="exercise-name"/>
 			            </div>
 			            <div class="form-group">
-			              <label class="small" for="birthday">Số câu hỏi</label>
-			              <input th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
+			              <label class="small" for="birthday">Số câu hỏi:</label>
+			              <input required="required" th:field="*{numberOfQuestion}" type="number" class="form-control" id="total-question"/>
 			            </div>
 			             <div class="form-group">
-			                <label for="part">Phần</label>
+			                <label for="part">Phần:</label>
 			                <select th:field="*{part}" class="form-control" id="part">
 			                  <option value ="1">Part 1: Photographs</option>
 			                  <option value ="2">Part 2: Question response</option>
@@ -93,65 +91,86 @@
 	           		<h3 style="text-align: center; color: red">Nhập File</h3>
 		          	<br/>
 		          	<form th:action="@{/save-exercise-file}" method="POST" enctype="multipart/form-data">
-			          	<div class="row">						          			                
-					          		<div class="form-group">	
-						          		<label class="col-md-2" style="margin-top: 5px" for="part">Phần:</label>						         
-						          			<div class="col-md-5">
-						          				<div class="form-group">							                
-									                <select class="form-control" id="part" name="part"  >
-														  <option value ="1">Part 1: Photographs</option>
-										                  <option value ="2">Part 2: Question response</option>
-										                  <option value ="3">Part 3: Short conversation</option>
-										                  <option value ="4">Part 4: Short talk</option>
-										                  <option value ="5">Part 5: Incomplete sentence</option>
-										                  <option value ="6">Part 6: Text completion</option>
-										                  <option value ="7">Part 7: Single passage</option>
-										                  <option value ="8">Part 8: Double passage</option>														 
-													</select>
-												</div>
-								             </div>
-								             <div class="col-xs-1">							             	
-										        <div class="form-group">
-										        	 <input type="hidden" id="id_href" />
-										             <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
-										             <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
-										             	<i class="fa fa-picture-o" aria-hidden="true"></i>		
-										             </button>			        		
-							     				</div>	
-								            </div>
-								            <div class="col-xs-1">							             	
-										        <div class="form-group">							        	
-										             <a class="btn btn-success" type="button" href="/download?url=https://s3-ap-southeast-1.amazonaws.com/toeic-master-web/Instruction_inputFile.xlsx"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
-							     				</div>	
-								            </div>								      
-					              </div>				       							            
-				         </div>
-			             <div style="size: 40px" id="cc"></div> 
-			             <div class="row">  
-			          		<div class="form-group">
-			          			<label class="col-md-2" style="margin-top: 5px;">Nhập file Exel:</label>    
-			          			<div class="col-md-10">  
-				          			<div class="form-group"> 			
-										<div  class="fileUpload btn btn-primary">
-										    <span>Upload</span>
-										    <input name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
-										</div>		
-										<input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+			          	<div class="col-md-8" style="margin-top: 8px">
+				          	<div class="row">						          			                
+					          	<div class="form-group">				          				
+						          	<label class="col-md-4" style="margin-top: 7px" for="part">Phần:</label>						         
+						          	<div class="col-md-8">
+						          		<div class="form-group">							                
+									        <select class="form-control" id="part" name="part"  >
+												<option value ="1">Part 1: Photographs</option>
+										        <option value ="2">Part 2: Question response</option>
+										        <option value ="3">Part 3: Short conversation</option>
+										        <option value ="4">Part 4: Short talk</option>
+										        <option value ="5">Part 5: Incomplete sentence</option>
+										        <option value ="6">Part 6: Text completion</option>
+										        <option value ="7">Part 7: Single passage</option>
+										        <option value ="8">Part 8: Double passage</option>														 
+											</select>
+										</div>
+								     </div>							             						      
+					             </div>				       							            
+					         </div>
+					         <div class="row">
+					         	<div class="form-group">
+						         	<label class="col-md-4" style="margin-top: 5px" for="part">Xem hướng dẫn:</label>
+						         	<div class="col-md-4">
+						         		<div class="row">
+								        	<div class="col-xs-1">							             	
+												<div class="form-group">
+													  <input type="hidden" id="id_href" />
+													  <!-- <button type="button" class="btn btn-info instructionImage" id="btn_instruction" onclick="window.open(document.getElementById('id_href').value + ' ');"> -->
+													  <button type="button" class="btn btn-info instructionImage" id="btn_instruction" data-toggle="modal" data-target="#myModal">
+													      <i class="fa fa-picture-o" aria-hidden="true"></i>		
+													  </button>			        		
+										     	 </div>	
+											 </div>
+											 <div class="col-xs-offset-1 col-xs-1">							             	
+												<div class="form-group">							        	
+													 <a id="downloadExel" class="btn btn-success" type="button" href="/download?url=1"><span class="glyphicon glyphicon-download-alt"></span></a>		        		
+										     	</div>	
+											 </div>
+										</div>	
+									</div>	 	
+					         	</div>
+					         </div>
+				             
+				             <div class="row">  
+				          		<div class="form-group">
+				          			<label class="col-md-4" style="margin-top: 5px;">Nhập file Exel:</label>    
+				          			<div class="col-md-8">  
+					          			<div class="form-group"> 			
+											<div  class="fileUpload btn btn-primary">
+											    <span>Upload</span>
+											    <input required="required" name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
+											</div>		
+											<input id="uploadFile" placeholder="Choose File" disabled="disabled"/>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-		          		<div class="row">  
-			          		<div class="form-group">
-								<label class="col-md-2" style="margin-top: 5px;">Nhập Sheet: </label>	
-								<div class="col-md-6">						
-									<input class="form-control" type="text" name="sheetname" />					
-								</div>		
-							</div>	
-						</div>	    
+			          		<!-- <div class="row">  
+				          		<div class="form-group">
+									<label class="col-md-2" style="margin-top: 5px;">Nhập Sheet: </label>	
+									<div class="col-md-6">						
+										<input class="form-control" type="text" name="sheetname" />					
+									</div>		
+								</div>	
+							</div>	 -->   
+						</div> 
+						<div class="col-md-4">
+							<div class="instruction-file">
+								<h3 style="text-align: center; color: red; margin-top: 5px">
+									<strong>CHÚ Ý!</strong>
+								</h3>
+								<p style="text-align: justify;">
+									Bạn nên tạo file Exel với duy nhất một Sheet hoặc Sheet chứa dữ liệu bạn muốn tạo phải nằm tại vị trí đầu tiên của file. 
+								</p>
+							</div>
+						</div>  
 						<div class="row">     
-							<div class="col-md-5">   		
-				          		<div class="form-group" style="margin-top: 20px">
+							<div class="col-md-offset-1 col-md-5">   		
+				          		<div class="form-group" style="margin-top: 10px">
 				              		<button type="submit" class="btn btn-primary form-control">Lưu lại</button>
 				              	</div>
 				            </div>
@@ -196,48 +215,70 @@
 	  });
 			  if(part == 1)
 				{
-				$("#id_href").val("https://www.google.com.vn/");	
+		//		$("#id_href").val("https://www.google.com.vn/");	
 				
 				$("#image_part").attr("src","/assets/img/part1.PNG");
-	//			$(".instructionImage").attr('href','https://www.google.com.vn/');	
+				$("#downloadExel").attr('href',"/download?url=1");	
 				}
 			else if(part == 2)
 				{
-					$("#id_href").val("https://translate.google.com/");	
+			//		$("#id_href").val("https://translate.google.com/");	
 					
 					$("#image_part").attr("src","/assets/img/part2.PNG");
+					$("#downloadExel").attr('href','/download?url=2');	
 				}
 			else if(part == 3)
 				{
 					$("#image_part").attr("src","/assets/img/part3.PNG");
+					$("#downloadExel").attr('href','/download?url=3');	
 				}
 			else if(part == 4)
 				{
 					$("#image_part").attr("src","/assets/img/part4.PNG");
+					$("#downloadExel").attr('href','/download?url=4');	
 				}
 			else if(part == 5)
 				{
 					$("#image_part").attr("src","/assets/img/part5.PNG");
+					$("#downloadExel").attr('href','/download?url=5');	
 	
 				}
 			else if(part == 6)
 				{
 					$("#image_part").attr("src","/assets/img/part6.PNG");
+					$("#downloadExel").attr('href','/download?url=6');	
 
 				}
 			else if(part == 7)
 				{
 					$("#image_part").attr("src","/assets/img/part7.PNG");
+					$("#downloadExel").attr('href','/download?url=7');	
 
 				}
 			else if(part == 8)
 				{
 					$("#image_part").attr("src","/assets/img/part8.PNG");
+					$("#downloadExel").attr('href','/download?url=8');	
 
 				}
 	})
 	.trigger( "change" );
 
+</script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+    var same = /*[[${sameExer}]]*/ 'default';
+    if(same == 1)
+	{
+		alert("Tên Bài tập bị trùng hoặc trống. Vui lòng khởi tạo tên khác!");
+	} else if(same == 2)
+		{
+			alert("Số câu hỏi không đúng hoặc chưa nhập. Vui lòng nhập lại!");
+		}
+
+/*]]>*/
 </script>
 
 </html> 

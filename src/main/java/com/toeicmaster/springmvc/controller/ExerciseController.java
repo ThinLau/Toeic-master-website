@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +28,6 @@ import com.toeicmaster.springmvc.model.ExerciseDetailView;
 import com.toeicmaster.springmvc.model.User;
 
 @Controller
-@RequestMapping("/exercise")
 public class ExerciseController {
 
 	@Autowired
@@ -50,39 +50,65 @@ public class ExerciseController {
 	int pageSize = 6;
 	int currentPage = 0;
 	int totalPage = 0;
+	String exerciseName = null;
 
 	// exercise homepage
-	@RequestMapping(value = { "", "homepage" }, method = RequestMethod.GET)
+	@RequestMapping(value = "/exercise/homepage", method = RequestMethod.GET)
 	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, Model model) {
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
-		paging(model, exerciseType);
+		exerciseName = null;
+		paging(model, exerciseType, exerciseName);
 		return "exercise/exercise_homepage";
 	}
 
 	// paging method
-	private void paging(Model model, String exerciseType) {
+	private void paging(Model model, String exerciseType, String exerciseName) {
 		// get all excerise and paging
-		exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
-
-		// exercisedetailDao.count() la so row trong table
-		totalPage = (exercisedetailDao.count() % pageSize) == 0 ? (int) exercisedetailDao.count() / pageSize
-				: (int) exercisedetailDao.count() / pageSize + 1;
+//		exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
+		if(exerciseName == null)
+		{
+			exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
+			
+			// exercisedetailDao.count() la so row trong table
+			totalPage = (exercisedetailDao.count() % pageSize) == 0 ? (int) exercisedetailDao.count() / pageSize
+						: (int) exercisedetailDao.count() / pageSize + 1;			
+		}
+		else { 
+			exercises = exercisedetailDao.findByPartTypeAndExerciseName(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		
+			totalPage = 1;
+		}		
 
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
 		model.addAttribute("exerciseType", exerciseType);
 		model.addAttribute("exercises", exercises);
 	}
+	
+	@RequestMapping(value = "/search-exercise", method = RequestMethod.POST)
+	public String serchExercise(HttpSession session, Model model, @RequestParam("search") String search, 
+			@RequestParam("exerciseType") String exerciseType) {
+		
+		if(search == "") {
+			exerciseName = null;
+		} else
+			exerciseName = search;
+		
+		
+		currentPage = 0;
+		model.addAttribute("module", "exercise");
+		paging(model, exerciseType, exerciseName);
+		return "exercise/exercise_homepage";
+	}
 
 	// exercise homepage with paging
-	@RequestMapping(value = "homepage/{page}", method = RequestMethod.GET)
+	@RequestMapping(value = "exercice-homepage/{page}", method = RequestMethod.GET)
 	public String exercisePage(@RequestParam("exerciseType") String exerciseType, @PathVariable("page") int page,
 			Model model) {
 
 		currentPage = page - 1;
 		model.addAttribute("module", "exercise");
-		paging(model, exerciseType);
+		paging(model, exerciseType, exerciseName);
 		return "exercise/exercise_homepage";
 	}
 
