@@ -83,13 +83,13 @@ public class ExamManagerController {
 		User user = (User) session.getAttribute("user");
 
 		// find list exercises was created by this user
-		List<Exercise> exercises = exerciseDao.findByAuthor(user.getId());
+		List<Exercise> exercises = exerciseDao.findExerbyId(user.getId());
 
 		// find list examinations was create by this user
-		List<Examination> examinations = examinationDao.findByAuthor(user.getId());
+		List<Examination> examinations = examinationDao.findExamById(user.getId());
 
 		// find list instructions was create by this user
-		List<Instruction> instructions = instructionDao.findByAuthor(user.getUsername());
+		List<Instruction> instructions = instructionDao.findInstructionById(user.getUsername());
 
 		model.addAttribute("exercises", exercises);
 		model.addAttribute("examinations", examinations);
@@ -106,22 +106,25 @@ public class ExamManagerController {
 
 		User user = (User) session.getAttribute("user");
 		// delete exercise_question_detail -> delete exercise_question -> delete exercise
-		List<ExerciseQuestion> questions = exerciseQuestionDao.findByExerciseId(exerciseId);
-		for (ExerciseQuestion question : questions) {
-			List<ExerciseQuestionDetail> questionDetails = exerciseQuestionDetailDao.findByExerciseQuestionId(question.getId());
-					
-			exerciseQuestionDetailDao.delete(questionDetails);
-			
-				
-			Am_s3.deleteS3("exer", question.getId(), question.getAudio(),question.getPhoto());
-		}
-		exerciseQuestionDao.delete(questions);
 		
-		exAlreadyDoDao.deleteExerciseAlreadyDo(exerciseId, user.getId());
-
-		Exercise exercise = exerciseDao.findById(exerciseId);
-		exerciseDao.delete(exercise);
-
+		if(exerciseId ==1) {}
+		else {
+			List<ExerciseQuestion> questions = exerciseQuestionDao.findByExerciseId(exerciseId);
+			for (ExerciseQuestion question : questions) {
+				List<ExerciseQuestionDetail> questionDetails = exerciseQuestionDetailDao.findByExerciseQuestionId(question.getId());
+						
+				exerciseQuestionDetailDao.delete(questionDetails);
+				
+					
+				Am_s3.deleteS3("exer", question.getId(), question.getAudio(),question.getPhoto());
+			}
+			exerciseQuestionDao.delete(questions);
+			
+			exAlreadyDoDao.deleteExerciseAlreadyDo(exerciseId);
+	
+			Exercise exercise = exerciseDao.findById(exerciseId);
+			exerciseDao.delete(exercise);
+		}
 		redirectAttributes.addFlashAttribute("manager_module", "exercise_manager");
 		return "redirect:/exam-manager/home";
 	}
@@ -133,21 +136,27 @@ public class ExamManagerController {
 		User user = (User) session.getAttribute("user");
 		// delete examintion_question_detail -> delete examination_question -> delete
 		// examination
-		List<ExaminationQuestion> questions = examinationQuestionDao.findByExamId(examId);
-		for (ExaminationQuestion question : questions) {
-			List<ExaminationQuestionDetail> questionDetails = examinationQuestionDetailDao
-					.findByExamQuestionId(question.getId());
-			examinationQuestionDetailDao.delete(questionDetails);
+		
+		if(examId == 1) {  }
+		else {
+		
+		
+			List<ExaminationQuestion> questions = examinationQuestionDao.findByExamId(examId);
+			for (ExaminationQuestion question : questions) {
+				List<ExaminationQuestionDetail> questionDetails = examinationQuestionDetailDao
+						.findByExamQuestionId(question.getId());
+				examinationQuestionDetailDao.delete(questionDetails);
+				
+				
+				Am_s3.deleteS3("exam", question.getId(), question.getAudio(),question.getPhoto());
+			}
+			examinationQuestionDao.delete(questions);
 			
+			exAlreadyDoDao.deleteExamAlreadyDo(examId);
 			
-			Am_s3.deleteS3("exam", question.getId(), question.getAudio(),question.getPhoto());
+			Examination exam = examinationDao.findById(examId);
+			examinationDao.delete(exam);
 		}
-		examinationQuestionDao.delete(questions);
-		
-		exAlreadyDoDao.deleteExamAlreadyDo(examId, user.getId());
-		
-		Examination exam = examinationDao.findById(examId);
-		examinationDao.delete(exam);
 
 		redirectAttributes.addFlashAttribute("manager_module", "examination_manager");
 		return "redirect:/exam-manager/home";

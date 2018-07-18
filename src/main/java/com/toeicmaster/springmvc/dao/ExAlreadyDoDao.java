@@ -21,13 +21,13 @@ public interface ExAlreadyDoDao extends CrudRepository<ExAlreadyDo,Integer>{
 	
 	@Transactional
 	@Modifying
-	@Query("DELETE FROM ExAlreadyDo e WHERE e.exerciseId = :exerciseId AND e.userId = :userId")
-	public void deleteExerciseAlreadyDo(@Param("exerciseId") int exericseId, @Param("userId") int userId);
+	@Query("DELETE FROM ExAlreadyDo e WHERE e.exerciseId = :exerciseId")
+	public void deleteExerciseAlreadyDo(@Param("exerciseId") int exericseId);
 	
 	@Transactional
 	@Modifying
-	@Query("DELETE FROM ExAlreadyDo e WHERE e.examId = :examId AND e.userId = :userId")
-	public void deleteExamAlreadyDo(@Param("examId") int examId, @Param("userId") int userId);
+	@Query("DELETE FROM ExAlreadyDo e WHERE e.examId = :examId")
+	public void deleteExamAlreadyDo(@Param("examId") int examId);
 
 	ExAlreadyDo findById(int exAlreadyDoId);
 	

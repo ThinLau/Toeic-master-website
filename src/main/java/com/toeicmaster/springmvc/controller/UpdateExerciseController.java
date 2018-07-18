@@ -78,7 +78,7 @@ public class UpdateExerciseController {
 		Exercise entity = exerciseDao.findById(exercise.getId());
 		int exerciseId = exercise.getId();
 		if (entity != null) {
-			if(exercise.getName() == "" || exerciseDao.findName(exercise.getName()).size() >=1 ) {
+			if(exercise.getName() == "" || exerciseDao.CheckName(exercise.getName(), entity.getName()).size() >=1 ) {
 				sameExer = 1;
 			} else {		
 				entity.setName(exercise.getName());

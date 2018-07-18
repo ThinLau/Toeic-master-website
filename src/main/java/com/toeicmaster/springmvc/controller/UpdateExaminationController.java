@@ -67,7 +67,7 @@ public class UpdateExaminationController {
 		Examination entity = examDao.findById(exam.getId());
 		int examId = exam.getId();		
 		if (entity != null) {		
-			if(exam.getName() == "" || examDao.findName(exam.getName()).size() >=1 ) {				
+			if(exam.getName() == "" || examDao.CheckName(exam.getName(), entity.getName()).size() >=1 ) {				
 				sameExam = 1;					
 			} else {			
 				entity.setName(exam.getName());
