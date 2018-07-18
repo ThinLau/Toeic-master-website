@@ -3,6 +3,7 @@ package com.toeicmaster.springmvc.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -70,9 +71,11 @@ public class ExerciseController {
 		{
 			exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
 			
+			int exerSize = exercisedetailDao.findPartType(exerciseType);
+			
 			// exercisedetailDao.count() la so row trong table
-			totalPage = (exercisedetailDao.count() % pageSize) == 0 ? (int) exercisedetailDao.count() / pageSize
-						: (int) exercisedetailDao.count() / pageSize + 1;			
+			totalPage = (exerSize % pageSize) == 0 ? (int) exerSize / pageSize
+						: (int) exerSize / pageSize + 1;			
 		}
 		else { 
 			exercises = exercisedetailDao.findByPartTypeAndExerciseName(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		

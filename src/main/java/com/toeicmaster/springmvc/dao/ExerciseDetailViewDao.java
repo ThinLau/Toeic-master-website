@@ -20,4 +20,7 @@ public interface ExerciseDetailViewDao extends CrudRepository<ExerciseDetailView
 	
 	@Query(value = "SELECT * FROM exercise_detail WHERE exercise_name =" + "?1", nativeQuery = true)
 	ExerciseDetailView searchName(String examinationName);
+	
+	@Query(value = "SELECT count(id) FROM exercise_detail WHERE part_type =" + "?1", nativeQuery = true)
+	int findPartType(String type);
 }

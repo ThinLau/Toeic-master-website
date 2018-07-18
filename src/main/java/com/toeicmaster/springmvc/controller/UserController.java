@@ -909,36 +909,44 @@ public class UserController {
 					
 					eqd = new ExerciseQuestionDetail();
 					temp++;
-		
-					String option_1;
+					
+					String question;
 					if (row.getCell(0) == null) {
+						question = "null";
+					} // suppose excel cell is empty then its set to 0 the variable
+					else
+						question = row.getCell(0).toString();
+					
+					String option_1;
+					if (row.getCell(1) == null) {
 						option_1 = "null";
 					} // suppose excel cell is empty then its set to 0 the variable
 					else
-						option_1 = row.getCell(0).toString();
+						option_1 = row.getCell(1).toString();
 		
 					String option_2;
-					if (row.getCell(1) == null) {
+					if (row.getCell(2) == null) {
 						option_2 = "null";
 					} // suppose excel cell is empty then its set to 0 the variable
 					else
-						option_2 = row.getCell(1).toString();
+						option_2 = row.getCell(2).toString();
 		
 					String option_3;
-					if (row.getCell(2) == null) {
+					if (row.getCell(3) == null) {
 						option_3 = "null";
 					} // suppose excel cell is empty then its set to 0 the variable
 					else
-						option_3 = row.getCell(2).toString();
+						option_3 = row.getCell(3).toString();
 		
 					String correct_answer;
-					if (row.getCell(3) == null) {
+					if (row.getCell(4) == null) {
 						correct_answer = "null";
 					} // suppose excel cell is empty then its set to 0 the variable
 					else
-						correct_answer = row.getCell(3).toString();
+						correct_answer = row.getCell(4).toString();
 		
 					eqd.setNum(temp);
+					eqd.setQuestion(question);
 					eqd.setOption1(option_1);
 					eqd.setOption2(option_2);
 					eqd.setOption3(option_3);
