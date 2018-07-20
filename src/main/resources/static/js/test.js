@@ -635,6 +635,6 @@
 	            if(!isSubmit) submit();
 	        }
 	    }, 1000);
-    	  
+    	   
     	  
       }); // end document.ready
