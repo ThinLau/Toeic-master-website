@@ -11,9 +11,13 @@ import com.toeicmaster.springmvc.model.ExaminationDetailView;
 public interface ExaminationDetailViewDao extends CrudRepository<ExaminationDetailView, Integer>{
 	
 	Page<ExaminationDetailView> findAll(Pageable pageAble);
-	Page<ExaminationDetailView> findByExaminationName(String examinationName ,Pageable pageAble);
+	
+//	@Query(value = "SELECT e FROM ExaminationDetailView e WHERE e.examinationName = ?1")
+//	Page<ExaminationDetailView> findExamAll(Pageable pageAble);
+	
+	Page<ExaminationDetailView> findByExaminationNameIgnoreCaseContaining(String examinationName ,Pageable pageable);
 	
 	
-	@Query(value = "SELECT * FROM ExaminationDetailView WHERE examinationName =" +"?1", nativeQuery = true)
+	@Query(value = "SELECT e FROM ExaminationDetailView e WHERE e.examinationName = ?1")
 	ExaminationDetailView searchName(String examinationName);
 }

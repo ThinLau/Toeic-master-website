@@ -14,13 +14,13 @@ public interface ExerciseDetailViewDao extends CrudRepository<ExerciseDetailView
 	// find by pary type: listen or read
 	List<ExerciseDetailView> findByPartType(String partType);
 	
-	Page<ExerciseDetailView> findByPartType(String partType, Pageable pageAble);
+	Page<ExerciseDetailView> findByPartTypeIgnoreCaseContaining(String partType, Pageable pageAble);
 	
-	Page<ExerciseDetailView> findByPartTypeAndExerciseName(String partType,String exerciseName, Pageable pageAble);
+	Page<ExerciseDetailView> findByPartTypeIgnoreCaseContainingAndExerciseNameIgnoreCaseContaining(String partType,String exerciseName, Pageable pageAble);
 	
-	@Query(value = "SELECT * FROM exercise_detail WHERE exercise_name =" + "?1", nativeQuery = true)
+	@Query(value = "SELECT e FROM ExerciseDetailView e WHERE e.exerciseName =" + "?1")
 	ExerciseDetailView searchName(String examinationName);
 	
-	@Query(value = "SELECT count(id) FROM exercise_detail WHERE part_type =" + "?1", nativeQuery = true)
-	int findPartType(String type);
+	@Query(value = "SELECT count(e.id) FROM ExerciseDetailView e WHERE e.partType =" + "?1")
+	int countType(String type);
 }

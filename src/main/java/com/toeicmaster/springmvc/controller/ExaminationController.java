@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,8 +67,9 @@ public class ExaminationController {
 	@RequestMapping(value = "/examination", method = RequestMethod.GET)
 	public String exerciseHomepage(Model model) {
 		currentPage = 0;
-		examName = null;
+
 		paging(model, examName);
+		examName = null;
 		return "examination/exam_homepage";
 	}
 
@@ -75,14 +77,14 @@ public class ExaminationController {
 	private void paging(Model model, String examName) {
 		
 		if (examName == null) {
-			examinations = examinationdetailDao.findAll(new PageRequest(currentPage, pageSize));
-			
+			Sort sort = new Sort(Sort.Direction.DESC, "id");
+			examinations = examinationdetailDao.findAll(new PageRequest(currentPage, pageSize, sort));
 			totalPage = (examinationdetailDao.count() % pageSize) == 0 ? (int) examinationdetailDao.count() / pageSize
 					: (int) examinationdetailDao.count() / pageSize + 1;
 		} else {
-			examinations = examinationdetailDao.findByExaminationName(examName, new PageRequest(currentPage, pageSize));
+			examinations = examinationdetailDao.findByExaminationNameIgnoreCaseContaining(examName, new PageRequest(currentPage, pageSize));
 			
-			totalPage = 1;
+			totalPage = examinations.getContent().size();
 		}
 
 		model.addAttribute("totalPage", totalPage);
@@ -101,13 +103,13 @@ public class ExaminationController {
 	
 	@RequestMapping(value = "/search-examination", method = RequestMethod.POST)
 	public String saveExercise(HttpSession session, Model model, @RequestParam("search") String search) {
-		if(search == ""){
+		if(search == "" || search == null){
 			examName = null;
 		} else 
 			examName = search;
 		currentPage = 0;
 		paging(model, examName);
-		return "examination/exam_homepage";
+		return "redirect:/examination";
 	}
 	
 

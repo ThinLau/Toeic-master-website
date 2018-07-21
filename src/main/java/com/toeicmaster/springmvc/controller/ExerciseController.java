@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -58,8 +59,9 @@ public class ExerciseController {
 	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, Model model) {
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
-		exerciseName = null;
+		
 		paging(model, exerciseType, exerciseName);
+		exerciseName = null;
 		return "exercise/exercise_homepage";
 	}
 
@@ -69,17 +71,18 @@ public class ExerciseController {
 //		exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
 		if(exerciseName == null)
 		{
-			exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
+			Sort sort = new Sort(Sort.Direction.DESC, "id");
+			exercises = exercisedetailDao.findByPartTypeIgnoreCaseContaining(exerciseType, new PageRequest(currentPage, pageSize, sort));
 			
-			int exerSize = exercisedetailDao.findPartType(exerciseType);
+			int exerSize = exercisedetailDao.countType(exerciseType);
 			
 			// exercisedetailDao.count() la so row trong table
 			totalPage = (exerSize % pageSize) == 0 ? (int) exerSize / pageSize
 						: (int) exerSize / pageSize + 1;			
 		}
 		else { 
-			exercises = exercisedetailDao.findByPartTypeAndExerciseName(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		
-			totalPage = 1;
+			exercises = exercisedetailDao.findByPartTypeIgnoreCaseContainingAndExerciseNameIgnoreCaseContaining(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		
+			totalPage = exercises.getContent().size();
 		}		
 
 		model.addAttribute("totalPage", totalPage);
@@ -89,10 +92,10 @@ public class ExerciseController {
 	}
 	
 	@RequestMapping(value = "/search-exercise", method = RequestMethod.POST)
-	public String serchExercise(HttpSession session, Model model, @RequestParam("search") String search, 
+	public String serchExercise(HttpSession session, Model model, @RequestParam(name="search", required=false) String search, 
 			@RequestParam("exerciseType") String exerciseType) {
 		
-		if(search == "") {
+		if(search == "" || search == null) {
 			exerciseName = null;
 		} else
 			exerciseName = search;
@@ -101,7 +104,7 @@ public class ExerciseController {
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
 		paging(model, exerciseType, exerciseName);
-		return "exercise/exercise_homepage";
+		return "redirect:/exercise/homepage?exerciseType="+exerciseType;
 	}
 
 	// exercise homepage with paging
