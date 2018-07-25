@@ -24,6 +24,13 @@ public class LoginController {
 		return "login/login";
 	}
 	
+	@RequestMapping(value="/register-page", method=RequestMethod.GET)
+	public String getRegisterPage(Model model) {
+		User user = new User();
+		model.addAttribute("user", user);
+		return "login/register";
+	}
+	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public String login(@ModelAttribute("user") User user, Model model, HttpSession session) {
 		// login
@@ -48,7 +55,7 @@ public class LoginController {
 	@RequestMapping(value="/register-account", method=RequestMethod.POST)
 	public String registerAccount(@ModelAttribute("user") User user, Model model) {
 		
-		user.setRole(2);  // role for create exam
+		user.setRole(1);  // role for create exam
 		user.setStatus(1);  // 1 for active status
 		
 		userDao.save(user); // create new account
