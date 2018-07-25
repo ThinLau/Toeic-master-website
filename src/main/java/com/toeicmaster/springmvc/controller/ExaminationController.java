@@ -65,28 +65,35 @@ public class ExaminationController {
 
 	// examination homepage
 	@RequestMapping(value = "/examination", method = RequestMethod.GET)
-	public String exerciseHomepage(Model model) {
+	public String exerciseHomepage(Model model, @RequestParam("level") int level) {
 		currentPage = 0;
 
-		paging(model, examName);
+		paging(model, level, examName);
 		examName = null;
 		return "examination/exam_homepage";
 	}
 
 	// paging method
-	private void paging(Model model, String examName) {
+	private void paging(Model model, int level, String examName) {
 		
 		if (examName == null) {
-			Sort sort = new Sort(Sort.Direction.DESC, "id");
-			examinations = examinationdetailDao.findAll(new PageRequest(currentPage, pageSize, sort));
-			totalPage = (examinationdetailDao.count() % pageSize) == 0 ? (int) examinationdetailDao.count() / pageSize
-					: (int) examinationdetailDao.count() / pageSize + 1;
+			if(level == 0) {			
+				Sort sort = new Sort(Sort.Direction.DESC, "id");
+				examinations = examinationdetailDao.findAll(new PageRequest(currentPage, pageSize, sort));
+				totalPage = (examinationdetailDao.count() % pageSize) == 0 ? (int) examinationdetailDao.count() / pageSize
+						: (int) examinationdetailDao.count() / pageSize + 1;
+			}
+			else {
+				Sort sort = new Sort(Sort.Direction.DESC, "id");
+				examinations = examinationdetailDao.findByLevel(level,(new PageRequest(currentPage, pageSize, sort)));
+				totalPage = examinations.getContent().size();
+			}
 		} else {
 			examinations = examinationdetailDao.findByExaminationNameIgnoreCaseContaining(examName, new PageRequest(currentPage, pageSize));
 			
 			totalPage = examinations.getContent().size();
 		}
-
+		model.addAttribute("module", "examination");
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
 		model.addAttribute("examinations", examinations);
@@ -97,7 +104,7 @@ public class ExaminationController {
 
 		currentPage = page - 1;
 
-		paging(model, examName);
+		paging(model, 0, examName);
 		return "examination/exam_homepage";
 	}
 	
@@ -108,8 +115,8 @@ public class ExaminationController {
 		} else 
 			examName = search;
 		currentPage = 0;
-		paging(model, examName);
-		return "redirect:/examination";
+		paging(model, 0, examName);
+		return "redirect:/examination?level=" + 0;
 	}
 	
 

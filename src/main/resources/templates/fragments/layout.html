@@ -43,6 +43,26 @@
 		<div class="navbar navbar-default" role="navigation">
 			<div class="container">
 				<!-- Brand and toggle get grouped for better mobile display -->
+				
+				
+				<div class="row" style="float: right; margin-top: 5px; margin-right: 10px">
+					<a th:unless="${session.user == null}"
+						th:href="@{/logout}" style="margin-left: 40px;"><i class="fa fa-sign-out" aria-hidden="true"></i> Đăng xuất 
+					</a>
+					<a th:unless="${session.user == null}" class="footerlink" style="margin-left: 40px;" >
+						<i class="fa fa-user" aria-hidden="true"></i>
+						<a 
+							th:href="@{/user-info}" th:text="${user.username}">
+						</a>
+					</a>
+					
+					<!-- else not -->
+					<a th:if="${session.user == null}"
+						 th:href="@{/login-page}" style="margin-left: 40px;"><i class="fa fa-sign-in" aria-hidden="true"></i> Đăng nhập
+					</a>
+				</div>
+				
+								
 				<div class="row">
 					<div class="navbar-header col-md-offset-1">
 
@@ -71,26 +91,24 @@
 								class="dropdown"><a href="#" class="dropdown-toggle"
 								data-toggle="dropdown">Hướng dẫn</a>
 								<ul class="dropdown-menu">
-
-									<li><a th:href="@{/instruction/homepage?type=listen}">Hướng
-											dẫn phần nghe</a></li>
-									<li><a th:href="@{/instruction/homepage?type=read}">Hướng
-											dẫn phần đọc</a></li>
-
+									<li><a th:href="@{/instruction/homepage?type=share}">Gốc chia sẻ</a></li>
+									<li><a th:href="@{/instruction/homepage?type=skill}">Kỹ năng làm bài</a></li>
+									<li><a th:href="@{/instruction/homepage?type=route}">Lộ trình học tập</a></li>
+									<li><a th:href="@{/instruction/homepage?type=book}">Tủ sách</a></li>
 								</ul></li>
 							<li th:classappend="${module == 'exercise' ? 'active' : ''}"
 								class="dropdown"><a href="#" class="dropdown-toggle"
 								data-toggle="dropdown">Bài tập</a>
 								<ul class="dropdown-menu">
 
-									<li><a th:href="@{/exercise/homepage?exerciseType=listen}">Bài
+									<li><a th:href="@{/exercise/homepage(exerciseType=listen, level=0)}">Bài
 											tập phần nghe</a></li>
-									<li><a th:href="@{/exercise/homepage?exerciseType=read}">Bài
+									<li><a th:href="@{/exercise/homepage(exerciseType=read, level=0)}">Bài
 											tập phần đọc</a></li>
 
 								</ul></li>
 							<li th:classappend="${module == 'examination' ? 'active' : ''}"><a
-								th:href="@{/examination}">Bài thi</a></li>
+								th:href="@{/examination?level=0}">Bài thi</a></li>
 							<li th:classappend="${module == 'contact' ? 'active' : ''}"><a
 								href="#">Liên hệ</a></li>
 							<li th:classappend="${module == 'about' ? 'active' : ''}"><a
@@ -151,15 +169,36 @@
 		</div>
 
 		<div class="panel-body">
-			<ul style="list-style-type: none; margin: 0; padding: 0;">
-				<li><h4>Bài tập</h4></li>
-				<li class="list-group-item"><a th:href="@{/exercise/homepage?exerciseType=listen}">Bài tập phần nghe</a></li>
-				<li class="list-group-item"><a th:href="@{/exercise/homepage?exerciseType=read}">Bài tập phần đọc</a></li>
-				<li class="list-group-item"><a th:href="@{/examination}">Làm bài thi thử</a></li>
+			<ul style="list-style-type: none; margin: -10px 0 0 0; padding: 0;">
+				<li><h4 th:text="${module == 'exercise'}? 'Bài tập' : 'Bài thi' ">Bài tập</h4></li>
+				<li class="list-group-item" style="margin-top: -8px;">
+					<a th:if="${exerciseType == 'listen'}" th:href="@{/exercise/homepage(exerciseType=listen, level=1)}">Bài tập level 0 - 450</a>
+					<a th:if="${exerciseType == 'read'}" th:href="@{/exercise/homepage(exerciseType=read, level=1)}">Bài tập level 0 - 450</a>
+					<a th:if="${module == 'examination'}" th:href="@{/examination?level=1}">Bài thi level 0 - 450</a>
+				</li>
+				<li class="list-group-item">
+					<a th:if="${exerciseType == 'listen'}" th:href="@{/exercise/homepage(exerciseType=listen, level=2)}">Bài tập level 450 - 600</a>
+					<a th:if="${exerciseType == 'read'}" th:href="@{/exercise/homepage(exerciseType=read, level=2)}">Bài tập level 450 - 600</a>
+					<a th:if="${module == 'examination'}" th:href="@{/examination?level=2}">Bài thi level 450 - 600</a>
+				</li>
+				<li class="list-group-item">
+					<a th:if="${exerciseType == 'listen'}" th:href="@{/exercise/homepage(exerciseType=listen, level=3)}">Bài tập level 600 - 750</a>
+					<a th:if="${exerciseType == 'read'}" th:href="@{/exercise/homepage(exerciseType=read, level=3)}">Bài tập level 600 - 750</a>
+					<a th:if="${module == 'examination'}" th:href="@{/examination?level=3}">Bài thi level 600 - 750</a>
+				</li>
+				<li class="list-group-item">
+					<a th:if="${exerciseType == 'listen'}" th:href="@{/exercise/homepage(exerciseType=listen, level=4)}">Bài tập level 750+</a>
+					<a th:if="${exerciseType == 'read'}" th:href="@{/exercise/homepage(exerciseType=read, level=4)}">Bài tập level 750+</a>
+					<a th:if="${module == 'examination'}" th:href="@{/examination?level=4}">Bài thi level 750+</a>
+				</li>
+				<li th:if="${module == 'exercise'}" class="list-group-item"><a th:href="@{/examination?level=0}">Làm bài thi thử</a></li>
 
-				<li><h4>Hướng dẫn</h4></li>
-				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=listen}">Hướng dẫn phần nghe</a></li>
-				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=read}">Hướng dẫn phần đọc</a></li>
+				<li style="margin-top: 5px;"><h4>Hướng dẫn</h4></li>
+				<li th:if="${mod == 'exercise'}" class="list-group-item" ><a th:href="@{/instruction/homepage?type=share}">Gốc chia sẻ</a></li>
+				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=skill}">Kỹ năng làm bài</a></li>
+				<li class="list-group-item"><a th:href="@{/instruction/homepage?type=route}">Lộ trình học tập</a></li>
+				<li th:if="${mod == 'exercise'}" class="list-group-item"><a th:href="@{/instruction/homepage?type=book}">Tủ sách</a></li>
+				
 			</ul>
 
 		</div>

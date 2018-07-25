@@ -30,7 +30,8 @@ public class Examination {
 	@Column(name="timeout")
 	private int timeOut;
 	
-	
+	@Column(name="level")
+	private int level;
 	
 	public int getTimeOut() {
 		return timeOut;
@@ -80,6 +81,12 @@ public class Examination {
 	public void setAuthor(int author) {
 		this.author = author;
 	}
+	public int getLevel() {
+		return level;
+	}
 
+	public void setLevel(int level) {
+		this.level = level;
+	}
 	
 }

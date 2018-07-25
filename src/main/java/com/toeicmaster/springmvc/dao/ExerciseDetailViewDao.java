@@ -16,6 +16,8 @@ public interface ExerciseDetailViewDao extends CrudRepository<ExerciseDetailView
 	
 	Page<ExerciseDetailView> findByPartTypeIgnoreCaseContaining(String partType, Pageable pageAble);
 	
+	Page<ExerciseDetailView> findByPartTypeIgnoreCaseContainingAndLevel(String partType, int level, Pageable pageAble);
+
 	Page<ExerciseDetailView> findByPartTypeIgnoreCaseContainingAndExerciseNameIgnoreCaseContaining(String partType,String exerciseName, Pageable pageAble);
 	
 	@Query(value = "SELECT e FROM ExerciseDetailView e WHERE e.exerciseName =" + "?1")

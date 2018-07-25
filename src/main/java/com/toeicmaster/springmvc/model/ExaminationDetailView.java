@@ -24,17 +24,26 @@ public class ExaminationDetailView {
 	@Column(name="author")
 	private String author;
 	
+	@Column(name="level")
+	private int level;
+	
 	
 	public int getId() {
 		return id;
 	}
 
+
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
-
+	public int getLevel() {
+		return level;
+	}
 
 	public String getExaminationName() {
 		return examinationName;

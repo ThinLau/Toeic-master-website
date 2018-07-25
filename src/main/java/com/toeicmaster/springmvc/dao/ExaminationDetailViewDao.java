@@ -17,6 +17,8 @@ public interface ExaminationDetailViewDao extends CrudRepository<ExaminationDeta
 	
 	Page<ExaminationDetailView> findByExaminationNameIgnoreCaseContaining(String examinationName ,Pageable pageable);
 	
+	Page<ExaminationDetailView> findByLevel(int level ,Pageable pageable);
+	
 	
 	@Query(value = "SELECT e FROM ExaminationDetailView e WHERE e.examinationName = ?1")
 	ExaminationDetailView searchName(String examinationName);

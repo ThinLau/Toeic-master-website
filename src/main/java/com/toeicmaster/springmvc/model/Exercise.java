@@ -30,6 +30,9 @@ public class Exercise {
 	// part is id of part table
 	@Column(name="part")
 	private int part;
+	
+	@Column(name="level")
+	private int level;
 
 	public int getId() {
 		return id;
@@ -79,5 +82,12 @@ public class Exercise {
 		this.part = part;
 	}
 	
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 	
 }

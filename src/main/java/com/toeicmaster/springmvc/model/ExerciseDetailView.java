@@ -35,6 +35,10 @@ public class ExerciseDetailView {
 	@Column(name="part_type")
 	private String partType;
 	
+	@Column(name="level")
+	private int level;
+
+	
 	public int getId() {
 		return id;
 	}
@@ -99,5 +103,11 @@ public class ExerciseDetailView {
 		this.partName = partName;
 	}
 	
-	
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }

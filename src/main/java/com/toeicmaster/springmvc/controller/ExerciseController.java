@@ -3,7 +3,6 @@ package com.toeicmaster.springmvc.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -13,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,35 +54,46 @@ public class ExerciseController {
 
 	// exercise homepage
 	@RequestMapping(value = "/exercise/homepage", method = RequestMethod.GET)
-	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, Model model) {
+	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, @RequestParam("level") int level, Model model) {
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
 		
-		paging(model, exerciseType, exerciseName);
+		paging(model, exerciseType, level, exerciseName);
 		exerciseName = null;
 		return "exercise/exercise_homepage";
 	}
 
 	// paging method
-	private void paging(Model model, String exerciseType, String exerciseName) {
+	private void paging(Model model, String exerciseType, int level, String exerciseName) {
 		// get all excerise and paging
 //		exercises = exercisedetailDao.findByPartType(exerciseType, new PageRequest(currentPage, pageSize));
-		if(exerciseName == null)
-		{
-			Sort sort = new Sort(Sort.Direction.DESC, "id");
-			exercises = exercisedetailDao.findByPartTypeIgnoreCaseContaining(exerciseType, new PageRequest(currentPage, pageSize, sort));
+		if(exerciseName == null) {	
+			if(level == 0) {		
+				Sort sort = new Sort(Sort.Direction.DESC, "id");
+				exercises = exercisedetailDao.findByPartTypeIgnoreCaseContaining(exerciseType, new PageRequest(currentPage, pageSize, sort));
+				
+				int exerSize = exercisedetailDao.countType(exerciseType);
+				
+				// exercisedetailDao.count() la so row trong table
+				totalPage = (exerSize % pageSize) == 0 ? (int) exerSize / pageSize
+							: (int) exerSize / pageSize + 1;	
+			}
+			else {
+				Sort sort = new Sort(Sort.Direction.DESC, "id");
+				exercises = exercisedetailDao.findByPartTypeIgnoreCaseContainingAndLevel(exerciseType, level, new PageRequest(currentPage, pageSize, sort));
+				
+				int exerSize = exercisedetailDao.countType(exerciseType);
+				
+				// exercisedetailDao.count() la so row trong table
+				totalPage = exercises.getContent().size();
 			
-			int exerSize = exercisedetailDao.countType(exerciseType);
-			
-			// exercisedetailDao.count() la so row trong table
-			totalPage = (exerSize % pageSize) == 0 ? (int) exerSize / pageSize
-						: (int) exerSize / pageSize + 1;			
+			}							
 		}
-		else { 
+		else  { 
 			exercises = exercisedetailDao.findByPartTypeIgnoreCaseContainingAndExerciseNameIgnoreCaseContaining(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		
 			totalPage = exercises.getContent().size();
 		}		
-
+		
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
 		model.addAttribute("exerciseType", exerciseType);
@@ -103,8 +112,8 @@ public class ExerciseController {
 		
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
-		paging(model, exerciseType, exerciseName);
-		return "redirect:/exercise/homepage?exerciseType="+exerciseType;
+		paging(model, exerciseType, 0, exerciseName);
+		return "redirect:/exercise/homepage?exerciseType="+exerciseType + "&level=" + 0;
 	}
 
 	// exercise homepage with paging
@@ -114,7 +123,7 @@ public class ExerciseController {
 
 		currentPage = page - 1;
 		model.addAttribute("module", "exercise");
-		paging(model, exerciseType, exerciseName);
+		paging(model, exerciseType, 0, exerciseName);
 		return "exercise/exercise_homepage";
 	}
 
@@ -128,34 +137,42 @@ public class ExerciseController {
 		case "Photo":
 			result = "exercise/do_exercise_photo";
 			panelHeader = "TOEIC&reg; Listening part 1: Photographs";
+			model.addAttribute("exerciseType", "listen");
 			break;
 		case "Question-Response":
 			result = "exercise/do_exercise_question_response";
 			panelHeader = "TOEIC&reg; Listening part 2: Question &amp; response";
+			model.addAttribute("exerciseType", "listen");
 			break;
 		case "Short-conversation":
 			result = "exercise/do_exercise_short_conversation_and_talk";
 			panelHeader = "TOEIC&reg; Listening part 3: Short Conversation";
+			model.addAttribute("exerciseType", "listen");
 			break;
 		case "Short-talk":
 			result = "exercise/do_exercise_short_conversation_and_talk";
 			panelHeader = "TOEIC&reg; Listening part 4: Short talk";
+			model.addAttribute("exerciseType", "listen");
 			break;
 		case "Incomplete-Sentence":
 			result = "exercise/do_exercise_incomplete_sentence";
 			panelHeader = "TOEIC&reg; Reading part 5 : Incomplete sentences";
+			model.addAttribute("exerciseType", "read");
 			break;
 		case "Text-completion":
 			result = "exercise/do_exercise_text_completion";
 			panelHeader = "TOEIC&reg; Reading part 6 : Text Completion";
+			model.addAttribute("exerciseType", "read");
 			break;
 		case "Single-passage":
 			result = "exercise/do_exercise_passage";
 			panelHeader = "TOEIC&reg; Reading part 7 : Single Passage";
+			model.addAttribute("exerciseType", "read");
 			break;
 		case "Double-passage":
 			result = "exercise/do_exercise_passage";
 			panelHeader = "TOEIC&reg; Reading part 8 : Double Passage";
+			model.addAttribute("exerciseType", "read");
 			break;
 
 		}
@@ -191,7 +208,7 @@ public class ExerciseController {
 			}else exAlreadyDoId = exAlreadyDo.getId();
 
 		}
-
+		model.addAttribute("mod", "exercise");
 		model.addAttribute("module", "exercise");
 		model.addAttribute("panelHeader", panelHeader);
 		model.addAttribute("exercise", exercise);
