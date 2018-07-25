@@ -76,7 +76,16 @@
 			              <label class="small" for="birthday">Thời gian làm bài (phút):</label>
 			              <input required="required" th:field="*{timeOut}" type="number" class="form-control" id="total-time" />
 			            </div>
-			            
+			             <div class="form-group">
+						     <label for="level">Mức độ:</label>
+						     <select class="form-control" name="level">
+							     <option value ="1">Level: 0 - 450</option>
+							     <option value ="2">Level: 450 - 600 </option>
+							     <option value ="3">Level: 600 - 750</option>
+							     <option value ="4">Level: 750+</option>			                   
+						     </select>
+						 </div>          
+             
 			            <div class="form-group">
 			              <button type="submit" class="btn btn-primary form-control">Lưu lại</button>
 			            </div>
@@ -89,6 +98,20 @@
 		          	<br/>
 		          	<form th:action="@{/save-exam-file}" method="POST" enctype="multipart/form-data">
 		          		<div class="col-md-8" style="margin-top: 30px">
+			          		<div class="row">
+					         	<label class="col-md-4" style="margin-top: 7px" for="part">Mức độ:</label>						         
+						          	<div class="col-md-8">
+								         <div class="form-group">										
+										     <select class="form-control" name="level">
+											     <option value ="1" >Level: 0 - 450</option>
+											     <option value ="2" >Level: 450 - 600 </option>
+											     <option value ="3" >Level: 600 - 750</option>
+											     <option value ="4" >Level: 750+</option>			                   
+										     </select>
+										 </div> 
+									</div>
+								</div>
+			          		
 			          		<div class="row">						          			                
 					          		<div class="form-group">	
 						          		<label class="col-md-4" style="margin-top: 5px" for="part">Xem hướng dẫn:</label>
@@ -118,7 +141,7 @@
 				          			<label class="col-md-4" style="margin-top: 5px;">Nhập file Exel:</label>    
 				          			<div class="col-md-8">  
 					          			<div class="form-group"> 			
-											<div  class="fileUpload btn btn-primary">
+											<div class="fileUpload btn btn-primary">
 											    <span>Upload</span>
 											    <input required="required" name="file" id="uploadBtn" type="file" class="upload" accept=".xls,.xlsx"/>
 											</div>		

@@ -65,9 +65,10 @@ public class ExaminationController {
 
 	// examination homepage
 	@RequestMapping(value = "/examination", method = RequestMethod.GET)
-	public String exerciseHomepage(Model model, @RequestParam("level") int level) {
+	public String exerciseHomepage(Model model, @RequestParam(name = "level", required = false) Integer level) {
 		currentPage = 0;
-
+		if(level == null)
+			level = 0;
 		paging(model, level, examName);
 		examName = null;
 		return "examination/exam_homepage";
@@ -93,12 +94,33 @@ public class ExaminationController {
 			
 			totalPage = examinations.getContent().size();
 		}
+		
+		String title = "Bài thi thử " + getLevel(level);
+		
+		model.addAttribute("title", title);
 		model.addAttribute("module", "examination");
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
 		model.addAttribute("examinations", examinations);
 	}
 
+	private String getLevel(int level) {
+		String mess = "";
+		if(level == 1) {
+			mess = "Level: 0 - 450";
+		} 
+		if(level == 2) {
+			mess = "Level: 450 - 600";
+		}
+		if(level == 3) {
+			mess = "Level: 600 - 750";
+		}
+		if(level == 4) {
+			mess = "Level: 750+";
+		}
+		return mess;
+	}
+	
 	@RequestMapping(value = "exam-homepage/{page}", method = RequestMethod.GET)
 	public String exercisePage(@PathVariable("page") int page, Model model) {
 

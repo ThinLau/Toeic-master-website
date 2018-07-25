@@ -12,6 +12,9 @@ import com.toeicmaster.springmvc.model.Instruction;
 
 public interface InstructionDao extends CrudRepository<Instruction,Integer>  {
 	Page<Instruction> findByType(String type, Pageable pageAble);
+	
+	Page<Instruction> findByTypeIgnoreCaseContainingAndNameIgnoreCaseContaining(String type, String name, Pageable pageAble);
+	
 	List<Instruction> findByAuthor(String username);
 	@Query(value = "select * from instruction where author = ?1 order by id DESC", nativeQuery = true)
 	List<Instruction> findInstructionById(String username);

@@ -47,15 +47,34 @@
           <div class="col-md-9 exercise-content"> 
           <div class="row">
               <div class="breadcrumbs part-I">
-                <h3 class="text-primary" >
-					<i class="fa fa-headphones" th:if="${type == 'listen'}" aria-hidden="true"></i>
-					<i class="fa fa-book" th:if="${type == 'read'}" aria-hidden="true"></i>
-                	<span th:text="${type == 'listen'}? 'Một số chia sẻ về phần nghe' : 'Một số chia sẻ về phần đọc' ">Listening Exercises</span></h3>
+              	<div class="col-md-6">
+                	<h3 class="text-primary" >
+						<i class="fa fa-headphones" th:if="${type == 'share'}" aria-hidden="true"></i>
+						<i class="fa fa-book" th:if="${type == 'skill'}" aria-hidden="true"></i>
+						<i th:if="${type == 'route'}" class="fa fa-book"></i>
+						<i class="fa fa-book" th:if="${type == 'book'}" aria-hidden="true"></i>
+	                	<span th:if="${type == 'share'}">Share Everyday</span>
+	                	<span th:if="${type == 'skill'}">Skills to do </span>
+	                	<span th:if="${type == 'route'}">Roadmap to learn English</span>
+	                	<span th:if="${type == 'book'}">Book</span>
+                	</h3>
+              	</div>
+              	<div class="col-md-6">
+		                <div class="topnav">							  
+							 <div class="search-container">
+							    <form th:action="@{/search-instruction}" method="post" >
+							      <input type="text" placeholder="Search.." name="search"/>
+							      <input type="hidden" th:value="${type}"  name="type"/>
+							      <button  type="submit"><i class="fa fa-search"></i></button>
+							    </form>
+							  </div>
+						</div>
+	  			</div>
               </div>
      
               	<th:block th:each="instruction : ${instructions}">
 	                <div class="col-md-6">
-	                  <a class="excercise-link"  th:href="@{/instruction/see-the-instructions/{id}(id=${instruction.id})}" 
+	                  <a class="excercise-link"  th:href="@{/see-the-instructions/{id}(id=${instruction.id})}" 
 	                  		th:title="${instruction.name}">
 	                     <div class="excercise" id="chooseTest">
 	                        <p class="excercise-name text-primary" th:text="${instruction.name}">Kỹ năng nghe tranh vật trong bài thi TOEIC (Part 3 - Unit 1)</p>
@@ -78,7 +97,7 @@
 					    </li>
 					    <!--  orther situation will clickable previous button-->
 					    <li class="page-item" th:if="${currentPage} != 1">
-					      <a  class="page-link text-primary" th:href="@{/instruction/homepage/{page}(page=${currentPage-1},type=${type})}" tabindex="-1">Previous</a>
+					      <a  class="page-link text-primary" th:href="@{/homepage/{page}(page=${currentPage-1},type=${type})}" tabindex="-1">Previous</a>
 					    </li>
 					    
 					    <li class="page-item">
@@ -91,7 +110,7 @@
 					    </li>
 					    <!--  if current page not end -->
 					    <li class="page-item " th:if="${currentPage} != ${totalPage}">
-					      <a class="page-link text-primary" th:href="@{/instruction/homepage/{page}(page=${currentPage+1},type=${type})}">Next</a>
+					      <a class="page-link text-primary" th:href="@{/homepage/{page}(page=${currentPage+1},type=${type})}">Next</a>
 					    </li>
 					  </ul>
 					</nav>

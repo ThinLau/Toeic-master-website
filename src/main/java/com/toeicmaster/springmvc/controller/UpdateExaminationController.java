@@ -73,6 +73,7 @@ public class UpdateExaminationController {
 				entity.setName(exam.getName());
 				entity.setNumberOfQuestion(exam.getNumberOfQuestion());
 				entity.setTimeOut(exam.getTimeOut());
+				entity.setLevel(exam.getLevel());
 				examDao.save(entity);
 				examId = entity.getId();
 				

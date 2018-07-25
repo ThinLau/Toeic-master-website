@@ -135,8 +135,8 @@ public class UserController {
 			exercise.setDateCreate(dateCreate);
 	
 			User user = (User) session.getAttribute("user");
-			exercise.setAuthor(user.getId());
-	
+			exercise.setAuthor(user.getId());			
+			
 			exerciseDao.save(exercise);
 			
 			sameExer = 0;
@@ -150,7 +150,7 @@ public class UserController {
 
 	@RequestMapping(value = "/save-exercise-file", method = RequestMethod.POST)
 	public String saveExerciseFile(HttpServletRequest request, HttpSession session, Model model,
-			@RequestParam("file") MultipartFile file, @RequestParam("part") String part) {
+			@RequestParam("file") MultipartFile file, @RequestParam("part") String part,  @RequestParam("level") int level) {
 		if (session.getAttribute("user") == null)
 			return "login/login";
 		Exercise exercise = new Exercise();
@@ -178,43 +178,43 @@ public class UserController {
 			switch (ii) {
 			case 1: // photo
 			{
-				result = part1(request, exercise, eq, eqd, user, worksheet, part);
+				result = part1(request, exercise, eq, eqd, user, worksheet, part, level);
 				
 				break;
 			}
 			case 2: // question-response
 			{
-				result = part2(request, exercise, eq, eqd, user, worksheet, part);				
+				result = part2(request, exercise, eq, eqd, user, worksheet, part, level );				
 				break;
 			}
 			case 3: // short converstion
 			{
-				result = part3(request, exercise, eq, eqd, user, worksheet, part);
+				result = part3(request, exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			case 4: // short talk
 			{
-				result = part4(request, exercise, eq, eqd, user, worksheet, part);
+				result = part4(request, exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			case 5: // incomplete sentence
 			{
-				result = part5(exercise, eq, eqd, user, worksheet, part);
+				result = part5(exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			case 6: // text completion
 			{
-				result = part6(exercise, eq, eqd, user, worksheet, part);
+				result = part6(exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			case 7: // single passage
 			{
-				result = part7(exercise, eq, eqd, user, worksheet, part);
+				result = part7(exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			case 8: // double passage
 			{
-				result = part8(exercise, eq, eqd, user, worksheet, part);
+				result = part8(exercise, eq, eqd, user, worksheet, part, level);
 				break;
 			}
 			}
@@ -248,6 +248,7 @@ public class UserController {
 			entity.setName(exercise.getName());
 			entity.setNumberOfQuestion(exercise.getNumberOfQuestion());
 			entity.setPart(exercise.getPart());
+			entity.setLevel(exercise.getLevel());
 			exerciseDao.save(entity);
 			exerciseId = entity.getId();
 		}
@@ -750,7 +751,7 @@ public class UserController {
 	}
 
 	public int part1(HttpServletRequest request, Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd,
-			User user, Sheet worksheet, String part) {
+			User user, Sheet worksheet, String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -763,6 +764,7 @@ public class UserController {
 			exercise.setName(row1.getCell(0).toString());
 			
 			exercise.setAuthor(user.getId());
+			exercise.setLevel(level);
 			exercise.setNumberOfQuestion(row2.getCell(0).toString());		
 			exercise.setPart(Integer.parseInt(part));
 			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -871,7 +873,7 @@ public class UserController {
 	}
 
 	public int part2(HttpServletRequest request, Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd,
-			User user, Sheet worksheet, String part) throws IOException {
+			User user, Sheet worksheet, String part, int level) throws IOException {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -882,6 +884,7 @@ public class UserController {
 			} else {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setAuthor(user.getId());
+				exercise.setLevel(level);
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());		
 				exercise.setPart(Integer.parseInt(part));
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -959,7 +962,7 @@ public class UserController {
 	}
 
 	public int part3(HttpServletRequest request, Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd,
-			User user, Sheet worksheet, String part) {
+			User user, Sheet worksheet, String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -971,6 +974,7 @@ public class UserController {
 				exercise.setName(row1.getCell(0).toString());
 			
 				exercise.setAuthor(user.getId());
+				exercise.setLevel(level);
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());		
 				exercise.setPart(Integer.parseInt(part));
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -1094,7 +1098,7 @@ public class UserController {
 	}
 
 	public int part4(HttpServletRequest request, Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd,
-		User user, Sheet worksheet, String part) {
+		User user, Sheet worksheet, String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -1105,6 +1109,7 @@ public class UserController {
 			} else {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setAuthor(user.getId());
+				exercise.setLevel(level);
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());		
 				exercise.setPart(Integer.parseInt(part));
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -1204,7 +1209,7 @@ public class UserController {
 	}
 
 	public int part5(Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd, User user, Sheet worksheet,
-			String part) {
+			String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -1216,6 +1221,7 @@ public class UserController {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());
 				exercise.setPart(Integer.parseInt(part));
+				exercise.setLevel(level);
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 				Date date = new Date();
 				String dateCreate = dateFormat.format(date);
@@ -1303,7 +1309,7 @@ public class UserController {
 	}
 
 	public int part6(Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd, User user, Sheet worksheet,
-			String part) {
+			String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 		
@@ -1315,7 +1321,7 @@ public class UserController {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());
 				exercise.setPart(Integer.parseInt(part));
-		
+				exercise.setLevel(level);
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 				Date date = new Date();
 				String dateCreate = dateFormat.format(date);
@@ -1407,7 +1413,7 @@ public class UserController {
 	}
 
 	public int part7(Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd, User user, Sheet worksheet,
-			String part) {
+			String part, int level) {
 		Row row2 = (Row) worksheet.getRow(1);
 		Row row1 = (Row) worksheet.getRow(0);
 
@@ -1419,7 +1425,7 @@ public class UserController {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());
 				exercise.setPart(Integer.parseInt(part));
-		
+				exercise.setLevel(level);
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 				Date date = new Date();
 				String dateCreate = dateFormat.format(date);
@@ -1519,7 +1525,7 @@ public class UserController {
 	}
 
 	public int part8(Exercise exercise, ExerciseQuestion eq, ExerciseQuestionDetail eqd, User user, Sheet worksheet,
-			String part) {
+			String part, int level) {
 		Row row1 = (Row) worksheet.getRow(0);
 		Row row2 = (Row) worksheet.getRow(1);
 		
@@ -1531,7 +1537,7 @@ public class UserController {
 				exercise.setName(row1.getCell(0).toString());
 				exercise.setNumberOfQuestion(row2.getCell(0).toString());
 				exercise.setPart(Integer.parseInt(part));
-		
+				exercise.setLevel(level);
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 				Date date = new Date();
 				String dateCreate = dateFormat.format(date);

@@ -18,7 +18,6 @@ import com.toeicmaster.springmvc.dao.InstructionDao;
 import com.toeicmaster.springmvc.model.Instruction;
 
 @Controller
-@RequestMapping("/instruction")
 public class InstructionController {
 
 	@Autowired
@@ -29,23 +28,30 @@ public class InstructionController {
 	int pageSize = 6;
 	int currentPage = 0;
 	int totalPage = 0;
-
+	String insName = null;
 	// exercise homepage
-	@RequestMapping(value = { "", "homepage" }, method = RequestMethod.GET)
+	@RequestMapping(value = "/instruction/homepage", method = RequestMethod.GET)
 	public String exerciseHomepage(@RequestParam("type") String type, Model model) {
 		currentPage = 0;
 		model.addAttribute("module", "instruction");
-		paging(model, type);
+		paging(model, type, insName);
+		insName = null;
 		return "instruction/instruction_homepage";
 	}
 
 	// paging method
-	private void paging(Model model, String type) {
-		// get all excerise and paging
-		instructions = instructionDao.findByType(type, new PageRequest(currentPage, pageSize));
+	private void paging(Model model, String type, String insName) {
+		// get all excerise and paging	
 
-		totalPage = (instructionDao.count() % pageSize) == 0 ? (int) instructionDao.count() / pageSize
-				: (int) instructionDao.count() / pageSize + 1;
+		if(insName == null) {
+			instructions = instructionDao.findByType(type, new PageRequest(currentPage, pageSize));
+			totalPage = instructions.getContent().size();
+		}
+		else {
+			instructions = instructionDao.findByTypeIgnoreCaseContainingAndNameIgnoreCaseContaining(type, insName, new PageRequest(currentPage, pageSize));
+			totalPage = instructions.getContent().size();
+		}
+		
 
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
@@ -59,9 +65,22 @@ public class InstructionController {
 
 		currentPage = page - 1;
 		model.addAttribute("module", "instruction");
-		paging(model, type);
+		paging(model, type, insName);
 		return "instruction/instruction_homepage";
 	}
+	
+	@RequestMapping(value = "/search-instruction", method = RequestMethod.POST)
+	public String saveExercise(HttpSession session, Model model, @RequestParam("type") String type, @RequestParam("search") String search) {
+		if(search == "" || search == null){
+			insName = null;
+		} else 
+			insName = search;
+		
+		currentPage = 0;
+		paging(model, type, insName);
+		return "redirect:/instruction/homepage?type=" + type;
+	}
+	
 
 	@RequestMapping(value = "/see-the-instructions/{id}", method = RequestMethod.GET)
 	public String seeTheInstructions(@PathVariable("id") int instructionId, Model model) {
@@ -73,6 +92,7 @@ public class InstructionController {
 		return "instruction/see_the_instructions";
 	}
 
+	
 	// get update instruction page
 	@RequestMapping(value = "/update", method = RequestMethod.GET)
 	public String update(@RequestParam("id") int instructionId, Model model) {

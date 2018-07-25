@@ -54,10 +54,12 @@ public class ExerciseController {
 
 	// exercise homepage
 	@RequestMapping(value = "/exercise/homepage", method = RequestMethod.GET)
-	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, @RequestParam("level") int level, Model model) {
+	public String exerciseHomepage(@RequestParam("exerciseType") String exerciseType, 
+			@RequestParam(name="level", required = false) Integer level, Model model) {
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
-		
+		if(level == null)
+			level = 0;
 		paging(model, exerciseType, level, exerciseName);
 		exerciseName = null;
 		return "exercise/exercise_homepage";
@@ -93,11 +95,36 @@ public class ExerciseController {
 			exercises = exercisedetailDao.findByPartTypeIgnoreCaseContainingAndExerciseNameIgnoreCaseContaining(exerciseType, exerciseName, new PageRequest(currentPage, pageSize));		
 			totalPage = exercises.getContent().size();
 		}		
-		
+		String title = "";
+		if(exerciseType.equalsIgnoreCase("listen")) {
+			title = "Listening Exercises "  ;
+		}
+		else {
+			title = "Reading Exercises "  ;
+		}
+		if(level != 0) title += getLevel(level);
+		model.addAttribute("titles", title);
 		model.addAttribute("totalPage", totalPage);
 		model.addAttribute("currentPage", currentPage + 1);
 		model.addAttribute("exerciseType", exerciseType);
 		model.addAttribute("exercises", exercises);
+	}
+	
+	private String getLevel(int level) {
+		String mess = null;
+		if(level == 1) {
+			mess = "Level: 0 - 450";
+		} 
+		if(level == 2) {
+			mess = "Level: 450 - 600";
+		}
+		if(level == 3) {
+			mess = "Level: 600 - 750";
+		}
+		if(level == 4) {
+			mess = "Level: 750+";
+		}
+		return mess;
 	}
 	
 	@RequestMapping(value = "/search-exercise", method = RequestMethod.POST)
@@ -108,12 +135,11 @@ public class ExerciseController {
 			exerciseName = null;
 		} else
 			exerciseName = search;
-		
-		
+				
 		currentPage = 0;
 		model.addAttribute("module", "exercise");
 		paging(model, exerciseType, 0, exerciseName);
-		return "redirect:/exercise/homepage?exerciseType="+exerciseType + "&level=" + 0;
+		return "redirect:/exercise/homepage?exerciseType="+exerciseType;
 	}
 
 	// exercise homepage with paging

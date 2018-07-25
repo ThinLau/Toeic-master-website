@@ -143,6 +143,7 @@ public class CreateExaminationController {
 			entity.setName(exam.getName());
 			entity.setNumberOfQuestion(exam.getNumberOfQuestion());
 			entity.setTimeOut(exam.getTimeOut());
+			entity.setLevel(exam.getLevel());
 			examDao.save(entity);
 			examId = entity.getId();
 		}
@@ -574,7 +575,7 @@ public class CreateExaminationController {
 	
 	@RequestMapping(value="/save-exam-file", method=RequestMethod.POST)
 	public String saveExerciseFile(HttpSession session , Model model, 
-			@RequestParam("file") MultipartFile file) {
+			@RequestParam("file") MultipartFile file, @RequestParam("level") int level) {
 		if(session.getAttribute("user") == null)
 			return "login/login";
 		Examination exam = new Examination();
@@ -616,6 +617,7 @@ public class CreateExaminationController {
 						exam.setName(row.getCell(1).toString());									
 						DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 						Date date = new Date();
+						exam.setLevel(level);
 						String dateCreate = dateFormat.format(date);
 						exam.setDateCreate(dateCreate);			
 						exam.setNumberOfQuestion((int) Double.parseDouble(row.getCell(3).toString()));

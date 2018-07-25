@@ -49,7 +49,8 @@
 	                <h3 class="text-primary" >
 						<i class="fa fa-headphones" th:if="${exerciseType == 'listen'}" aria-hidden="true"></i>
 						<i class="fa fa-book" th:if="${exerciseType == 'read'}" aria-hidden="true"></i>
-	                	<span th:text="${exerciseType == 'listen'}? 'Listening Exercises' : 'Reading Exercises' ">Listening Exercises</span>
+	                	<span th:text="${titles}">Listening Exercises</span>
+	                	
 	                </h3>
 	                </div>
 	                 <div class="col-md-6">

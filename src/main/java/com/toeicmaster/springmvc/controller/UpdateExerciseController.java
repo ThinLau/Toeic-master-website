@@ -84,6 +84,7 @@ public class UpdateExerciseController {
 				entity.setName(exercise.getName());
 				entity.setNumberOfQuestion(exercise.getNumberOfQuestion());
 				entity.setPart(exercise.getPart());
+				entity.setLevel(exercise.getLevel());
 				exerciseDao.save(entity);
 				exerciseId = entity.getId();
 				
